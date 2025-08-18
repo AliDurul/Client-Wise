@@ -50,7 +50,7 @@ export interface Register {
 /* TIKCET */
 export interface Ticket {
   _id: string;
-  caller_details: CallerDetails | null;
+  caller_phone: string;
   assigned_agent: PersonInfo;
   customer: PersonInfo;
   title: string;
@@ -80,7 +80,7 @@ export interface Escalation {
 }
 
 export interface PersonInfo {
-  _id: number;
+  _id: string;
   first_name: string;
   last_name: string;
   full_name: string;
@@ -89,6 +89,14 @@ export interface PersonInfo {
   profile_pic: string | null;
 };
 
+
+export interface TicketCategory {
+  _id: string;
+  name: string;
+  description: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 export interface TicketComments {
   _id: string;

@@ -19,8 +19,8 @@ interface UseDataTableConfig<T> {
 
 export function useDataTable<T extends { _id: string }>(config: UseDataTableConfig<T> = {}) {
     const {
-        defaultSortAccessor = 'first_name',
-        defaultSortDirection = 'asc',
+        defaultSortAccessor = 'createdAt',
+        defaultSortDirection = 'desc',
         deleteAction,
         deleteMultiAction,
     } = config;
@@ -130,7 +130,7 @@ export function useDataTable<T extends { _id: string }>(config: UseDataTableConf
     const getTableProps = () => ({
         className: `${isDark} table-hover whitespace-nowrap`,
         minHeight: 400,
-        height: 850,
+        // height: 700,
         withBorder: false,
         highlightOnHover: true,
         recordsPerPage: pageLimit ? parseInt(pageLimit, 10) : 20,

@@ -11,12 +11,12 @@ import useSWR from 'swr'
 interface SideProfileProps {
     sideProfileModal: boolean,
     setSideProfileModal: (value: boolean) => void,
+    customerId: string
 }
 
-export default function TicketUserSideProfile({ sideProfileModal, setSideProfileModal }: SideProfileProps) {
-    const { getParam } = useUrlParams();
-    const customerId = getParam('customerId')
+export default function TicketUserSideProfile({ sideProfileModal, setSideProfileModal, customerId }: SideProfileProps) {
     const { data, isLoading } = useSWR(`customers/${customerId}`, () => getData(`customers/${customerId}`));
+
 
     return (
         <Dialog className="relative z-10" open={sideProfileModal} onClose={setSideProfileModal}>
@@ -52,22 +52,22 @@ export default function TicketUserSideProfile({ sideProfileModal, setSideProfile
                                                 <div className="relative h-40 sm:h-56">
                                                     <Image
                                                         width={100}
-                                                        height={10}
-                                                        className="absolute h-full w-full object-cover "
-                                                        src={data?.profile_pic || '/assets/images/profile-2.jpeg'}
-                                                        alt={data?.full_name ?? ""}
+                                                        height={100}
+                                                        className="absolute h-full w-full object-contain "
+                                                        src={data?.result?.profile_pic || '/assets/images/profile-2.jpeg'}
+                                                        alt={data?.result?.full_name ?? ""}
                                                     />
                                                 </div>
                                                 <div className="mt-6 px-4 sm:mt-8 sm:flex sm:items-end sm:px-6">
                                                     <div className="sm:flex-1">
                                                         <div>
                                                             <div className="flex items-center">
-                                                                <h3 className="text-xl font-bold text-gray-900 sm:text-2xl">{data?.first_name} {data?.last_name}</h3>
+                                                                <h3 className="text-xl font-bold text-gray-900 sm:text-2xl">{data?.result?.first_name} {data?.result?.last_name}</h3>
                                                                 {/* <span className="ml-2.5 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-green-400">
                                                                     <span className="sr-only">Online</span>
                                                                 </span> */}
                                                             </div>
-                                                            <Link href='/mailbox' className="text-sm text-gray-500">{data?.email}</Link>
+                                                            <Link href='/mailbox' className="text-sm text-gray-500">{data?.result?.email}</Link>
                                                         </div>
                                                         <div className="mt-5 flex flex-wrap space-y-3 sm:space-x-3 sm:space-y-0">
                                                             <Link href="/wp"
@@ -107,8 +107,8 @@ export default function TicketUserSideProfile({ sideProfileModal, setSideProfile
                                                                                     {({ active }) => (
                                                                                         <div
                                                                                             onClick={() => {
-                                                                                                router.push(`/kyc/action?s=r&userId=${data?.id}`),
-                                                                                                    dispatch(updateKycState(data))
+                                                                                                router.push(`/kyc/action?s=r&userId=${data?.result?.id}`),
+                                                                                                    dispatch(updateKycState(data?.result))
                                                                                             }}
                                                                                             className={classNames(
                                                                                                 active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
@@ -157,33 +157,33 @@ export default function TicketUserSideProfile({ sideProfileModal, setSideProfile
                                                 <div className='flex'>
                                                     <div>
                                                         <dt className="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0">Nationality</dt>
-                                                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2">{data?.nationality}</dd>
+                                                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2">{data?.result?.nationality}</dd>
                                                     </div>
                                                     <div>
                                                         <dt className="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0">NRC</dt>
-                                                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2">{data?.id_number}</dd>
+                                                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2">{data?.result?.id_number}</dd>
                                                     </div>
                                                 </div>
                                                 <div className='flex'>
                                                     <div>
                                                         <dt className="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0">Financial Institution</dt>
-                                                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2">{data?.finincial_institution}</dd>
+                                                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2">{data?.result?.finincial_institution}</dd>
                                                     </div>
                                                     <div>
                                                         <dt className="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0">Location</dt>
-                                                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2">{data?.address.city}</dd>
+                                                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2">{data?.result?.address.city}</dd>
                                                     </div>
                                                 </div>
                                                 <div className="flex">
                                                     <div>
                                                         <dt className="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0">Profession</dt>
-                                                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2">{data?.profession}</dd>
+                                                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2">{data?.result?.profession}</dd>
                                                     </div>
                                                     <div>
                                                         <dt className="text-sm font-medium text-gray-500 sm:w-40 sm:flex-shrink-0">Birthday</dt>
                                                         <dd className="mt-1 text-sm text-gray-900 sm:col-span-2">
-                                                            {/* <time dateTime={data?.dob}>{data?.dob ? data?.dob : ''}</time> */}
-                                                            {data?.dob}
+                                                            {/* <time dateTime={data?.result?.dob}>{data?.result?.dob ? data?.result?.dob : ''}</time> */}
+                                                            {data?.result?.dob}
                                                         </dd>
                                                     </div>
                                                 </div>

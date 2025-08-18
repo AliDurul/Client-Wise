@@ -11,6 +11,9 @@ import { LuMousePointerClick } from 'react-icons/lu';
 import { useDataTable } from '@/hooks/useDataTable';
 import Image from 'next/image';
 import { delData, delMultiData } from '@/lib/features/shared/actionUtils';
+import { selectTicketModal, setTicketModal } from '@/lib/features/tickets/ticketSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import TicketModal from './TicketModal';
 
 
 interface TicketTableProps {
@@ -18,6 +21,10 @@ interface TicketTableProps {
 }
 
 export default function TicketTable({ tickets }: TicketTableProps) {
+
+    // hooks
+    const dispatch = useAppDispatch();
+    const ticketModal = useAppSelector(selectTicketModal);
 
     const {
         selectedRecords,
@@ -51,7 +58,7 @@ export default function TicketTable({ tickets }: TicketTableProps) {
                 userInfo?.role !== 'admin' && (
                     <>
                         <button className="flex hover:text-info"
-                            onClick={(e) => { handleEdit(`/tickets/action/?s=e&id=${record._id}`, e); }}>
+                            onClick={(e) => { e?.stopPropagation(); dispatch(setTicketModal({ open: true, record })) }}>
                             <EditIcon />
                         </button>
                         <button
@@ -132,8 +139,8 @@ export default function TicketTable({ tickets }: TicketTableProps) {
             sortable: true,
             render: ({ priority }) => <span className={`badge badge-outline-${priority === 'critical' ? 'danger'
                 : priority === 'high' ? 'warning'
-                : priority === 'medium' ? 'secondary'
-                    : priority === 'low' ? 'dark' : ''}`}>{priority}</span>,
+                    : priority === 'medium' ? 'secondary'
+                        : priority === 'low' ? 'dark' : ''}`}>{priority}</span>,
         },
         {
             accessor: 'actions',
@@ -163,7 +170,7 @@ export default function TicketTable({ tickets }: TicketTableProps) {
                         )
                     }
                     <button
-                        onClick={() => handleCreate('/tickets/action/?s=c')}
+                        onClick={() => dispatch(setTicketModal({ open: true, record: null }))}
                         className="btn btn-primary btn-sm  gap-2">
                         <svg className="h-5 w-5" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -187,6 +194,10 @@ export default function TicketTable({ tickets }: TicketTableProps) {
                     idAccessor="_id"
                 />
             </div>
+
+            {
+                ticketModal && <TicketModal />
+            }
 
         </>
     )

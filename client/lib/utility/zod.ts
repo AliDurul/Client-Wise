@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { de } from 'zod/v4/locales';
 
 /* -------------------- Credential Schema -------------------- */
 
@@ -46,7 +47,7 @@ export const customerSchema = z.object({
     first_name: z.string().min(1, "First name is required"),
     last_name: z.string().min(1, "Last name is required"),
     profession: z.string().optional(),
-    dob: z.string().min(1, "Date of birth is required"), 
+    dob: z.string().min(1, "Date of birth is required"),
     email: z.string().email("Invalid email address"),
     phone_number: z.string().min(1, "Phone number is required"),
     gender: z.string().min(1, "Gender is required"),
@@ -106,3 +107,20 @@ export const invoiceSchema = z.object({
     payment_type: z.enum(['cash', 'credit card', 'bank transfer', 'paypal', 'stripe', 'mobile', 'debit card', 'cheque']).default('cash'),
     invoice_items: z.array(invoiceItemSchema).min(1, "At least one invoice item is required"),
 });
+
+/* -------------------- Ticket Schema -------------------- */
+
+export const ticketEscalateSchema = z.object({
+    reason: z.string().min(10, "Reason for escalation is required, please provide a detailed explanation.")
+});
+
+export const ticketSchema = z.object({
+    caller_phone: z.string().optional(),
+    customer: z.string().min(1, "Customer is required"),
+    title: z.string().min(1, "Title is required"),
+    category: z.string().min(1, "Category is required"),
+    status: z.enum(['pending', 'active', 'resolved', 'cancelled', 'escalated']),
+    priority: z.enum(['high', 'medium', 'low', 'critical']),
+    flag: z.enum(['important', 'moderate', 'least important', 'prank']),
+    description: z.string().min(10, "Description is required"),
+})

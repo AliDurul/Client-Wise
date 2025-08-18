@@ -2,7 +2,7 @@ import type { Action, ThunkAction } from "@reduxjs/toolkit";
 import { combineSlices, configureStore } from "@reduxjs/toolkit";
 import { themeSlice } from "./features/theme/themeSlice";
 // import { invoiceSlice } from "./features/invoices/invoiceSlice";
-// import { ticketSlice } from "./features/tickets/ticketSlice";
+import { ticketSlice } from "./features/tickets/ticketSlice";
 // import { categorySlice } from "./features/category/categorySlice";
 import { kycSlice } from "./features/kyc/kycSlice";
 import { productSlice } from "./features/products/productSlice";
@@ -15,7 +15,7 @@ import { taskSlice } from "./features/task/taskSlice";
 const rootReducer = combineSlices(
     themeSlice,
     // invoiceSlice,
-    // ticketSlice,
+    ticketSlice,
     // categorySlice,
     kycSlice,
     productSlice,

@@ -65,49 +65,47 @@ export default function FaqModal() {
                             <DialogTitle as="h3" className="bg-[#fbfbfb] py-3 text-lg font-medium ltr:pl-5 ltr:pr-[50px] rtl:pr-5 rtl:pl-[50px] dark:bg-[#121c2c]">
                                 Add New Question
                             </DialogTitle>
-                            <div className="p-5">
-                                <form action={action}>
-                                    <input type="hidden" name="id" value={initialValues._id} />
-                                    <div className="mb-5">
-                                        <label htmlFor="question">Question</label>
-                                        <input
-                                            name="question"
-                                            id="question"
-                                            type="text"
-                                            placeholder="Enter Question"
-                                            className="form-input"
-                                            onChange={(e) => setinitialValues({ ...initialValues, question: e.target.value })}
-                                            value={initialValues.question}
-                                        />
-                                        {
-                                            state?.errors?.question && <p className='text-red-500 pt-1 text-sm'>- {state.errors.question}</p>
-                                        }
-                                    </div>
-                                    <div className="mb-5">
-                                        <label htmlFor="desc">Answer</label>
-                                        <textarea
-                                            id="desc"
-                                            name='answer'
-                                            rows={3}
-                                            className="form-textarea min-h-[130px] resize-none"
-                                            placeholder="Enter Answer"
-                                            onChange={(e) => setinitialValues({ ...initialValues, answer: e.target.value })}
-                                            value={initialValues.answer}
-                                        ></textarea>
-                                        {
-                                            state?.errors?.answer && <p className='text-red-500 pt-1 text-sm'>- {state.errors.answer}</p>
-                                        }
-                                    </div>
-                                    <div className="mt-8 flex items-center justify-end">
-                                        <button type="button" className="btn btn-outline-danger gap-2" onClick={() => dispatch(setFaqModal(false))}>
-                                            Cancel
-                                        </button>
-                                        <button type="submit" className="btn btn-primary ltr:ml-4 rtl:mr-4" >
-                                            {isPending ? 'Loading...' : 'Add Question'}
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
+                            <form action={action} className='p-5'>
+                                <input type="hidden" name="id" value={initialValues._id} />
+                                <div className="mb-5">
+                                    <label htmlFor="question">Question</label>
+                                    <input
+                                        name="question"
+                                        id="question"
+                                        type="text"
+                                        placeholder="Enter Question"
+                                        className="form-input"
+                                        onChange={(e) => setinitialValues({ ...initialValues, question: e.target.value })}
+                                        value={initialValues.question}
+                                    />
+                                    {
+                                        state?.errors?.question && <p className='text-red-500 pt-1 text-sm'>- {state.errors.question}</p>
+                                    }
+                                </div>
+                                <div className="mb-5">
+                                    <label htmlFor="desc">Answer</label>
+                                    <textarea
+                                        id="desc"
+                                        name='answer'
+                                        rows={3}
+                                        className="form-textarea min-h-[130px] resize-none"
+                                        placeholder="Enter Answer"
+                                        onChange={(e) => setinitialValues({ ...initialValues, answer: e.target.value })}
+                                        value={initialValues.answer}
+                                    ></textarea>
+                                    {
+                                        state?.errors?.answer && <p className='text-red-500 pt-1 text-sm'>- {state.errors.answer}</p>
+                                    }
+                                </div>
+                                <div className="mt-8 flex items-center justify-end">
+                                    <button type="button" className="btn btn-outline-danger gap-2" onClick={() => dispatch(setFaqModal(false))}>
+                                        Cancel
+                                    </button>
+                                    <button type="submit" className="btn btn-primary ltr:ml-4 rtl:mr-4" >
+                                        {isPending ? 'Loading...' : 'Add Question'}
+                                    </button>
+                                </div>
+                            </form>
                         </DialogPanel>
                     </div>
                 </div>

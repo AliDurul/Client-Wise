@@ -194,7 +194,8 @@ export const queryHandler: RequestHandler = (req, res, next) => {
     };
 
     // URL?sort[key1]=asc&sort[key2]=desc
-    const rawSort = req.query?.sort || {};
+    // const rawSort = req.query?.sort || {};
+    const rawSort = req.query?.sort || { createdAt: 'desc' };
     const sort: { [key: string]: SortOrder } = {};
 
     if (typeof rawSort === "object" && !Array.isArray(rawSort)) {
@@ -217,7 +218,11 @@ export const queryHandler: RequestHandler = (req, res, next) => {
     skip = skip > 0 ? skip : (page * limit);
 
     // List
-    res.getModelList = async <T extends Document>(Model: Model<T>, customFilter = {}, populate: string | null = null): Promise<T[]> => {
+    res.getModelList = async <T extends Document>(
+        Model: Model<T>,
+        customFilter = {},
+        populate: string | null = null
+    ): Promise<any[]> => {
 
         const query: RootFilterQuery<T> = {
             ...(typeof filter === "object" && filter),
@@ -225,7 +230,7 @@ export const queryHandler: RequestHandler = (req, res, next) => {
             ...(typeof customFilter === "object" && customFilter),
         } as RootFilterQuery<T>;
 
-        return await Model.find(query).sort(sort).skip(skip).limit(limit).populate(populate).exec()
+        return await Model.find(query).sort(sort).skip(skip).limit(limit).populate(populate).lean();
     };
 
     // Details:

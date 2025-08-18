@@ -1,69 +1,31 @@
 
 import { createAppSlice } from "@/lib/createAppSlice";
-import { getAllTickets } from "./ticketAPI";
-import { ApiResponse, EscalationForm, Pagination, Ticket, TicketClientPhoneNumber, TicketComments } from "@/types";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { createApiThunk, createAsyncThunkConfig } from "../shared/sliceUtils";
+import { createApiThunk, createAsyncThunkConfig, sharedInitialState } from "../shared/sliceUtils";
+import { Escalation, Pagination, Ticket, TicketComments } from "@/types";
 
-
-export interface DefaultTicketParams {
-    title: string;
-    description: string;
-    client_phonenumber: TicketClientPhoneNumber | number | null
-    caller_phonenumber: string | null;
-    email_id: string | null;
-    caller_email: string | TicketClientPhoneNumber | null;
-    flag: string;
-    cat: number;
-    priority: string;
-    status: string;
-    ticket_id?: string
-    timestamp?: string
-    last_updated?: string
-    escalation: null | EscalationForm
-    assigned_agent: { id: string; first_name: string; last_name: string; };
-}
 
 export interface TicketSliceState {
     tickets: Pagination<Ticket>;
-    ticket: Ticket | DefaultTicketParams;
+    ticket: Ticket | null
     status: "idle" | "loading" | "failed";
     error: string | null;
     ticketModal: boolean;
     isEscalation: boolean;
     ticketComments: TicketComments;
-    escalation: null | EscalationForm
+    escalation: null | Escalation
 }
 
-export const initialTicket: DefaultTicketParams = {
-    title: "",
-    description: "",
-    client_phonenumber: null,
-    caller_phonenumber: null,
-    caller_email: null,
-    email_id: null,
-    flag: "",
-    cat: 0,
-    priority: "",
-    status: "",
-    escalation: null,
-    assigned_agent: { id: "", first_name: "", last_name: "" }
-};
 
 const initialState: TicketSliceState = {
-    tickets: {
-        count: 0,
-        next: null,
-        previous: null,
-        results: []
-    },
+    tickets: sharedInitialState,
     status: "idle",
     error: null,
     ticketModal: false,
     isEscalation: false,
     escalation: null,
-    ticketComments: { id: "", title: "", comments: [] },
-    ticket: initialTicket,
+    ticketComments: { _id: "", title: "", comments: [] },
+    ticket: null,
 };
 
 export const ticketSlice = createAppSlice({
@@ -73,16 +35,13 @@ export const ticketSlice = createAppSlice({
         // Collection management
         updateTickets: create.reducer((state, action: PayloadAction<Ticket[]>) => {
             state.status = 'idle';
-            state.tickets.results = action.payload;
+            state.tickets.result = action.payload;
         }),
 
         // Entity management
-        setTicket: create.reducer((state, action: PayloadAction<Ticket | DefaultTicketParams>) => {
+        setTicket: create.reducer((state, action: PayloadAction<Ticket | null>) => {
             state.status = 'idle';
             state.ticket = action.payload;
-        }),
-        clearTicket: create.reducer((state) => {
-            state.ticket = initialTicket;
         }),
 
         // Comments management
@@ -92,33 +51,11 @@ export const ticketSlice = createAppSlice({
         }),
 
         // Modal management
-        setTicketModal: create.reducer((state, action: PayloadAction<boolean>) => {
+        setTicketModal: create.reducer((state, action: PayloadAction<{open: boolean, record: Ticket | null}>) => {
             state.status = 'idle';
-            state.ticketModal = action.payload;
+            state.ticketModal = action.payload.open;
+            state.ticket = action.payload.record;
         }),
-        toggleTicketModal: create.reducer((state) => {
-            state.ticketModal = !state.ticketModal;
-        }),
-
-        // Escalation management
-        setEscalation: create.reducer((state, action: PayloadAction<boolean>) => {
-            state.status = 'idle';
-            state.isEscalation = action.payload;
-        }),
-        toggleEscalation: create.reducer((state) => {
-            state.isEscalation = !state.isEscalation;
-        }),
-
-        // Async actions
-        fetchAllTicketAsync: create.asyncThunk(
-            async (params: { page?: string, pageSize?: string }) => {
-                return createApiThunk(
-                    () => getAllTickets(null, params.page, params.pageSize),
-                    "Failed to fetch tickets"
-                );
-            },
-            createAsyncThunkConfig('tickets')
-        ),
     }),
     selectors: {
         selectTickets: (ticket) => ticket.tickets,
@@ -133,15 +70,10 @@ export const ticketSlice = createAppSlice({
 });
 
 export const {
-    fetchAllTicketAsync,
     updateTickets,
     setTicket,
-    clearTicket,
     setTicketModal,
-    toggleTicketModal,
-    updateTicketComments,
-    setEscalation,
-    toggleEscalation
+    updateTicketComments
 } = ticketSlice.actions;
 
 export const {

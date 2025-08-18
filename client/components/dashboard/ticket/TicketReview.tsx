@@ -9,11 +9,16 @@ import toast from 'react-hot-toast';
 import { formatDate } from '@/lib/utility/functions';
 import TicketUserSideProfile from './TicketUserSideProfile';
 import Link from 'next/link';
+import { useAppDispatch } from '@/lib/hooks';
+import TicketEscModal from './TicketEscModal';
 
 export default function TicketReview({ ticket }: { ticket: Ticket }) {
 
     // hooks
+    const dispatch = useAppDispatch();
     const router = useRouter();
+    
+    // states
     const [isEscalation, setIsEscalation] = useState(false);
     const [sideProfileModal, setSideProfileModal] = useState(false)
 
@@ -65,10 +70,8 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
     }
 
 
-
-
     return (
-        <div className={` panel p-0  ${isEscalation ? 'sm:col-span-2' : 'sm:col-span-3'} ${lightBgColor}`}>
+        <div className={` panel p-0 sm:col-span-3 ${lightBgColor}`}>
             {/* Header */}
             <div className=" mb-1 flex items-start justify-between  p-5 ">
                 <h5 className="sm:text-2xl text-sm font-extrabold ">Ticket / <span className='text-sm'>{ticket?._id ?? ''}</span></h5>
@@ -120,7 +123,7 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
                                             strokeWidth="1.5"
                                         ></path>
                                     </svg>
-                                    {ticket?.priority}
+                                    Priority : {ticket?.priority}
                                 </span>
                             }
                         >
@@ -163,7 +166,7 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
                                         <path d="M2.5 17.5C2.5 15.2909 4.29086 13.5 6.5 13.5H8.9C9.46005 13.5 9.74008 13.5 9.95399 13.609C10.1422 13.7049 10.2951 13.8578 10.391 14.046C10.5 14.2599 10.5 14.5399 10.5 15.1V17.5C10.5 19.7091 8.70914 21.5 6.5 21.5C4.29086 21.5 2.5 19.7091 2.5 17.5Z" stroke="currentColor" strokeWidth="1.5" />
                                         <path d="M13.5 6.5C13.5 4.29086 15.2909 2.5 17.5 2.5C19.7091 2.5 21.5 4.29086 21.5 6.5C21.5 8.70914 19.7091 10.5 17.5 10.5H14.6429C14.5102 10.5 14.4438 10.5 14.388 10.4937C13.9244 10.4415 13.5585 10.0756 13.5063 9.61196C13.5 9.55616 13.5 9.48982 13.5 9.35714V6.5Z" stroke="currentColor" strokeWidth="1.5" />
                                     </svg>
-                                    {ticket?.status}
+                                    Status : {ticket?.status}
                                 </div>
                             }
                         >
@@ -199,11 +202,11 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
                             offset={[-10, -5]}
                             placement='bottom-start'
                             button={
-                                <div className={`flex justify-center items-center gap-2 badge  rounded-xl badge-outline-secondary`}>
+                                <div className={`flex justify-center items-center gap-2 badge  rounded-xl  ${ticketStatus}`}>
                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M5 22V14M5 14V4M5 14L7.47067 13.5059C9.1212 13.1758 10.8321 13.3328 12.3949 13.958C14.0885 14.6354 15.9524 14.7619 17.722 14.3195L17.8221 14.2945C18.4082 14.148 18.6861 13.4769 18.3753 12.9589L16.8147 10.3578C16.4732 9.78863 16.3024 9.50405 16.2619 9.19451C16.2451 9.06539 16.2451 8.93461 16.2619 8.80549C16.3024 8.49595 16.4732 8.21137 16.8147 7.64221L18.0932 5.51132C18.4278 4.9536 17.9211 4.26972 17.2901 4.42746C15.8013 4.79967 14.2331 4.69323 12.8082 4.12329L12.3949 3.95797C10.8321 3.33284 9.1212 3.17576 7.47067 3.50587L5 4M5 4V2" stroke="currentColor" strokeWidth="1.5" stroke-linecap="round" />
+                                        <path d="M5 22V14M5 14V4M5 14L7.47067 13.5059C9.1212 13.1758 10.8321 13.3328 12.3949 13.958C14.0885 14.6354 15.9524 14.7619 17.722 14.3195L17.8221 14.2945C18.4082 14.148 18.6861 13.4769 18.3753 12.9589L16.8147 10.3578C16.4732 9.78863 16.3024 9.50405 16.2619 9.19451C16.2451 9.06539 16.2451 8.93461 16.2619 8.80549C16.3024 8.49595 16.4732 8.21137 16.8147 7.64221L18.0932 5.51132C18.4278 4.9536 17.9211 4.26972 17.2901 4.42746C15.8013 4.79967 14.2331 4.69323 12.8082 4.12329L12.3949 3.95797C10.8321 3.33284 9.1212 3.17576 7.47067 3.50587L5 4M5 4V2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                                     </svg>
-                                    {ticket?.flag}
+                                    Flag : {ticket?.flag}
                                 </div>
                             }
                         >
@@ -306,11 +309,11 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
                                         <li>
                                             <button
                                                 type="button"
-                                            // onClick={() => dispatch(setEscalate(true))}
+                                                onClick={() => setIsEscalation(true)}
                                             >
                                                 <svg className="ltr:mr-3 rtl:ml-3" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M3 10.4167C3 7.21907 3 5.62028 3.37752 5.08241C3.75503 4.54454 5.25832 4.02996 8.26491 3.00079L8.83772 2.80472C10.405 2.26824 11.1886 2 12 2C12.8114 2 13.595 2.26824 15.1623 2.80472L15.7351 3.00079C18.7417 4.02996 20.245 4.54454 20.6225 5.08241C21 5.62028 21 7.21907 21 10.4167C21 10.8996 21 11.4234 21 11.9914C21 17.6294 16.761 20.3655 14.1014 21.5273C13.38 21.8424 13.0193 22 12 22C10.9807 22 10.62 21.8424 9.89856 21.5273C7.23896 20.3655 3 17.6294 3 11.9914C3 11.4234 3 10.8996 3 10.4167Z" stroke="currentColor" strokeWidth="1.5" />
-                                                    <path d="M16 11.55L12.6 9C12.2444 8.73333 11.7556 8.73333 11.4 9L8 11.55M14 14.05L12 12.55L10 14.05" stroke="currentColor" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                                    <path d="M16 11.55L12.6 9C12.2444 8.73333 11.7556 8.73333 11.4 9L8 11.55M14 14.05L12 12.55L10 14.05" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" stroke-linejoin="round" />
                                                 </svg>
                                                 Escalate
                                             </button>
@@ -352,7 +355,7 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
                                     {/* {typeof ticket.client_phonenumber !== "number" && `${ticket.client_phonenumber?.first_name ? ticket?.client_phonenumber?.first_name + ' ' + ticket?.client_phonenumber?.last_name : ticket.caller_email}`} */}
                                 </h2>
                                 <h2 className='text-base '>
-                                    {ticket?.customer?.phone_number}
+                                    {ticket?.customer?.first_name}
                                 </h2>
                             </div>
                         </div>
@@ -392,14 +395,25 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
                 </form>
 
             </div>
+            {
+                isEscalation && (
+                    <TicketEscModal
+                        isOpen={isEscalation}
+                        onClose={() => setIsEscalation(false)}
+                        ticketId={ticket._id} />
+                )
+            }
+
             {/* <TicketModal /> */}
 
             {sideProfileModal && (
                 <TicketUserSideProfile
                     sideProfileModal={sideProfileModal}
                     setSideProfileModal={setSideProfileModal}
+                    customerId={ticket.customer._id}
                 />
             )}
+
         </div>
     )
 }

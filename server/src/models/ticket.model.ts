@@ -36,25 +36,7 @@ const ticketSchema: Schema<ITicket> = new Schema({
         required: true,
     },
 
-    caller_details: {
-        first_name: {
-            type: String,
-            trim: true,
-        },
-        last_name: {
-            type: String,
-            trim: true,
-        },
-        email: {
-            type: String,
-            // required: true,
-            trim: true,
-        },
-        phone_number: {
-            type: String,
-            trim: true,
-        },
-    },
+    caller_phone: String,
 
     title: {
         type: String,
@@ -135,7 +117,7 @@ interface PersonInfo {
 export interface ITicket extends Document {
     assigned_agent: mongoose.Schema.Types.ObjectId;
     customer: PersonInfo;
-    caller_details: ICallerDetails;
+    caller_phone: string;
     title: string;
     description: string;
     status: 'pending' | 'active' | 'resolved' | 'cancelled' | 'escalated';

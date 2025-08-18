@@ -1,19 +1,29 @@
 import { Request, Response, NextFunction } from 'express';
-import Ticket, { TicCat } from "../models/ticket.model";
+import Ticket, { ITicket, TicCat } from "../models/ticket.model";
 
 import { CustomError, getImageUrl } from "../utils/common";
 
 
 export const getTickets = async (req: Request, res: Response): Promise<void> => {
 
-    const result = await res.getModelList(Ticket, {}, [
-        { path: 'customer', select: 'full_name first_name last_name email phone_number profile_pic' },
-        { path: 'assigned_agent', select: 'full_name first_name last_name email phone_number profile_pic' },
-        { path: 'category', select: 'name' },
-        { path: 'escalation.raised_by', select: 'full_name first_name last_name email phone_number profile_pic' }
-    ])
+    let result: ITicket[] = [];
 
-    await Promise.all(result.map(async (ticket: any) => {
+    if (req.query.select) {
+        const selectFields = req.query.select ? String(req.query.select).split(',').join(' ') : '';
+        result = await Ticket.find({})
+            .select(selectFields)
+            .limit(100)
+            .lean();
+    } else {
+        result = await res.getModelList(Ticket, {}, [
+            { path: 'customer', select: 'full_name first_name last_name email phone_number profile_pic' },
+            { path: 'assigned_agent', select: 'full_name first_name last_name email phone_number profile_pic' },
+            { path: 'category', select: 'name' },
+            { path: 'escalation.raised_by', select: 'full_name first_name last_name email phone_number profile_pic' }
+        ]);
+    }
+
+    await Promise.all(result.map(async (ticket: ITicket) => {
         if (ticket.customer?.profile_pic) {
             ticket.customer.profile_pic = await getImageUrl(ticket.customer.profile_pic);
         }
@@ -47,7 +57,12 @@ export const createTicket = async (req: Request, res: Response): Promise<void> =
 export const getTicketById = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
 
-    const result = await Ticket.findById(id);
+    const result = await (await Ticket.findById(id)).populate([
+        { path: 'customer', select: 'full_name first_name last_name email phone_number profile_pic' },
+        { path: 'assigned_agent', select: 'full_name first_name last_name email phone_number profile_pic' },
+        { path: 'category', select: 'name' },
+        { path: 'escalation.raised_by', select: 'full_name first_name last_name email phone_number profile_pic' }
+    ])
 
     if (!result) throw new CustomError("Ticket not found", 404);
 
@@ -59,6 +74,17 @@ export const getTicketById = async (req: Request, res: Response): Promise<void> 
 
 export const updateTicket = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
+
+    const { reason } = req.body
+
+    if (reason) {
+        req.body.escalation = {
+            raised_by: req.user.id,
+            reason
+        };
+
+        req.body.status = 'escalated';
+    }
 
     const result = await Ticket.findByIdAndUpdate(id, req.body, { new: true });
 

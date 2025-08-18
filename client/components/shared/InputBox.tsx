@@ -8,8 +8,8 @@ type TInputField = {
     type: 'text' | 'email' | 'password' | 'date' | 'number' | 'tel' | 'textarea';
     placeholder: string;
     id?: string;
-    value?: string | null | undefined | number;
-    icon?: string;
+    value?: string | null | undefined | number | FormDataEntryValue;
+    icon?: React.ElementType;
     errors?: any;
     disabled?: boolean;
     className?: string;
@@ -33,9 +33,16 @@ export default function InputBox({ name, type, id, value, placeholder, icon, err
 
     return (
         <div className='flex-1'>
-            <div className='relative'>
+            <div className={`relative ${errors && 'has-error'}`}>
 
-                {label && <label htmlFor={id} className='pl-2'>{label}</label>}
+                {/* {label && <label htmlFor={id} className='pl-2'>{label}</label>} */}
+                {label && <label htmlFor={id} className=''>{label}</label>}
+
+                {icon && (
+                    <div className='absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none'>
+                        {React.createElement(icon)}
+                    </div>
+                )}
 
                 {type === 'textarea' ? (
                     <textarea
@@ -57,7 +64,7 @@ export default function InputBox({ name, type, id, value, placeholder, icon, err
                         id={id}
                         disabled={disabled}
                         readOnly={readOnly}
-                        className={`form-input placeholder:text-gray-400 ${errors ? 'border-red-500' : ''} ${className}`}
+                        className={`form-input placeholder:text-gray-400  ${className}`}
                         onChange={handleChange}
                         min={
                             type === 'number'
@@ -69,7 +76,6 @@ export default function InputBox({ name, type, id, value, placeholder, icon, err
                     />
                 )}
 
-                {icon && (<i className={`fi input-icon ${icon}`} />)}
                 {
                     type === 'password' && (
                         isPassVisible ? (

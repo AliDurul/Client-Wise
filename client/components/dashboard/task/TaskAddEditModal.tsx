@@ -47,7 +47,7 @@ const TaskAddEditModal = () => {
         description: task?.description || '',
     });
 
-    const { data: usersData, isLoading: usersLoading } = useSWR('users', () => getAllData({ url: 'users/'}), {
+    const { data: usersData, isLoading: usersLoading } = useSWR('users', () => getAllData({ url: 'users/' }), {
         revalidateOnFocus: false,
         revalidateOnReconnect: false,
         onSuccess: (data) => {
@@ -165,7 +165,7 @@ const TaskAddEditModal = () => {
                                     {
                                         usersLoading ? (
                                             <div className="flex items-center justify-center h-10">
-                                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-500"></div>
+                                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-500" />
                                             </div>
                                         ) : <>
                                             <Select
