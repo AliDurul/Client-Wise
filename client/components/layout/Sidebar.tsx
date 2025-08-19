@@ -79,7 +79,9 @@ const Sidebar = () => {
                         </button>
                     </div>
 
-                    <PerfectScrollbar className="relative h-[calc(100vh-80px)]">
+                    <PerfectScrollbar
+                        options={{ suppressScrollX: true }}
+                        className="relative h-[calc(100vh-80px)]">
                         <ul className="relative space-y-0.5 p-4 py-0 ">
 
                             {/* Dashboard */}

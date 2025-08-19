@@ -35,7 +35,7 @@ const TaskSidebar = () => {
     const countDetail = countData?.success ? countData.count.status : {
         all: 0,
         'In-Progress': 0,
-        Pending: 0, 
+        Pending: 0,
         Completed: 0,
         Cancelled: 0
     };
@@ -155,8 +155,10 @@ const TaskSidebar = () => {
                         <h3 className="text-lg font-semibold ltr:ml-3 rtl:mr-3">Todo list</h3>
                     </div>
                 </div>
-                <div className="mb-5 h-px w-full border-b border-white-light dark:border-[#1b2e4b]"></div>
-                <PerfectScrollbar className="relative -mr-3.5 h-full grow pr-3.5 ">
+                <div className="mb-5 h-px w-full border-b border-white-light dark:border-[#1b2e4b]" />
+                <PerfectScrollbar
+                    options={{ suppressScrollX: true }}
+                    className="relative -mr-3.5 h-full grow pr-3.5 ">
                     <div className="space-y-1">
                         {/* Status Buttons */}
                         {statusButtons.map((button) => (

@@ -90,9 +90,9 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
 
 
     return (
-        <div className={` panel p-0 sm:col-span-3 ${lightBgColor}`}>
+        <div className={` panel md:-h-[calc(100vh_-_200px)] col-span-1 md:col-span-2 lg:col-span-3 ${lightBgColor}`}>
             {/* Header */}
-            <div className=" mb-1 flex flex-col gap-3 md:flex-row  items-start justify-between  p-5  ">
+            <div className=" mb-1 flex flex-col gap-3 lg:flex-row  items-start justify-between  p-5  ">
                 <div className="sm:text-2xl text-sm font-extrabold ">Ticket / <span className='text-sm'>{ticket?._id ?? ''}</span></div>
                 <div className="flex items-center gap-4">
                     <div className="dropdown">
@@ -302,7 +302,7 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
                                 </li>
 
                                 <li>
-                                    <button type="button" onClick={() => handleDelete(ticket._id)}>
+                                    <button type="button" onClick={() => handleDelete(ticket?._id)}>
                                         <svg className="ltr:mr-3 rtl:ml-3" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path
                                                 opacity="0.5"
@@ -325,7 +325,7 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
                                     </button>
                                 </li>
                                 {
-                                    ticket.status !== "escalated" && (
+                                    ticket?.status !== "escalated" && (
                                         <li>
                                             <button
                                                 type="button"
@@ -341,9 +341,9 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
                                     )
                                 }
                                 {
-                                    ticket.email_id && (
+                                    ticket?.email_id && (
                                         <li>
-                                            <Link type="button" href={`/mailbox?emailId=${ticket.email_id}`}>
+                                            <Link type="button" href={`/mailbox?emailId=${ticket?.email_id}`}>
                                                 Show Email
                                             </Link>
                                         </li>
@@ -357,7 +357,7 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
             </div>
 
             {/* Body */}
-            <div className='p-5 pt-0 pb-3 relative' key={ticket._id}>
+            <div className='p-5 pt-0 pb-3 relative' key={ticket?._id}>
                 <div className="flex justify-between">
                     <div className="flex w-max items-center">
                         <div className="ltr:ml-2 rtl:mr-2">
@@ -370,7 +370,7 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
                         onClick={() => setSideProfileModal(true)}
                     >
                         <h2 className='text-lg font-bold'>
-                            {ticket.customer.full_name}
+                            {ticket?.customer?.full_name}
                             {/* {typeof ticket.client_phonenumber !== "number" && `${ticket.client_phonenumber?.first_name ? ticket?.client_phonenumber?.first_name + ' ' + ticket?.client_phonenumber?.last_name : ticket.caller_email}`} */}
                         </h2>
                         <h2 className='text-base '>
@@ -403,7 +403,7 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
                 </div>
 
                 <form action={actionComment} className='flex flex-col gap-4 mt-4'>
-                    <input type="text" name='ticketId' defaultValue={ticket._id} hidden />
+                    <input type="text" name='ticketId' defaultValue={ticket?._id} hidden />
                     <div className="flex">
                         <div className={`${darkBgColor} flex justify-center items-center ltr:rounded-l-md  px-3 font-semibold border ltr:border-r-0  border-white-light dark:border-[#17263c] dark:bg-[#1b2e4b] whitespace-nowrap`}>
                             Enter New Comment
@@ -431,7 +431,7 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
                     <TicketEscModal
                         isOpen={isEscalation}
                         onClose={() => setIsEscalation(false)}
-                        ticketId={ticket._id} />
+                        ticketId={ticket?._id} />
                 )
             }
 
@@ -441,7 +441,7 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
                 <TicketUserSideProfile
                     sideProfileModal={sideProfileModal}
                     setSideProfileModal={setSideProfileModal}
-                    customerId={ticket.customer._id}
+                    customerId={ticket?.customer._id}
                 />
             )}
 

@@ -46,6 +46,9 @@
 /* Select2*/
 @import '../lib/styles/select2.css';
 
+@import 'react-perfect-scrollbar/dist/css/styles.css';
+
+
 /* PRNT AREA */
 @media print {
     body * {
