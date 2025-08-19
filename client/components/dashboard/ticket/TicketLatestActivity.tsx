@@ -80,7 +80,7 @@ export default function TicketLatestActivity({ ticket }: { ticket: Ticket }) {
 
       </div>
       <div className="absolute bottom-0 left-0 right-0 hidden md:block">
-        <Link href={`/tickets/activities/${ticket._id}`} type="button" className="group flex w-full items-center justify-center p-4 font-semibold hover:text-primary border-t border-white-light dark:border-white/10">
+        <Link href={`/tickets/${ticket._id}/activities`} type="button" className="group flex w-full items-center justify-center p-4 font-semibold hover:text-primary border-t border-white-light dark:border-white/10">
           View All
           <svg
             className="h-4 w-4 transition duration-300 group-hover:translate-x-1 ltr:ml-1 rtl:mr-1 rtl:rotate-180 rtl:group-hover:-translate-x-1"

@@ -1,5 +1,5 @@
 import InvoiceForm from '@/components/dashboard/invoice/InvoiceForm';
-import KycForm from '@/components/dashboard/kyc/KycForm';
+import CustomerForm from '@/components/dashboard/customer/CustomerForm';
 import { getData } from '@/lib/features/shared/actionUtils';
 import { Invoice, PageSearchParams } from '@/types'
 import React, { Suspense } from 'react'

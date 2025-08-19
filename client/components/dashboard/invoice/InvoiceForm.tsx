@@ -1,6 +1,6 @@
 'use client';
 import InputBox from '@/components/shared/InputBox';
-import { Invoice, InvoiceItem, Kyc, Product } from '@/types';
+import { Invoice, InvoiceItem, Customer, Product } from '@/types';
 import Image from 'next/image';
 import React, { startTransition, useActionState, useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import Select from 'react-select';
@@ -25,7 +25,7 @@ const initialInvoiceItem = {
 
 interface InvoiceFormProps {
     invoice: Invoice | null;
-    customers: Kyc[];
+    customers: Customer[];
     products: Product[];
     isEdit: boolean;
     error: string | null;
@@ -67,7 +67,7 @@ export default function InvoiceForm({ invoice, customers, products, isEdit, erro
         invoice_items: invoice?.invoice_items || [initialInvoiceItem],
     });
 
-    const [selectedCustomer, setSelectedCustomer] = useState<Kyc | undefined>(customers?.find(customer => customer._id === invoice?.customer._id));
+    const [selectedCustomer, setSelectedCustomer] = useState<Customer | undefined>(customers?.find(customer => customer._id === invoice?.customer._id));
 
 
     // Utility functions

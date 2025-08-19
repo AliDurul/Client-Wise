@@ -1,10 +1,10 @@
 'use client'
-import { selectType, setType, setKyc } from '@/lib/features/kyc/kycSlice';
+import { selectType, setType, setCustomer } from '@/lib/features/customer/customerSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { useRouter } from 'next/navigation';
 import React from 'react'
 
-const KycHeaderBtns = () => {
+const CustomerHeaderBtns = () => {
     const router = useRouter()
     const value = useAppSelector(selectType)
     const dispatch = useAppDispatch();
@@ -12,7 +12,7 @@ const KycHeaderBtns = () => {
     return (
         <>
             <div>
-                <button type="button" className="btn btn-primary" onClick={() => { router.push(`/kyc/action?s=c`), dispatch(setKyc(null)) }}>
+                <button type="button" className="btn btn-primary" onClick={() => { router.push(`/customers/action?s=c`), dispatch(setCustomer(null)) }}>
                     <svg className="ltr:mr-2 rtl:ml-2" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="10" cy="6" r="4" stroke="currentColor" strokeWidth="1.5" />
                         <path
@@ -70,4 +70,4 @@ const KycHeaderBtns = () => {
     )
 }
 
-export default KycHeaderBtns
+export default CustomerHeaderBtns

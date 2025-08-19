@@ -1,6 +1,6 @@
 'use client';
 import { formatDate } from '@/lib/utility/functions';
-import { Kyc, Pagination } from '@/types';
+import { Customer, Pagination } from '@/types';
 import { LuMousePointerClick } from "react-icons/lu";
 import Image from 'next/image';
 import { DeleteIcon, EditIcon, PreviewIcon } from '@/icons';
@@ -8,21 +8,22 @@ import { use } from 'react';
 import type { DataTableColumn, DataTableProps } from 'mantine-datatable';
 import { DataTable } from 'mantine-datatable';
 import SearchInput from '@/components/shared/SearchInput';
-import { delMultiKyc } from '@/lib/features/kyc/kycActions';
+import { delMultiCustomer } from '@/lib/features/customer/customerActions';
 import { useDataTable } from '@/hooks/useDataTable';
 import { delData, delMultiData } from '@/lib/features/shared/actionUtils';
 
-interface KycMainProps {
-  customerPromise: Promise<Pagination<Kyc>>;
+interface CustomerMainProps {
+  customerPromise: Promise<Pagination<Customer>>;
 }
 
-export default function KycTable({ customerPromise, }: KycMainProps) {
+export default function CustomerTable({ customerPromise }: CustomerMainProps) {
   const customers = use(customerPromise);
 
   const {
     selectedRecords,
     userInfo,
     isPendingSingle,
+    deletingId,
     isPendingMulti,
     handleEdit,
     handlePreview,
@@ -30,7 +31,7 @@ export default function KycTable({ customerPromise, }: KycMainProps) {
     handleMultiDelete,
     getTableProps,
     getRowExpansionProps,
-  } = useDataTable<Kyc>({
+  } = useDataTable<Customer>({
     deleteAction: delData,
     deleteMultiAction: delMultiData,
   });
@@ -38,11 +39,11 @@ export default function KycTable({ customerPromise, }: KycMainProps) {
 
   // Data table 
 
-  const renderActions: DataTableColumn<Kyc>['render'] = (record) => (
+  const renderActions: DataTableColumn<Customer>['render'] = (record) => (
     <div className="mx-auto flex w-max items-center gap-4">
       <button
         className="flex hover:text-primary"
-        onClick={(e) => { handlePreview(`/kyc/action/?s=r&id=${record._id}`, e); }}
+        onClick={(e) => { handlePreview(`/customers/action/?s=r&id=${record._id}`, e); }}
       >
         <PreviewIcon />
       </button>
@@ -51,7 +52,7 @@ export default function KycTable({ customerPromise, }: KycMainProps) {
           <>
             <button
               className="flex hover:text-info"
-              onClick={(e) => { handleEdit(`/kyc/action/?s=e&id=${record._id}`, e); }}
+              onClick={(e) => { handleEdit(`/customers/action/?s=e&id=${record._id}`, e); }}
             >
               <EditIcon />
             </button>
@@ -60,7 +61,11 @@ export default function KycTable({ customerPromise, }: KycMainProps) {
               className="flex hover:text-danger"
               disabled={isPendingSingle}
               onClick={(e) => { handleDelete({ url: 'customers', id: record._id }, e); }}>
-              <DeleteIcon />
+              {
+                deletingId === record._id
+                  ? <div className="animate-spin rounded-full size-5 border-b-2 border-red-500" />
+                  : <DeleteIcon />
+              }
             </button>
           </>
         )
@@ -68,7 +73,7 @@ export default function KycTable({ customerPromise, }: KycMainProps) {
     </div>
   );
 
-  const rowExpansion: DataTableProps<Kyc>['rowExpansion'] = {
+  const rowExpansion: DataTableProps<Customer>['rowExpansion'] = {
     ...getRowExpansionProps(),
     content: ({ record: { full_name, assigned_agent, address, profile_pic, phone_number } }) => (
       <div className='flex items-center gap-4'>
@@ -86,7 +91,7 @@ export default function KycTable({ customerPromise, }: KycMainProps) {
     ),
   };
 
-  const columns: DataTableProps<Kyc>['columns'] = [
+  const columns: DataTableProps<Customer>['columns'] = [
     {
       accessor: 'first_name',
       title: 'Full Name',

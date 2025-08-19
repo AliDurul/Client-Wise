@@ -21,7 +21,7 @@ export const getCustomers = async (req: Request, res: Response): Promise<void> =
 
     const result = await res.getModelList(Customer);
 
-    if (!result) throw new CustomError("No Customers found", 404);
+    if (!result) throw new CustomError("No Customers found", 404, true);
 
     for (const customer of result) {
         if (customer.profile_pic) {
@@ -104,7 +104,7 @@ export const getCustomerById = async (req: Request, res: Response): Promise<void
         result.profile_pic = await getImageUrl(result.profile_pic);
     }
 
-    if (!result) throw new CustomError("Customer not found", 404);
+    if (!result) throw new CustomError("Customer not found", 404, true);
 
 
     res.status(200).send({
@@ -125,7 +125,7 @@ export const updateCustomer = async (req: Request, res: Response): Promise<void>
         }
     );
 
-    if (!result) throw new CustomError("Customer not found", 404);
+    if (!result) throw new CustomError("Customer not found", 404, true);
 
     res.status(200).send({
         success: true,
@@ -137,7 +137,7 @@ export const deleteCustomer = async (req: Request, res: Response): Promise<void>
     const { id } = req.params;
 
     const customer = await Customer.findById(id);
-    if (!customer) throw new CustomError("Customer not found", 404);
+    if (!customer) throw new CustomError("Customer not found", 404, true);
 
     const result = await Customer.deleteOne({ _id: id });
 
@@ -161,13 +161,13 @@ export const multiDeleteCustomers = async (req: Request, res: Response): Promise
     const { ids } = req.body;
 
     if (!Array.isArray(ids) || ids.length === 0) {
-        throw new CustomError("Invalid or empty 'ids' array", 400);
+        throw new CustomError("Invalid or empty 'ids' array", 400, true);
     }
 
     const customers = await Customer.find({ _id: { $in: ids } });
 
     if (customers.length === 0) {
-        throw new CustomError("No customers found for the provided IDs", 404);
+        throw new CustomError("No customers found for the provided IDs", 404, true);
     }
 
     const deletePromises = customers.map(customer => {
@@ -183,7 +183,7 @@ export const multiDeleteCustomers = async (req: Request, res: Response): Promise
 
     const result = await Customer.deleteMany({ _id: { $in: ids } });
 
-    if (!result) throw new CustomError("Failed to delete customers", 500);
+    if (!result) throw new CustomError("Failed to delete customers", 500, true);
 
 
     res.status(result.deletedCount ? 204 : 404).send({

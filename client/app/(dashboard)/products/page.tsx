@@ -22,11 +22,5 @@ export default async function page({ searchParams }: PageSearchParams) {
 
 
 
-    return (
-        <div>
-            <ProductHeaderBtns />
-
-            <ProductDisplay products={products} />
-        </div>
-    )
+    return (<ProductDisplay products={products} />)
 }

@@ -116,15 +116,15 @@ export const deleteMultiCoparate = async (ids: any) => {
   }
 };
 
-export const updateCoparate = async (kycData: any) => {
+export const updateCoparate = async (customerData: any) => {
   const headers = await authConfigFormData();
-  const id = kycData.get("id");
+  const id = customerData.get("id");
 
   try {
     const response = await fetch(`${BASE_URL}coparate/${id}/`, {
       method: "PUT",
       headers,
-      body: kycData,
+      body: customerData,
     });
 
     const data = await response.json();
@@ -140,7 +140,7 @@ export const updateCoparate = async (kycData: any) => {
   }
 };
 
-export const createCoparate = async (kycData: any) => {
+export const createCoparate = async (customerData: any) => {
   const headers = await authConfigFormData();
 
   try {
@@ -148,7 +148,7 @@ export const createCoparate = async (kycData: any) => {
     const response = await fetch(`${BASE_URL}coparates/`, {
       method: "POST",
       headers,
-      body: kycData,
+      body: customerData,
     });
 
     const data = await response.json();

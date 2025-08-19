@@ -4,7 +4,7 @@ import { themeSlice } from "./features/theme/themeSlice";
 // import { invoiceSlice } from "./features/invoices/invoiceSlice";
 import { ticketSlice } from "./features/tickets/ticketSlice";
 // import { categorySlice } from "./features/category/categorySlice";
-import { kycSlice } from "./features/kyc/kycSlice";
+import { customerSlice } from "./features/customer/customerSlice";
 import { productSlice } from "./features/products/productSlice";
 import { faqSlice } from "./features/faq/faqSlice";
 import { taskSlice } from "./features/task/taskSlice";
@@ -17,7 +17,7 @@ const rootReducer = combineSlices(
     // invoiceSlice,
     ticketSlice,
     // categorySlice,
-    kycSlice,
+    customerSlice,
     productSlice,
     faqSlice,
     taskSlice,

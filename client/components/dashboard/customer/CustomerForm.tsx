@@ -1,5 +1,5 @@
 'use client';
-import { bankOp, countryOp, genderOp, getMaskForIdType, idTypeOp, maritalOp, maskConfig, nationalityOp, relationOp, religionOp } from '@/components/dashboard/kyc/KycConstraints';
+import { bankOp, countryOp, genderOp, getMaskForIdType, idTypeOp, maritalOp, maskConfig, nationalityOp, relationOp, religionOp } from '@/components/dashboard/customer/CustomerConstraints';
 import InputBox from '@/components/shared/InputBox';
 import ImageUploading, { ImageListType } from 'react-images-uploading';
 
@@ -7,35 +7,27 @@ import Image from 'next/image';
 import MaskedInput from 'react-text-mask';
 import Select from 'react-select';
 import { use, useActionState, useEffect, useRef, useState } from 'react';
-import { Kyc } from '@/types';
-import { kycCrUpAction } from '@/lib/features/kyc/kycActions';
-import KycImageUpload from './KycImageUpload';
+import { Customer } from '@/types';
+import { customerCrUpAction } from '@/lib/features/customer/customerActions';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import CustomerImageUpload from './CustomerImageUpload';
+import { capitalize } from '@/lib/utility/functions';
+import FormErrMsg from '@/components/shared/FormErrMsg';
 
 
 interface CustomStyles {
     control: (provided: any) => any;
 }
 
-interface IinitialValues {
-    success: boolean;
-    message: string;
-}
-
-const initialState: IinitialValues = {
-    success: false,
-    message: '',
-}
-
-interface KycFormProps {
-    kyc: Kyc | null;
+interface CustomerFormProps {
+    customer: Customer | null;
     isEdit: boolean;
     readOnly: boolean;
     error: string | null;
 }
 
-export default function KycForm({ kyc, isEdit, readOnly, error }: KycFormProps) {
+export default function CustomerForm({ customer, isEdit, readOnly, error }: CustomerFormProps) {
 
     if (error) {
         return <div className="error">Error: {error}</div>;
@@ -45,77 +37,80 @@ export default function KycForm({ kyc, isEdit, readOnly, error }: KycFormProps) 
 
 
     // form action
-    const [state, action, isPending] = useActionState(kycCrUpAction, initialState);
+    const [state, action, isPending] = useActionState(customerCrUpAction, null);
 
 
     // states
     const customStyles: CustomStyles = { control: (provided) => ({ ...provided, backgroundColor: readOnly ? 'white' : provided.backgroundColor, }) };
 
-    const initialValues = kyc ? {
-        _id: kyc._id || '',
-        customer_id: kyc.customer_id || '',
-        first_name: kyc.first_name || '',
-        last_name: kyc.last_name || '',
-        full_name: kyc.full_name || '',
-        email: kyc.email || '',
-        phone_number: kyc.phone_number || '',
-        dob: kyc.dob ? kyc.dob : undefined,
-        nationality: kyc.nationality || '',
-        gender: kyc.gender || '',
-        address: {
-            street: kyc.address?.street || '',
-            city: kyc.address?.city || '',
-            state: kyc.address?.state || '',
-            country: kyc.address?.country || '',
-            zip_code: kyc.address?.zip_code || '',
-        },
-        id_type: kyc.id_type || '',
-        id_number: kyc.id_number || '',
-        id_front: kyc.id_front || '',
-        id_back: kyc.id_back || '',
-        profession: kyc.profession || '',
-        marital_status: kyc.marital_status || '',
-        religion: kyc.religion || '',
-        father_name: kyc.father_name || '',
-        mother_name: kyc.mother_name || '',
-        witness_name: kyc.witness_name || '',
-        witness_relation: kyc.witness_relation || '',
-        medication: typeof kyc.medication === 'boolean' ? kyc.medication : false,
-        medication_type: kyc.medication_type || '',
-        number_of_children: typeof kyc.number_of_children === 'number' ? kyc.number_of_children : 0,
-        boys: typeof kyc.boys === 'number' ? kyc.boys : 0,
-        girls: typeof kyc.girls === 'number' ? kyc.girls : 0,
-        finincial_institution: kyc.finincial_institution || '',
-        documents: Array.isArray(kyc.documents) ? kyc.documents : [],
-        profile_pic: kyc.profile_pic || '',
-        status: kyc.status || 'active',
-        notes: kyc.notes || '',
-        assigned_agent: typeof kyc.assigned_agent === 'number' ? kyc.assigned_agent : undefined,
-        createdAt: kyc.createdAt ? new Date(kyc.createdAt) : undefined,
-        updatedAt: kyc.updatedAt ? new Date(kyc.updatedAt) : undefined,
-    } : {
-        ...state?.inputs,
-        address: {
-            street: state?.inputs?.street || '',
-            city: state?.inputs?.city || '',
-            state: state?.inputs?.state || '',
-            country: state?.inputs?.country || '',
-            zip_code: state?.inputs?.zip_code || '',
-        },
-    };
-
-    const [idType, setIdType] = useState(initialValues.id_type || '');
-
-
+    const [initialValues, setInitialValues] = useState<any>(() => {
+        return customer ? {
+            _id: customer._id || '',
+            customer_id: customer.customer_id || '',
+            first_name: customer.first_name || '',
+            last_name: customer.last_name || '',
+            full_name: customer.full_name || '',
+            email: customer.email || '',
+            phone_number: customer.phone_number || '',
+            dob: customer.dob ? customer.dob : undefined,
+            nationality: customer.nationality || '',
+            gender: customer.gender || '',
+            address: {
+                street: customer.address?.street || '',
+                city: customer.address?.city || '',
+                state: customer.address?.state || '',
+                country: customer.address?.country || '',
+                zip_code: customer.address?.zip_code || '',
+            },
+            id_type: customer.id_type || '',
+            id_number: customer.id_number || '',
+            id_front: customer.id_front || '',
+            id_back: customer.id_back || '',
+            profession: customer.profession || '',
+            marital_status: customer.marital_status || '',
+            religion: customer.religion || '',
+            father_name: customer.father_name || '',
+            mother_name: customer.mother_name || '',
+            witness_name: customer.witness_name || '',
+            witness_relation: customer.witness_relation || '',
+            medication: typeof customer.medication === 'boolean' ? customer.medication : false,
+            medication_type: customer.medication_type || '',
+            number_of_children: typeof customer.number_of_children === 'number' ? customer.number_of_children : 0,
+            boys: typeof customer.boys === 'number' ? customer.boys : 0,
+            girls: typeof customer.girls === 'number' ? customer.girls : 0,
+            finincial_institution: customer.finincial_institution || '',
+            documents: Array.isArray(customer.documents) ? customer.documents : [],
+            profile_pic: customer.profile_pic || '',
+            status: customer.status || 'active',
+            notes: customer.notes || '',
+            assigned_agent: typeof customer.assigned_agent === 'number' ? customer.assigned_agent : undefined,
+            createdAt: customer.createdAt ? new Date(customer.createdAt) : undefined,
+            updatedAt: customer.updatedAt ? new Date(customer.updatedAt) : undefined,
+        } : {
+            // ...defaultValues,
+            ...(state?.inputs as Partial<Customer> ?? {}),
+            address: {
+                street: state?.inputs?.street || '',
+                city: state?.inputs?.city || '',
+                state: state?.inputs?.state || '',
+                country: state?.inputs?.country || '',
+                zip_code: state?.inputs?.zip_code || '',
+            },
+        };
+    });
 
     // functins
     useEffect(() => {
         if (!state?.message) return;
 
+        setInitialValues((prev: any) => ({
+            ...prev,
+            ...(state?.inputs as Partial<Customer> ?? {})
+        }));
 
         toast[state.success ? 'success' : 'error'](state.message || 'Operation completed successfully');
         if (state.success) {
-            const timer = setTimeout(() => router.replace('/kyc'), 2000);
+            const timer = setTimeout(() => router.replace('/customers'), 2000);
             return () => clearTimeout(timer);
         }
 
@@ -133,12 +128,12 @@ export default function KycForm({ kyc, isEdit, readOnly, error }: KycFormProps) 
                         {
                             (readOnly || isEdit)
                                 ? <Image
-                                    src={kyc?.profile_pic ? kyc.profile_pic : '/assets/images/profile-pic.png'}
+                                    src={customer?.profile_pic ? customer.profile_pic : '/assets/images/profile-pic.png'}
                                     alt="profile"
                                     width={120}
                                     height={120}
                                     className="rounded-full my-5" />
-                                : <KycImageUpload />
+                                : <CustomerImageUpload />
                         }
                     </div>
 
@@ -298,12 +293,12 @@ export default function KycForm({ kyc, isEdit, readOnly, error }: KycFormProps) 
                                 id='Gender'
                                 name='gender'
                                 value={genderOp.find(option => option.value === initialValues.gender)}
+                                onChange={option => setInitialValues((prev: any) => ({ ...prev, gender: option?.value ? String(option.value) : '' }))}
                                 isDisabled={readOnly}
                                 styles={customStyles}
                                 menuIsOpen={readOnly ? false : undefined}
-                                required
                             />
-                            {state?.errors?.gender && (<p className="mt-1 text-sm text-red-600">{state.errors.gender}</p>)}
+                            {state?.errors?.gender && <FormErrMsg error={state.errors.gender} />}
                         </div>
 
                         <div>
@@ -313,17 +308,16 @@ export default function KycForm({ kyc, isEdit, readOnly, error }: KycFormProps) 
                                 options={idTypeOp}
                                 id='id_type'
                                 name='id_type'
-                                value={idTypeOp.find(option => option.value === idType)}
-                                onChange={option => setIdType(option ? option.value : '')}
+                                value={idTypeOp.find(option => option.value === initialValues.id_type)}
+                                onChange={option => setInitialValues((prev: any) => ({ ...prev, id_type: option?.value ? String(option.value) : '' }))}
                                 isDisabled={readOnly}
                                 styles={customStyles}
                                 menuIsOpen={readOnly ? false : undefined}
-                                required
                             />
-                            {state?.errors?.id_type && (<p className="mt-1 text-sm text-red-600">{state.errors.id_type}</p>)}
+                            {state?.errors?.id_type && <FormErrMsg error={state.errors.id_type} />}
                         </div>
                         <div>
-                            <label htmlFor="id_number">{idType.charAt(0).toUpperCase() + idType.slice(1)} Number</label>
+                            <label htmlFor="id_number">{capitalize(initialValues.id_type)} Number</label>
                             <MaskedInput
                                 id="id_number"
                                 name="id_number"
@@ -331,10 +325,10 @@ export default function KycForm({ kyc, isEdit, readOnly, error }: KycFormProps) 
                                 keepCharPositions={true}
                                 className='form-input'
                                 value={initialValues.id_number}
-                                mask={getMaskForIdType(idType)?.mask}
-                                placeholder={getMaskForIdType(idType)?.placeholder}
+                                mask={getMaskForIdType(initialValues.id_type)?.mask}
+                                placeholder={getMaskForIdType(initialValues.id_type)?.placeholder}
                             />
-                            {state?.errors?.id_number && (<p className="mt-1 text-sm text-red-600">{state.errors.id_number}</p>)}
+                            {state?.errors?.id_number && <FormErrMsg error={state.errors.id_number} />}
                         </div>
                         <div>
                             <label htmlFor="Religion">Religion</label>
@@ -344,11 +338,12 @@ export default function KycForm({ kyc, isEdit, readOnly, error }: KycFormProps) 
                                 id='Religion'
                                 name='religion'
                                 value={religionOp.find(option => option.value === initialValues.religion)}
+                                onChange={option => setInitialValues((prev: any) => ({ ...prev, religion: option?.value ? String(option.value) : '' }))}
                                 isDisabled={readOnly}
                                 styles={customStyles}
                                 menuIsOpen={readOnly ? false : undefined}
                             />
-                            {state?.errors?.religion && (<p className="mt-1 text-sm text-red-600">{state.errors.religion}</p>)}
+                            {state?.errors?.religion && <FormErrMsg error={state.errors.religion} />}
                         </div>
                         <div>
                             <label htmlFor="marital_status">Marital Status</label>
@@ -358,11 +353,12 @@ export default function KycForm({ kyc, isEdit, readOnly, error }: KycFormProps) 
                                 id='marital_status'
                                 name='marital_status'
                                 value={maritalOp.find(option => option.value === initialValues.marital_status)}
+                                onChange={option => setInitialValues((prev: any) => ({ ...prev, marital_status: option?.value ? String(option.value) : '' }))}
                                 isDisabled={readOnly}
                                 styles={customStyles}
                                 menuIsOpen={readOnly ? false : undefined}
                             />
-                            {state?.errors?.marital_status && (<p className="mt-1 text-sm text-red-600">{state.errors.marital_status}</p>)}
+                            {state?.errors?.marital_status && <FormErrMsg error={state.errors.marital_status} />}
                         </div>
                         <div>
                             <InputBox
@@ -430,12 +426,12 @@ export default function KycForm({ kyc, isEdit, readOnly, error }: KycFormProps) 
                                 options={countryOp} id='country'
                                 name='country'
                                 value={countryOp.find(option => option.value === initialValues.address?.country)}
+                                onChange={option => setInitialValues((prev: any) => ({ ...prev, address: { ...prev.address, country: option?.value ? String(option.value) : '' } }))}
                                 isDisabled={readOnly}
                                 styles={customStyles}
                                 menuIsOpen={readOnly ? false : undefined}
-                                required
                             />
-                            {state?.errors?.country && (<p className="mt-1 text-sm text-red-600">{state.errors.country}</p>)}
+                            {state?.errors?.country && <FormErrMsg error={state.errors.country} />}
                         </div>
                         <div>
                             <InputBox
@@ -493,11 +489,12 @@ export default function KycForm({ kyc, isEdit, readOnly, error }: KycFormProps) 
                                 options={relationOp} id='witness_relation'
                                 name='witness_relation'
                                 value={relationOp.find(option => option.value === initialValues.witness_relation)}
+                                onChange={option => setInitialValues((prev: any) => ({ ...prev, witness_relation: option?.value ? String(option.value) : '' }))}
                                 isDisabled={readOnly}
                                 styles={customStyles}
                                 menuIsOpen={readOnly ? false : undefined}
                             />
-                            {state?.errors?.witness_relation && (<p className="mt-1 text-sm text-red-600">{state.errors.witness_relation}</p>)}
+                            {state?.errors?.witness_relation && <FormErrMsg error={state.errors.witness_relation} />}
                         </div>
                         <div>
                             <label htmlFor="nationality">Nationality</label>
@@ -505,12 +502,12 @@ export default function KycForm({ kyc, isEdit, readOnly, error }: KycFormProps) 
                                 options={nationalityOp} id='nationality'
                                 name='nationality'
                                 value={nationalityOp.find(option => option.value === initialValues.nationality)}
+                                onChange={option => setInitialValues((prev: any) => ({ ...prev, nationality: option?.value ? String(option.value) : '' }))}
                                 isDisabled={readOnly}
                                 styles={customStyles}
                                 menuIsOpen={readOnly ? false : undefined}
-                                required
                             />
-                            {state?.errors?.nationality && (<p className="mt-1 text-sm text-red-600">{state.errors.nationality}</p>)}
+                            {state?.errors?.nationality && <FormErrMsg error={state.errors.nationality} />}
                         </div>
                         <div>
                             <label htmlFor="banks">Finincial Institution</label>
@@ -519,11 +516,12 @@ export default function KycForm({ kyc, isEdit, readOnly, error }: KycFormProps) 
                                 options={bankOp} id='banks'
                                 name='finincial_institution'
                                 value={bankOp.find(option => option.value === initialValues.finincial_institution)}
+                                onChange={option => setInitialValues((prev: any) => ({ ...prev, finincial_institution: option?.value ? String(option.value) : '' }))}
                                 isDisabled={readOnly}
                                 styles={customStyles}
                                 menuIsOpen={readOnly ? false : undefined}
                             />
-                            {state?.errors?.finincial_institution && (<p className="mt-1 text-sm text-red-600">{state.errors.finincial_institution}</p>)}
+                            {state?.errors?.finincial_institution && <FormErrMsg error={state.errors.finincial_institution} />}
                         </div>
 
                         <div>

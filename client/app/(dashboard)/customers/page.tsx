@@ -1,5 +1,5 @@
-import KycHeaderBtns from "@/components/dashboard/kyc/KycHeaderBtns";
-import KycTable from "@/components/dashboard/kyc/KycTable";
+import CustomerHeaderBtns from "@/components/dashboard/customer/CustomerHeaderBtns";
+import CustomerTable from "@/components/dashboard/customer/CustomerTable";
 import { ClientErrorBoundary } from "@/components/shared/ClientErrorBoundary";
 import TopPageNavigation from "@/components/shared/TopPageNavigation";
 import { getAllData } from "@/lib/features/shared/actionUtils";
@@ -33,7 +33,7 @@ export default async function page({ searchParams }: PageSearchParams) {
 
             <div className="flex justify-end mt-3">
                 <div className="flex gap-3">
-                    <KycHeaderBtns />
+                    <CustomerHeaderBtns />
                 </div>
             </div>
             
@@ -41,7 +41,7 @@ export default async function page({ searchParams }: PageSearchParams) {
 
                 {/* <ClientErrorBoundary> */}
                     <Suspense fallback={<div className="flex h-full items-center justify-center">Loading...</div>}>
-                        <KycTable customerPromise={customerPromise} />
+                        <CustomerTable customerPromise={customerPromise} />
                     </Suspense>
                 {/* </ClientErrorBoundary> */}
             </div>

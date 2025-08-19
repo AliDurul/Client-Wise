@@ -1,7 +1,7 @@
 "use server";
 import { auth } from "@/auth"
 import { customerQuickSchema, customerSchema } from "@/lib/utility/zod";
-import { Kyc } from "@/types";
+import { Customer } from "@/types";
 import { revalidateTag } from "next/cache";
 import { authConfig } from "../shared/actionUtils";
 
@@ -18,7 +18,7 @@ const authConfigFormData = async () => {
 }
 
 
-export const kycCrUpAction = async (_: unknown, payload: FormData) => {
+export const customerCrUpAction = async (_: unknown, payload: FormData) => {
 
   const id = payload.get('_id') as string;
   payload.delete('_id');
@@ -88,7 +88,7 @@ export const kycCrUpAction = async (_: unknown, payload: FormData) => {
 
     revalidateTag('customers');
     return {
-      message: !!id ? "Kyc updated successfully!" : "Kyc created successfully!",
+      message: !!id ? "Customer updated successfully!" : "Customer created successfully!",
       success: true
     };
 
@@ -102,7 +102,7 @@ export const kycCrUpAction = async (_: unknown, payload: FormData) => {
 };
 
 
-export const delMultiKyc = async (_: unknown, ids: string[]) => {
+export const delMultiCustomer = async (_: unknown, ids: string[]) => {
 
   if (ids.length === 0) return { success: false, message: "No customers selected for deletion" };
 

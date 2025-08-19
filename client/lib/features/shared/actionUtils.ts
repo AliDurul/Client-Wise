@@ -47,6 +47,7 @@ export const getData = async (url: string) => {
 };
 
 export const delData = async (_: unknown, { url, id }: { url: string; id: string }) => {
+    console.log('Deleting data from URL:', url, 'with ID:', id);
     try {
         const headers = await authConfig();
         const response = await fetch(`${BASE_URL}${url}/${id}/`, {
@@ -57,6 +58,7 @@ export const delData = async (_: unknown, { url, id }: { url: string; id: string
 
         if (response.status !== 204) {
             const res = await response.json();
+            console.log('Error response:', res);
             throw new Error(res.message || "Something went wrong, Please try again!");
         }
 

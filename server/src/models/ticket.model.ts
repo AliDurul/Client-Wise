@@ -112,7 +112,7 @@ export default Ticket;
 
 // Interface for escalation subdocument
 export interface IEscalation {
-    raised_by: mongoose.Schema.Types.ObjectId;
+    raised_by: PersonInfo;
     reason: string;
     createdAt: Date;
     updatedAt: Date;
@@ -143,7 +143,7 @@ export interface IComment {
 
 // Main ticket interface
 export interface ITicket extends Document {
-    assigned_agent: mongoose.Schema.Types.ObjectId;
+    assigned_agent: PersonInfo;
     customer: PersonInfo;
     caller_phone: string;
     title: string;

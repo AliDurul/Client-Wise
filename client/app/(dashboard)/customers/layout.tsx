@@ -5,7 +5,7 @@ interface Props {
     readonly children: ReactNode;
 }
 
-export default function KycLayout({ children }: Props) {
+export default function CustomerLayout({ children }: Props) {
     return (
         <>
             <TopPageNavigation />

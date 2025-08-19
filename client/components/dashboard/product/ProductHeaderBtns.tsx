@@ -1,14 +1,11 @@
 'use client';
 import SearchInput from '@/components/shared/SearchInput';
-import { useUrlParams } from '@/hooks/useUrlParams';
 import { setProduct, setProductModal } from '@/lib/features/products/productSlice';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { useAppDispatch } from '@/lib/hooks';
 import React from 'react'
 
-export default function ProductHeaderBtns() {
+export default function ProductHeaderBtns({ uiType, setUiType }: { uiType: string, setUiType: (value: string) => void }) {
     const dispatch = useAppDispatch();
-    const { getParam, updateUrlParams } = useUrlParams()
-    const uiType = getParam('ui', 'grid')
 
     return (
         <div className="flex flex-wrap items-center justify-end gap-4 mb-5">
@@ -33,7 +30,7 @@ export default function ProductHeaderBtns() {
                         <button
                             type="button"
                             className={`btn btn-outline-primary p-2 ${uiType === 'list' && 'bg-primary text-white'}`}
-                            onClick={() => updateUrlParams({ ui: 'list' })}
+                            onClick={() => setUiType('list')}
                         >
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5">
                                 <path d="M2 5.5L3.21429 7L7.5 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -46,10 +43,10 @@ export default function ProductHeaderBtns() {
                         </button>
                     </div>
                     <div>
-                        <button 
-                        type="button" 
-                        className={`btn btn-outline-primary p-2 ${uiType === 'grid' && 'bg-primary text-white'}`} 
-                        onClick={() => updateUrlParams({ ui: 'grid' })}>
+                        <button
+                            type="button"
+                            className={`btn btn-outline-primary p-2 ${uiType === 'grid' && 'bg-primary text-white'}`}
+                            onClick={() => setUiType('grid')}>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5">
                                 <path
                                     opacity="0.5"

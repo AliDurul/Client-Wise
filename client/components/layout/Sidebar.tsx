@@ -213,31 +213,41 @@ const Sidebar = () => {
                                         </Link>
                                     </li>
 
-                                    <li className="menu nav-item">
-                                        <button type="button" className={`${currentMenu === 'kyc' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('kyc')}>
+
+                                    <li className="nav-item">
+                                        <Link href="/customers" className="group">
+                                            <div className="flex items-center">
+                                                <ContactIcon />
+                                                <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light">Customers</span>
+                                            </div>
+                                        </Link>
+                                    </li>
+
+                                    {/* <li className="menu nav-item">
+                                        <button type="button" className={`${currentMenu === 'customer' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('customer')}>
                                             <div className="flex items-center">
                                                 <ContactIcon />
                                                 <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light ">KYC</span>
                                             </div>
 
-                                            <div className={currentMenu === 'kyc' ? 'rotate-90' : 'rtl:rotate-180'}>
+                                            <div className={currentMenu === 'customer' ? 'rotate-90' : 'rtl:rotate-180'}>
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M9 5L15 12L9 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                                 </svg>
                                             </div>
                                         </button>
 
-                                        <AnimateHeight duration={300} height={currentMenu === 'kyc' ? 'auto' : 0}>
+                                        <AnimateHeight duration={300} height={currentMenu === 'customer' ? 'auto' : 0}>
                                             <ul className="sub-menu text-gray-500">
                                                 <li>
-                                                    <Link href="/kyc">Individuals</Link>
+                                                    <Link href="/customers">Individuals</Link>
                                                 </li>
                                                 <li>
                                                     <Link href="/coparate">Coparates</Link>
                                                 </li>
                                             </ul>
                                         </AnimateHeight>
-                                    </li>
+                                    </li> */}
 
                                     <li className="nav-item">
                                         <Link href="/products" className="group">

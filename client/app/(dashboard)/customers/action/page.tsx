@@ -1,7 +1,7 @@
-import KycForm from '@/components/dashboard/kyc/KycForm';
+import CustomerForm from '@/components/dashboard/customer/CustomerForm';
 import TopPageNavigation from '@/components/shared/TopPageNavigation';
 import { getData } from '@/lib/features/shared/actionUtils';
-import { Kyc, PageSearchParams } from '@/types';
+import { Customer, PageSearchParams } from '@/types';
 import { Suspense } from 'react';
 
 
@@ -14,14 +14,14 @@ export default async function page({ searchParams }: PageSearchParams) {
     const readOnly = params.s === 'r';
     const isEdit = params.s === 'e';
 
-    let kyc: Kyc | null = null;
+    let customer: Customer | null = null;
     let error = null;
 
     if ((readOnly || isEdit)) {
         try {
             const data = await getData(`customers/${userId}`);
             if (data.success) {
-                kyc = data.result;
+                customer = data.result;
             } else {
                 error = data.message;
             }
@@ -33,6 +33,6 @@ export default async function page({ searchParams }: PageSearchParams) {
 
 
     return (
-        <KycForm kyc={kyc} readOnly={readOnly} isEdit={isEdit} error={error} />
+        <CustomerForm customer={customer} readOnly={readOnly} isEdit={isEdit} error={error} />
     )
 }

@@ -100,12 +100,15 @@ export interface TicketCategory {
 }
 
 
-export interface StatusCounts {
-  Pending: number;
-  Active: number;
-  Resolved: number;
-  Cancelled: number;
-  Escalated: number;
+export interface TicketStats {
+  total_count: number;
+  status_counts: {
+    Pending: number;
+    Active: number;
+    Resolved: number;
+    Cancelled: number;
+    Escalated: number;
+  };
 }
 
 
@@ -156,7 +159,7 @@ export interface InvoicePerson {
 
 
 /* KYC */
-export interface Kyc {
+export interface Customer {
   _id: string;
   customer_id: string;
   first_name: string;

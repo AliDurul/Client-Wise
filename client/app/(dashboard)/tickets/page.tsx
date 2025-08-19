@@ -1,3 +1,4 @@
+import TicketStat from '@/components/dashboard/ticket/TicketStat';
 import TicketTable from '@/components/dashboard/ticket/TicketTable';
 import { getAllData } from '@/lib/features/shared/actionUtils';
 import { PageSearchParams } from '@/types'
@@ -12,16 +13,22 @@ export default async function page({ searchParams }: PageSearchParams) {
   const sortBy = params.sb || 'createdAt';
   const sort = params.s || 'desc';
 
-  const tickets = await getAllData({
-    url: 'tickets/',
-    searchQueries: { 'title': query },
-    customQuery: { page, limit },
-    sortQueries: { [sortBy]: sort }
-  });
+  const [tickets, ticketStats] = await Promise.all([
+    getAllData({
+      url: 'tickets/',
+      searchQueries: { 'title': query },
+      customQuery: { page, limit },
+      sortQueries: { [sortBy]: sort }
+    }),
+    getAllData({
+      url: 'tickets/stats',
+    })
+  ]);
 
   return (
-    <div className="panel mt-5 border-white-light px-0 dark:border-[#1b2e4b]">
+    <>
+      <TicketStat stats={ticketStats?.result} />
       <TicketTable tickets={tickets} />
-    </div>
+    </>
   )
 }

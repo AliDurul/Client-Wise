@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import React, { useRef, useState } from 'react'
 
-export default function KycImageUpload() {
+export default function CustomerImageUpload() {
     const [images, setImages] = useState<any>([]);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     return (

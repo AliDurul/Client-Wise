@@ -1,7 +1,7 @@
 'use client';
 import SearchInput from '@/components/shared/SearchInput';
 import { DeleteIcon, EditIcon, PreviewIcon } from '@/icons';
-import { delMultiKyc } from '@/lib/features/kyc/kycActions'; // TODO: Create proper invoice actions
+import { delMultiCustomer } from '@/lib/features/customer/customerActions'; // TODO: Create proper invoice actions
 import { formatDate, truncateText } from '@/lib/utility/functions';
 import { Ticket, Pagination } from '@/types';
 import { DataTable, type DataTableColumn, type DataTableProps } from 'mantine-datatable';
@@ -160,7 +160,7 @@ export default function TicketTable({ tickets }: TicketTableProps) {
 
 
     return (
-        <>
+        <div className="panel mt-5 border-white-light px-0 dark:border-[#1b2e4b]">
             <div className="mb-4.5 flex flex-col justify-between gap-5 md:flex-row md:items-center">
                 <div className="ml-3 flex flex-wrap items-center gap-2">
                     {
@@ -202,6 +202,6 @@ export default function TicketTable({ tickets }: TicketTableProps) {
                 ticketModal && <TicketModal />
             }
 
-        </>
+        </div>
     )
 }

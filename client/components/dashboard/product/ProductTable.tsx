@@ -24,6 +24,7 @@ export default function ProductTable({ products }: ProductTableProps) {
         selectedRecords,
         userInfo,
         isPendingSingle,
+        deletingId,
         isPendingMulti,
         handleCreate,
         handleEdit,
@@ -62,7 +63,11 @@ export default function ProductTable({ products }: ProductTableProps) {
                             className="flex hover:text-danger"
                             disabled={isPendingSingle}
                             onClick={(e) => { handleDelete({ url: 'products', id: record._id }, e); }}>
-                            <DeleteIcon />
+                            {
+                                deletingId === record._id
+                                    ? <div className="animate-spin rounded-full size-5 border-b-2 border-red-500" />
+                                    : <DeleteIcon />
+                            }
                         </button>
                     </>
                 )
@@ -124,7 +129,7 @@ export default function ProductTable({ products }: ProductTableProps) {
                 totalRecords={products?.details.totalRecords || 0}
                 idAccessor="_id"
             />
-          
+
         </div>
     )
 }

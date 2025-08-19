@@ -4,7 +4,7 @@ import { cache } from "react";
 
 export const cachedAuth = cache(auth);
 
-// Better implementation with proper date handling
+// Date function
 const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as const;
 
 export const formatDate = (date: Date | string | number | null | undefined, showTime: boolean = false): string => {
@@ -45,7 +45,7 @@ export const truncateText = (text: string | undefined, charLimit: number) => {
     return text.substring(0, charLimit) + '...';
 };
 
-
+// Capitalize function
 export function capitalize<T>(data: T): T {
     if (typeof data === 'string') {
         return (data.charAt(0).toUpperCase() + data.slice(1)) as T;

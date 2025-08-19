@@ -4,7 +4,7 @@ import { getAllData } from '@/lib/features/shared/actionUtils';
 import { ticketCrUpAction } from '@/lib/features/tickets/ticketActions';
 import { selectTicket, selectTicketModal, setTicketModal } from '@/lib/features/tickets/ticketSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
-import { Kyc, TicketCategory } from '@/types';
+import { Customer, TicketCategory } from '@/types';
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react'
 import React, { useActionState, useEffect, useRef, useState } from 'react'
 import MaskedInput from 'react-text-mask';
@@ -64,7 +64,7 @@ export default function TicketModal() {
     // states
     const [categoryModal, setCategoryModal] = useState(false);
     const [userModal, setUserModal] = useState(false);
-    const phoneOp = customers?.result?.map((customer: Kyc) => ({ label: customer.phone_number, value: customer._id }));
+    const phoneOp = customers?.result?.map((customer: Customer) => ({ label: customer.phone_number, value: customer._id }));
     const categoryOp = categories?.result?.map((category: TicketCategory) => ({ label: category.name, value: category._id }));
 
     const [initialValues, setInitialValues] = useState<TicketFormValues>(() => {

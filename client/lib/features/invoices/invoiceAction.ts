@@ -1,6 +1,6 @@
 "use server";
 import { auth } from "@/auth";
-import { Invoice, Kyc } from "@/types";
+import { Invoice, Customer } from "@/types";
 import { authConfig } from "../shared/actionUtils";
 import { revalidateTag } from "next/cache";
 import { invoiceSchema } from "@/lib/utility/zod";

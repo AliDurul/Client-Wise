@@ -105,46 +105,6 @@ export const ticketCommentCrUpAction = async (_: unknown, payload: FormData) => 
     }
 };
 
-export const getTicketComments = async (ticketId: string) => {
-    const headers = await authConfig();
-    try {
-        const response = await fetch(`${BASE_URL}ticket-with-comments/${ticketId}/`, {
-            cache: "no-cache",
-            headers,
-        });
-        const data = await response.json();
-
-        if (response.ok) {
-            return data;
-        } else {
-            throw new Error(data.detail || "Something went wrong, Please try again!");
-        }
-    } catch (error: any) {
-        return { error: error.message };
-    }
-}
-
-export const createTicketComment = async (commentData: any) => {
-    const headers = await authConfig();
-    try {
-        const response = await fetch(`${BASE_URL}ticket-comments/`, {
-            method: "POST",
-            headers,
-            body: JSON.stringify(commentData),
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-            return { message: "Successfully Created!" };
-        } else {
-            throw new Error(
-                data.message || "Something went wrong, Please try again!"
-            );
-        }
-    } catch (error: any) {
-        return { error: error.message };
-    }
-};
 
 export const getTicketStatus = async () => {
     const headers = await authConfig();

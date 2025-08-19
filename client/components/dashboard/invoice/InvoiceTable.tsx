@@ -1,7 +1,7 @@
 'use client';
 import SearchInput from '@/components/shared/SearchInput';
 import { DeleteIcon, EditIcon, PreviewIcon } from '@/icons';
-import { delMultiKyc } from '@/lib/features/kyc/kycActions'; // TODO: Create proper invoice actions
+import { delMultiCustomer } from '@/lib/features/customer/customerActions'; // TODO: Create proper invoice actions
 import { formatDate } from '@/lib/utility/functions';
 import { Invoice, Pagination } from '@/types';
 import { DataTable, type DataTableColumn, type DataTableProps } from 'mantine-datatable';
@@ -24,6 +24,7 @@ export default function InvoiceTable({ invoicePromise }: InvoiceTableProps) {
         selectedRecords,
         userInfo,
         isPendingSingle,
+        deletingId,
         isPendingMulti,
         handleCreate,
         handleEdit,
@@ -33,8 +34,8 @@ export default function InvoiceTable({ invoicePromise }: InvoiceTableProps) {
         getTableProps,
         getRowExpansionProps
     } = useDataTable<Invoice>({
-        deleteAction: delData, 
-        deleteMultiAction: delMultiData, 
+        deleteAction: delData,
+        deleteMultiAction: delMultiData,
     });
 
 
@@ -60,7 +61,11 @@ export default function InvoiceTable({ invoicePromise }: InvoiceTableProps) {
                             className="flex hover:text-danger"
                             disabled={isPendingSingle}
                             onClick={(e) => { handleDelete({ url: 'invoices', id: record._id }, e); }}>
-                            <DeleteIcon />
+                            {
+                                deletingId === record._id
+                                    ? <div className="animate-spin rounded-full size-5 border-b-2 border-red-500" />
+                                    : <DeleteIcon />
+                            }
                         </button>
                     </>
                 )

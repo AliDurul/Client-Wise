@@ -66,18 +66,16 @@ export const getTicketById = async (req: Request, res: Response): Promise<void> 
     if (!result) throw new CustomError("Ticket not found", 404);
 
     if (result.comments && Array.isArray(result.comments)) {
-
-        const sortedComments = result.comments.sort(
-            (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        result.comments = await Promise.all(
+            result.comments
+                .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                .map(async (comment) => {
+                    if (comment.author?.profile_pic) {
+                        comment.author.profile_pic = await getImageUrl(comment.author.profile_pic);
+                    }
+                    return comment;
+                })
         );
-
-        result.comments = await Promise.all(sortedComments.map(async (comment) => {
-            if (comment.author?.profile_pic) {
-                comment.author.profile_pic = await getImageUrl(comment.author.profile_pic);
-            }
-            return comment;
-        }));
-
     }
 
     res.status(200).send({
@@ -125,6 +123,58 @@ export const deleteTicket = async (req: Request, res: Response): Promise<void> =
 
 };
 
+
+export const getTicketStats = async (req: Request, res: Response): Promise<void> => {
+
+    // Aggregate ticket stats
+    const stats = await Ticket.aggregate([
+        {
+            $group: {
+                _id: "$status",
+                count: { $sum: 1 }
+            }
+        }
+    ]);
+
+    const status_counts = {
+        Pending: 0,
+        Active: 0,
+        Resolved: 0,
+        Cancelled: 0,
+        Escalated: 0
+    };
+    
+    let total_count = 0;
+    stats.forEach(s => {
+        switch (s._id) {
+            case "pending":
+                status_counts.Pending = s.count;
+                break;
+            case "active":
+                status_counts.Active = s.count;
+                break;
+            case "resolved":
+                status_counts.Resolved = s.count;
+                break;
+            case "cancelled":
+                status_counts.Cancelled = s.count;
+                break;
+            case "escalated":
+                status_counts.Escalated = s.count;
+                break;
+        }
+        total_count += s.count;
+    });
+
+    res.send({
+        success: true,
+        result: {
+            total_count,
+            status_counts
+        }
+    });
+};
+
 // --------------- TICKET COMMENTS ---------------
 
 export const createTicCom = async (req: Request, res: Response): Promise<void> => {
@@ -149,11 +199,30 @@ export const createTicCom = async (req: Request, res: Response): Promise<void> =
 
 export const getTicComs = async (req: Request, res: Response): Promise<void> => {
 
-    const result = await res.getModelList(Ticket, { _id: req.params.ticketId }, [{ path: 'comments.author', select: 'full_name first_name last_name email phone_number profile_pic' }], 'comments')
+    const result = await (await Ticket.findById(req.params.ticketId).select('comments escalation')).populate([
+        { path: 'comments.author', select: 'full_name first_name last_name email phone_number profile_pic' },
+        { path: 'escalation.raised_by', select: 'full_name first_name last_name email phone_number profile_pic' }
+    ])
+
+    if (result.escalation?.raised_by && result.escalation.raised_by.profile_pic) {
+        result.escalation.raised_by.profile_pic = await getImageUrl(result.escalation.raised_by.profile_pic);
+    }
+
+    if (result.comments && Array.isArray(result.comments)) {
+        result.comments = await Promise.all(
+            result.comments
+                .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                .map(async (comment) => {
+                    if (comment.author?.profile_pic) {
+                        comment.author.profile_pic = await getImageUrl(comment.author.profile_pic);
+                    }
+                    return comment;
+                })
+        );
+    }
 
     res.send({
         success: true,
-        // details: await res.getModelListDetails(Ticket),
         result,
     });
 };

@@ -1,5 +1,5 @@
 import InputBox from '@/components/shared/InputBox';
-import { kycCrUpAction } from '@/lib/features/kyc/kycActions';
+import { customerCrUpAction } from '@/lib/features/customer/customerActions';
 import { Dialog, DialogPanel } from '@headlessui/react'
 import React, { useActionState, useEffect } from 'react'
 import toast from 'react-hot-toast';
@@ -14,7 +14,7 @@ interface TicketUserModalProps {
 
 export default function TicketUserModal({ userModal, onClose }: TicketUserModalProps) {
 
-    const [state, action, isLoading] = useActionState(kycCrUpAction, null);
+    const [state, action, isLoading] = useActionState(customerCrUpAction, null);
 
     useEffect(() => {
         if (!state) return;

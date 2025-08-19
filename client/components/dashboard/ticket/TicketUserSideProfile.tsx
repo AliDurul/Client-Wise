@@ -1,6 +1,6 @@
 import { useUrlParams } from '@/hooks/useUrlParams'
 import { getData } from '@/lib/features/shared/actionUtils'
-import { Kyc } from '@/types'
+import { Customer } from '@/types'
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
@@ -107,8 +107,8 @@ export default function TicketUserSideProfile({ sideProfileModal, setSideProfile
                                                                                     {({ active }) => (
                                                                                         <div
                                                                                             onClick={() => {
-                                                                                                router.push(`/kyc/action?s=r&userId=${data?.result?.id}`),
-                                                                                                    dispatch(updateKycState(data?.result))
+                                                                                                router.push(`/customer/action?s=r&userId=${data?.result?.id}`),
+                                                                                                    dispatch(updateCustomerState(data?.result))
                                                                                             }}
                                                                                             className={classNames(
                                                                                                 active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
