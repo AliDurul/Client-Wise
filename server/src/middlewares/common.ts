@@ -156,7 +156,8 @@ declare global {
             getModelList: <T extends Document>(
                 Model: Model<T>,
                 customFilter?: Record<string, any>,
-                populate?: string | Array<{ path: string; select?: string | string[] }> | null
+                populate?: string | Array<{ path: string; select?: string | string[] }> | null,
+                select?: string | null
             ) => Promise<T[]>;
             getModelListDetails: <T extends Document>(
                 Model: Model<T>,
@@ -221,7 +222,8 @@ export const queryHandler: RequestHandler = (req, res, next) => {
     res.getModelList = async <T extends Document>(
         Model: Model<T>,
         customFilter = {},
-        populate: string | null = null
+        populate: string | null = null,
+        select: string | null = ''
     ): Promise<any[]> => {
 
         const query: RootFilterQuery<T> = {
@@ -230,7 +232,7 @@ export const queryHandler: RequestHandler = (req, res, next) => {
             ...(typeof customFilter === "object" && customFilter),
         } as RootFilterQuery<T>;
 
-        return await Model.find(query).sort(sort).skip(skip).limit(limit).populate(populate).lean();
+        return await Model.find(query).sort(sort).skip(skip).limit(limit).select(select).populate(populate).lean();
     };
 
     // Details:

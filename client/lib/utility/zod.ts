@@ -134,3 +134,8 @@ export const ticketCategorySchema = z.object({
     name: z.string().min(1, "Category name is required"),
     description: z.string().min(10, "Description is required"),
 });
+
+export const ticketCommentSchema = z.object({
+    ticketId: z.string().min(1, "Ticket ID is required"),
+    comment: z.string().min(10, "Comment is required, please provide a detailed explanation."),
+});

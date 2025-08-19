@@ -1,7 +1,7 @@
 'use client';
 import InputBox from '@/components/shared/InputBox';
 import { getAllData } from '@/lib/features/shared/actionUtils';
-import { TicketCrUpAction } from '@/lib/features/tickets/ticketActions';
+import { ticketCrUpAction } from '@/lib/features/tickets/ticketActions';
 import { selectTicket, selectTicketModal, setTicketModal } from '@/lib/features/tickets/ticketSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { Kyc, TicketCategory } from '@/types';
@@ -56,7 +56,7 @@ export default function TicketModal() {
     const { data: customers, error: customersError, isLoading: customersLoading } = useSWR('customers', () => getAllData({ url: 'customers/' }));
 
     // hooks
-    const [state, action, isLoading] = useActionState(TicketCrUpAction, null);
+    const [state, action, isLoading] = useActionState(ticketCrUpAction, null);
     const dispatch = useAppDispatch();
     const ticketModal = useAppSelector(selectTicketModal);
     const ticket = useAppSelector(selectTicket);

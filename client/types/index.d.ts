@@ -61,15 +61,17 @@ export interface Ticket {
   flag: 'important' | 'moderate' | 'least important' | 'prank';
   category: { _id: number; name: string };
   escalation: Escalation | null;
+  comments: TicketComment[];
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export interface CallerDetails {
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone_number: string;
+export interface TicketComment {
+  _id: string;
+  author: PersonInfo;
+  comment: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Escalation {
@@ -89,7 +91,6 @@ export interface PersonInfo {
   profile_pic: string | null;
 };
 
-
 export interface TicketCategory {
   _id: string;
   name: string;
@@ -98,32 +99,6 @@ export interface TicketCategory {
   updatedAt?: string;
 }
 
-export interface TicketComments {
-  _id: string;
-  title: string;
-  comments: Comment[];
-}
-
-export interface Comment {
-  _id: number;
-  user: User;
-  ticket: string;
-  // title: string;
-  body: string;
-  timestamp: Date;
-  last_updated: null | Date;
-}
-
-export interface User {
-  first_name: string;
-  last_name: string;
-  phone_number: string | null;
-}
-
-export interface TicketStatuses {
-  total_count: number;
-  status_counts: StatusCounts;
-}
 
 export interface StatusCounts {
   Pending: number;
@@ -132,6 +107,8 @@ export interface StatusCounts {
   Cancelled: number;
   Escalated: number;
 }
+
+
 
 /* INVOICE */
 

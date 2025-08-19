@@ -20,7 +20,7 @@ export const getTickets = async (req: Request, res: Response): Promise<void> => 
             { path: 'assigned_agent', select: 'full_name first_name last_name email phone_number profile_pic' },
             { path: 'category', select: 'name' },
             { path: 'escalation.raised_by', select: 'full_name first_name last_name email phone_number profile_pic' }
-        ]);
+        ], '-comments');
     }
 
     await Promise.all(result.map(async (ticket: ITicket) => {
@@ -38,15 +38,13 @@ export const getTickets = async (req: Request, res: Response): Promise<void> => 
 
 export const createTicket = async (req: Request, res: Response): Promise<void> => {
 
-
     const userId = req.user?.id;
 
     req.body.assigned_agent = userId;
-    console.log(req.body);
 
     const result = await Ticket.create(req.body);
 
-    if (!result) throw new CustomError("Failed to create FAQ", 500);
+    if (!result) throw new CustomError("Failed to create ticket", 500, true);
 
     res.send({
         success: true,
@@ -61,10 +59,26 @@ export const getTicketById = async (req: Request, res: Response): Promise<void> 
         { path: 'customer', select: 'full_name first_name last_name email phone_number profile_pic' },
         { path: 'assigned_agent', select: 'full_name first_name last_name email phone_number profile_pic' },
         { path: 'category', select: 'name' },
-        { path: 'escalation.raised_by', select: 'full_name first_name last_name email phone_number profile_pic' }
+        { path: 'escalation.raised_by', select: 'full_name first_name last_name email phone_number profile_pic' },
+        { path: 'comments.author', select: 'full_name first_name last_name email phone_number profile_pic' }
     ])
 
     if (!result) throw new CustomError("Ticket not found", 404);
+
+    if (result.comments && Array.isArray(result.comments)) {
+
+        const sortedComments = result.comments.sort(
+            (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+
+        result.comments = await Promise.all(sortedComments.map(async (comment) => {
+            if (comment.author?.profile_pic) {
+                comment.author.profile_pic = await getImageUrl(comment.author.profile_pic);
+            }
+            return comment;
+        }));
+
+    }
 
     res.status(200).send({
         success: true,
@@ -110,6 +124,41 @@ export const deleteTicket = async (req: Request, res: Response): Promise<void> =
     })
 
 };
+
+// --------------- TICKET COMMENTS ---------------
+
+export const createTicCom = async (req: Request, res: Response): Promise<void> => {
+
+    const author = req.user?.id;
+    const { comment, ticketId } = req.body
+
+
+    const result = await Ticket.findByIdAndUpdate(
+        ticketId,
+        { $push: { comments: { comment, author } } },
+        // { new: true }
+    );
+
+    if (!result) throw new CustomError("Failed to create comment", 500, true);
+
+    res.send({
+        success: true,
+        result,
+    });
+};
+
+export const getTicComs = async (req: Request, res: Response): Promise<void> => {
+
+    const result = await res.getModelList(Ticket, { _id: req.params.ticketId }, [{ path: 'comments.author', select: 'full_name first_name last_name email phone_number profile_pic' }], 'comments')
+
+    res.send({
+        success: true,
+        // details: await res.getModelListDetails(Ticket),
+        result,
+    });
+};
+
+
 
 // --------------- TICKET CATEGORIES ---------------
 export const getTicCats = async (req: Request, res: Response): Promise<void> => {

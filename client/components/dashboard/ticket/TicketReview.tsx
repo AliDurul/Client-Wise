@@ -1,7 +1,7 @@
 'use client';
 import Dropdown from '@/components/layout/Dropdown';
 import { Ticket } from '@/types';
-import React, { startTransition, useActionState, useState } from 'react'
+import React, { startTransition, useActionState, useEffect, useState } from 'react'
 import { flagOp, priorityOp, statusOp } from './TicketConstants';
 import { delData } from '@/lib/features/shared/actionUtils';
 import { useRouter } from 'next/navigation';
@@ -11,6 +11,8 @@ import TicketUserSideProfile from './TicketUserSideProfile';
 import Link from 'next/link';
 import { useAppDispatch } from '@/lib/hooks';
 import TicketEscModal from './TicketEscModal';
+import { ticketCommentCrUpAction } from '@/lib/features/tickets/ticketActions';
+import InputBox from '@/components/shared/InputBox';
 
 export default function TicketReview({ ticket }: { ticket: Ticket }) {
 
@@ -58,6 +60,23 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
 
     // functions
     const [stateDelete, actionDelete, isPendingDelete] = useActionState(delData, null);
+    const [stateComment, actionComment, isPendingComment] = useActionState(ticketCommentCrUpAction, null);
+
+
+    useEffect(() => {
+        if (!stateComment) return;
+
+        if (stateComment.success) {
+            toast.success(stateComment.message);
+        } else {
+            toast.error(stateComment.message || 'An error occurred while processing your comment');
+        }
+
+        return () => {
+            toast.dismiss();
+        }
+    }, [stateComment])
+
     const handleDelete = async (id: string) => {
         startTransition(() => {
             actionDelete({ url: 'tickets', id });
@@ -336,63 +355,74 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
                     </div>
                 </div>
             </div>
+
             {/* Body */}
             <div className='p-5 pt-0 pb-3 relative' key={ticket._id}>
-                <form action="">
-                    <div className="">
-                        <div className="flex justify-between">
-                            <div className="flex w-max items-center">
-                                <div className="ltr:ml-2 rtl:mr-2">
-                                    <div className="font-bold text-xl ">{ticket?.title}</div>
-                                    <div className="text-sx text-white-dark">{formatDate(ticket?.createdAt, true)}</div>
-                                </div>
-                            </div>
-                            <div
-                                className='text-center cursor-pointer'
-                                onClick={() => setSideProfileModal(true)}
-                            >
-                                <h2 className='text-lg font-bold'>
-                                    {ticket.customer.full_name}
-                                    {/* {typeof ticket.client_phonenumber !== "number" && `${ticket.client_phonenumber?.first_name ? ticket?.client_phonenumber?.first_name + ' ' + ticket?.client_phonenumber?.last_name : ticket.caller_email}`} */}
-                                </h2>
-                                <h2 className='text-base '>
-                                    {ticket?.customer?.first_name}
-                                </h2>
-                            </div>
+                <div className="flex justify-between">
+                    <div className="flex w-max items-center">
+                        <div className="ltr:ml-2 rtl:mr-2">
+                            <div className="font-bold text-xl ">{ticket?.title}</div>
+                            <div className="text-sx text-white-dark">{formatDate(ticket?.createdAt, true)}</div>
                         </div>
-                        {/* Divider */}
-                        {/* <div className="mx-auto mt-3 h-px border-b border-white-light dark:border-[#1b2e4b] w-3/4" /> */}
-                        <div className="relative mt-3">
-                            <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                                <div className="w-full border-t border-[#eee]" />
-                            </div>
-                            <div className="relative flex justify-center">
-                                <span className=" bg-[#eee] px-2 text-sm text-gray-500">Description</span>
-                            </div>
-                        </div>
-                        <div>
-                            <div
-                                className="mt-4 text-lg font-semibold"
-                            // dangerouslySetInnerHTML={{ __html: ticket?.description }}
-                            >
-                                {/* <span className='text-white-dark'>Description : </span> */}
-                                {ticket?.description}
-                            </div>
-                            <p className="mt-10 text-lg text-white-dark">{ticket?.assigned_agent?.first_name} {ticket?.assigned_agent?.last_name}</p>
-                        </div>
-                        <div className='my-5 '>
-                            <div className="flex">
-                                <div className={`${darkBgColor} flex justify-center items-center ltr:rounded-l-md  px-3 font-semibold border ltr:border-r-0  border-white-light dark:border-[#17263c] dark:bg-[#1b2e4b] whitespace-nowrap`}>
-                                    Enter New Comment
-                                </div>
-                                <textarea rows={2} className="form-textarea ltr:rounded-l-none bg-transparent focus:border-dark-dark-light" ></textarea>
-                            </div>
+                    </div>
+                    <div
+                        className='text-center cursor-pointer'
+                        onClick={() => setSideProfileModal(true)}
+                    >
+                        <h2 className='text-lg font-bold'>
+                            {ticket.customer.full_name}
+                            {/* {typeof ticket.client_phonenumber !== "number" && `${ticket.client_phonenumber?.first_name ? ticket?.client_phonenumber?.first_name + ' ' + ticket?.client_phonenumber?.last_name : ticket.caller_email}`} */}
+                        </h2>
+                        <h2 className='text-base '>
+                            {ticket?.customer?.first_name}
+                        </h2>
+                    </div>
+                </div>
 
+                {/* Divider */}
+                {/* <div className="mx-auto mt-3 h-px border-b border-white-light dark:border-[#1b2e4b] w-3/4" /> */}
+
+                <div className="relative mt-3">
+                    <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                        <div className="w-full border-t border-[#eee]" />
+                    </div>
+                    <div className="relative flex justify-center">
+                        <span className=" bg-[#eee] px-2 text-sm text-gray-500">Description</span>
+                    </div>
+                </div>
+
+                <div>
+                    <div
+                        className="mt-4 text-lg font-semibold"
+                    // dangerouslySetInnerHTML={{ __html: ticket?.description }}
+                    >
+                        {/* <span className='text-white-dark'>Description : </span> */}
+                        {ticket?.description}
+                    </div>
+                    <p className="mt-10 text-lg text-white-dark">{ticket?.assigned_agent?.first_name} {ticket?.assigned_agent?.last_name}</p>
+                </div>
+
+                <form action={actionComment} className='flex flex-col gap-4 mt-4'>
+                    <input type="text" name='ticketId' defaultValue={ticket._id} hidden />
+                    <div className="flex">
+                        <div className={`${darkBgColor} flex justify-center items-center ltr:rounded-l-md  px-3 font-semibold border ltr:border-r-0  border-white-light dark:border-[#17263c] dark:bg-[#1b2e4b] whitespace-nowrap`}>
+                            Enter New Comment
                         </div>
+                        {/* <textarea rows={2} className="form-textarea ltr:rounded-l-none bg-transparent focus:border-dark-dark-light" ></textarea> */}
+
+                        <InputBox
+                            type='textarea'
+                            placeholder='Enter your comment here...'
+                            name='comment'
+                            id='comment'
+                            errors={stateComment?.errors?.comment}
+                            className='ltr:rounded-l-none bg-transparent focus:border-dark-dark-light'
+                        />
                     </div>
-                    <div >
-                        <button type="submit" className="btn rounded-xl ml-auto btn-secondary "> Commit</button>
-                    </div>
+
+                    <button type="submit" className="btn rounded-xl ml-auto btn-secondary" disabled={isPendingComment}>
+                        {isPendingComment ? 'Committing...' : 'Commit'}
+                    </button>
                 </form>
 
             </div>

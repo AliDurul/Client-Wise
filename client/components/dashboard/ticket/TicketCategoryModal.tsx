@@ -1,5 +1,5 @@
 import InputBox from '@/components/shared/InputBox';
-import { TicketCategoryCrUpAction } from '@/lib/features/tickets/ticketActions';
+import { ticketCategoryCrUpAction } from '@/lib/features/tickets/ticketActions';
 import { Dialog, DialogPanel } from '@headlessui/react'
 import React, { useActionState, useEffect } from 'react'
 import toast from 'react-hot-toast';
@@ -14,7 +14,7 @@ interface TicketcategoryModalProps {
 
 export default function TicketCategoryModal({ categoryModal, onClose }: TicketcategoryModalProps) {
 
-    const [state, action, isLoading] = useActionState(TicketCategoryCrUpAction, null);
+    const [state, action, isLoading] = useActionState(ticketCategoryCrUpAction, null);
 
     useEffect(() => {
         if (!state) return;

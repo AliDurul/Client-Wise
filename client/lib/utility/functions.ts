@@ -37,7 +37,8 @@ export const formatDate = (date: Date | string | number | null | undefined, show
 };
 
 
-export const truncateText = (text: string, charLimit: number) => {
+export const truncateText = (text: string | undefined, charLimit: number) => {
+    if (!text) return '';
     if (text.length <= charLimit) {
         return text;
     }

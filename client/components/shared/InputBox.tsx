@@ -52,7 +52,7 @@ export default function InputBox({ name, type, id, value, placeholder, icon, err
                         id={id}
                         disabled={disabled}
                         // readOnly={readOnly}
-                        className={`form-textarea placeholder:text-gray-400 ${errors ? 'border-red-500' : ''} ${className}`}
+                        className={`form-textarea placeholder:text-gray-400  ${className}`}
                         onChange={handleChange}
                     />
                 ) : (

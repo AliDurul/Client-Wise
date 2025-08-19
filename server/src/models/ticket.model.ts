@@ -16,6 +16,22 @@ const escalationSchema: Schema<IEscalation> = new Schema({
 
 }, { _id: false, timestamps: true });
 
+const commentSchema = new Schema<IComment>({
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
+    comment: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+}, {
+    timestamps: true,
+    _id: true,
+});
+
 const ticketSchema: Schema<ITicket> = new Schema({
     assigned_agent: {
         type: Schema.Types.ObjectId,
@@ -80,6 +96,11 @@ const ticketSchema: Schema<ITicket> = new Schema({
         default: null,
     },
 
+    comments: {
+        type: [commentSchema],
+        default: [],
+    },
+
 }, {
     timestamps: true,
     collection: 'tickets',
@@ -113,6 +134,13 @@ interface PersonInfo {
     profile_pic?: string;
 }
 
+export interface IComment {
+    author: PersonInfo;
+    comment: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 // Main ticket interface
 export interface ITicket extends Document {
     assigned_agent: mongoose.Schema.Types.ObjectId;
@@ -126,6 +154,7 @@ export interface ITicket extends Document {
     flag: string;
     category: mongoose.Schema.Types.ObjectId;
     escalation?: IEscalation;
+    comments: IComment[];
     createdAt: Date;
     updatedAt: Date;
 }
@@ -133,7 +162,7 @@ export interface ITicket extends Document {
 
 
 // --------------------------------------------------------------
-
+// Ticket Category
 const categorySchema: Schema<ITicCat> = new Schema({
 
     name: {
@@ -159,3 +188,5 @@ export interface ITicCat extends Document {
     name: string;
     description: string;
 }
+
+

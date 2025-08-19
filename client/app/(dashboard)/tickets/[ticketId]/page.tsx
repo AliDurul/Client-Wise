@@ -23,7 +23,7 @@ export default async function page({ params }: { params: Promise<{ ticketId: str
         <>
             <div className="mt-5 grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 grid-rows-none lg:grid-rows-1">
                 <TicketReview ticket={ticket.result} />
-                <TicketLatestActivity />
+                <TicketLatestActivity ticket={ticket?.result} />
                 <div className="panel sm:col-span-2 sm:row-start-2 lg:col-span-2 lg:row-start-2">
                     <div className="mb-5 flex items-center justify-between">
                         <h5 className="text-lg font-semibold dark:text-white-light">Recent Orders</h5>
