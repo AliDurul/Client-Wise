@@ -17,7 +17,7 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
     // hooks
     const dispatch = useAppDispatch();
     const router = useRouter();
-    
+
     // states
     const [isEscalation, setIsEscalation] = useState(false);
     const [sideProfileModal, setSideProfileModal] = useState(false)
@@ -29,7 +29,7 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
         : ticket?.priority === 'low'
             ? 'bg-warning-light shadow-warning'
             : ticket?.priority === 'high'
-                ? 'bg-danger-light shadow-danger'
+                ? 'bg-warning-light shadow-warn'
                 : ticket?.priority === 'critical'
                     ? 'bg-danger-light shadow-primary'
                     : 'dark:shadow-dark';
@@ -51,7 +51,7 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
         : ticket?.priority === 'low'
             ? 'bg-warning-dark-light '
             : ticket?.priority === 'high'
-                ? 'bg-danger-dark-light'
+                ? 'bg-warning-dark-light'
                 : ticket?.priority === 'critical'
                     ? 'bg-danger-dark-light'
                     : 'dark:shadow-dark';
@@ -73,45 +73,46 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
     return (
         <div className={` panel p-0 sm:col-span-3 ${lightBgColor}`}>
             {/* Header */}
-            <div className=" mb-1 flex items-start justify-between  p-5 ">
-                <h5 className="sm:text-2xl text-sm font-extrabold ">Ticket / <span className='text-sm'>{ticket?._id ?? ''}</span></h5>
+            <div className=" mb-1 flex flex-col gap-3 md:flex-row  items-start justify-between  p-5  ">
+                <div className="sm:text-2xl text-sm font-extrabold ">Ticket / <span className='text-sm'>{ticket?._id ?? ''}</span></div>
                 <div className="flex items-center gap-4">
                     <div className="dropdown">
                         <Dropdown
                             offset={[0, -5]}
                             placement='bottom-start'
                             btnClassName={`${ticket?.priority === 'medium'
-                                ? 'text-primary'
+                                ? 'text-secondary'
                                 : ticket?.priority === 'low'
-                                    ? 'text-warning'
+                                    ? 'text-dark'
                                     : ticket?.priority === 'high'
-                                        ? 'text-danger'
+                                        ? 'text-warning'
                                         : ticket?.priority === 'critical'
                                             ? 'text-danger'
                                             : ''
                                 } `}
                             button={
                                 <span className={`flex gap-2 items-center badge rounded-xl ${ticket?.priority === 'medium'
-                                    ? 'badge-outline-primary'
+                                    ? 'badge-outline-secondary'
                                     : ticket?.priority === 'low'
-                                        ? 'badge-outline-warning'
+                                        ? 'badge-outline-dark'
                                         : ticket?.priority === 'high'
-                                            ? 'badge-outline-danger'
+                                            ? 'badge-outline-warning'
                                             : ticket?.priority === 'critical'
                                                 ? 'badge-outline-danger'
                                                 : 'badge-outline-secondary'
-                                    } `}> <svg
+                                    } `}>
+                                    <svg
                                         width="24"
                                         height="24"
                                         viewBox="0 0 24 24"
                                         fill="none"
                                         xmlns="http://www.w3.org/2000/svg"
                                         className={`h-3 w-3 rotate-45 ${ticket?.priority === 'medium'
-                                            ? 'fill-primary'
+                                            ? 'fill-secondary'
                                             : ticket?.priority === 'low'
-                                                ? 'fill-warning'
+                                                ? 'fill-dark'
                                                 : ticket?.priority === 'high'
-                                                    ? 'fill-danger'
+                                                    ? 'fill-warning'
                                                     : ticket?.priority === 'critical'
                                                         ? 'fill-danger'
                                                         : ''

@@ -42,7 +42,6 @@ export const taskSchema = z.object({
 
 /* -------------------- Customer Schema -------------------- */
 
-
 export const customerSchema = z.object({
     first_name: z.string().min(1, "First name is required"),
     last_name: z.string().min(1, "Last name is required"),
@@ -71,6 +70,12 @@ export const customerSchema = z.object({
     medication: z.boolean(),
     medication_type: z.string().optional().nullable(),
     profile_pic: z.any().optional(), // file/image, adjust as needed
+});
+
+export const customerQuickSchema = z.object({
+    first_name: z.string().min(1, "First name is required"),
+    last_name: z.string().min(1, "Last name is required"),
+    phone_number: z.string().min(1, "Phone number is required"),
 });
 
 /* -------------------- Invoice Schema -------------------- */
@@ -124,3 +129,8 @@ export const ticketSchema = z.object({
     flag: z.enum(['important', 'moderate', 'least important', 'prank']),
     description: z.string().min(10, "Description is required"),
 })
+
+export const ticketCategorySchema = z.object({
+    name: z.string().min(1, "Category name is required"),
+    description: z.string().min(10, "Description is required"),
+});

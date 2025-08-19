@@ -64,6 +64,10 @@ export const refresh = async (req: Request, res: Response): Promise<void> => {
 
     if (!user) throw new CustomError('User not found.', 404, true);
 
+    if (user.profile_pic) {
+        user.profile_pic = await getImageUrl(user.profile_pic);
+    }
+
     res.status(200).send(setToken(user, true));
 };
 

@@ -1,7 +1,7 @@
 export const priorityOp = [
-    { name: 'medium', color: 'fill-primary' },
-    { name: 'low', color: 'fill-warning' },
-    { name: 'high', color: 'fill-danger' },
+    { name: 'medium', color: 'fill-secondary' },
+    { name: 'low', color: 'fill-dark' },
+    { name: 'high', color: 'fill-warning' },
     { name: 'critical', color: 'fill-danger' },
 ];
 

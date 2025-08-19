@@ -144,6 +144,7 @@ const customerSchema: Schema<ICustomer> = new Schema({
     assigned_agent: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
+        required: true,
     },
     full_name: {
         type: String,

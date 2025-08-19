@@ -1,6 +1,6 @@
 "use server";
 import { auth } from "@/auth"
-import { customerSchema } from "@/lib/utility/zod";
+import { customerQuickSchema, customerSchema } from "@/lib/utility/zod";
 import { Kyc } from "@/types";
 import { revalidateTag } from "next/cache";
 import { authConfig } from "../shared/actionUtils";
@@ -53,7 +53,13 @@ export const kycCrUpAction = async (_: unknown, payload: FormData) => {
     profile_pic: payload.get('profile_pic') ?? null,
   }
 
-  const result = customerSchema.safeParse(rowData);
+  let result: any;
+
+  if (payload.get('ref') === 'ticket') {
+    result = customerQuickSchema.safeParse(rowData);
+  } else {
+    result = customerSchema.safeParse(rowData);
+  }
 
 
   if (!result.success) {

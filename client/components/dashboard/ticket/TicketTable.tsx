@@ -30,9 +30,8 @@ export default function TicketTable({ tickets }: TicketTableProps) {
         selectedRecords,
         userInfo,
         isPendingSingle,
+        deletingId,
         isPendingMulti,
-        handleCreate,
-        handleEdit,
         handlePreview,
         handleDelete,
         handleMultiDelete,
@@ -66,7 +65,11 @@ export default function TicketTable({ tickets }: TicketTableProps) {
                             className="flex hover:text-danger"
                             disabled={isPendingSingle}
                             onClick={(e) => { handleDelete({ url: 'tickets', id: record._id }, e); }}>
-                            <DeleteIcon />
+                            {
+                                deletingId === record._id
+                                    ? <div className="animate-spin rounded-full size-5 border-b-2 border-red-500" />
+                                    : <DeleteIcon />
+                            }
                         </button>
                     </>
                 )
@@ -110,14 +113,14 @@ export default function TicketTable({ tickets }: TicketTableProps) {
             sortable: true,
         },
         {
-            accessor: 'description',
-            sortable: true,
-            render: ({ description }) => `${truncateText(description, 70)}`,
-        },
-        {
             accessor: 'category',
             sortable: true,
             render: ({ category }) => `${category?.name}`,
+        },
+        {
+            accessor: 'description',
+            sortable: true,
+            render: ({ description }) => `${truncateText(description, 70)}`,
         },
         {
             accessor: 'createdAt',
@@ -176,7 +179,7 @@ export default function TicketTable({ tickets }: TicketTableProps) {
                             <line x1="12" y1="5" x2="12" y2="19"></line>
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                         </svg>
-                        Create new invoice
+                        Create new ticket
                     </button>
                 </div>
 

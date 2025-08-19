@@ -1,6 +1,6 @@
 'use server'
 
-import { ticketEscalateSchema, ticketSchema } from "@/lib/utility/zod";
+import { ticketCategorySchema, ticketEscalateSchema, ticketSchema } from "@/lib/utility/zod";
 import { authConfig } from "../shared/actionUtils";
 import { revalidateTag } from "next/cache";
 
@@ -153,6 +153,54 @@ export const escalateTicket = async (_: unknown, payload: FormData) => {
     } catch (error: any) {
         return {
             message: error.message,
+            success: false,
+            inputs: result.data
+        };
+    }
+};
+
+export const TicketCategoryCrUpAction = async (_: unknown, payload: FormData) => {
+
+    const id = payload.get('_id') as string;
+    payload.delete('_id');
+
+    const rowData = { ...Object.fromEntries(payload) };
+
+    const result = ticketCategorySchema.safeParse(rowData);
+
+
+    if (!result.success) {
+        const errors = result.error.flatten().fieldErrors;
+        return { success: false, message: 'Fix the error in the form', inputs: rowData, errors };
+    }
+
+    const url = !!id ? `${BASE_URL}tickets/categories/${id}/` : `${BASE_URL}tickets/categories`;
+    const method = !!id ? "PUT" : "POST";
+
+    try {
+        const headers = await authConfig();
+
+        const response = await fetch(url, {
+            method,
+            headers,
+            body: JSON.stringify(result.data),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Something went wrong, Please try again!");
+        }
+
+        revalidateTag('categories');
+        return {
+            message: !!id ? "Ticket category updated successfully!" : "Ticket category created successfully!",
+            success: true
+        };
+
+    } catch (error: any) {
+        return {
+            message: error.message || "Something went wrong, Please try again!",
             success: false,
             inputs: result.data
         };

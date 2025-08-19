@@ -84,6 +84,7 @@ export const createCustomer = async (req: Request, res: Response): Promise<void>
         data.profile_pic = fileName
     }
 
+    data.assigned_agent = req.user.id;
     const result = await Customer.create(data);
 
     if (!result) throw new CustomError("Failed to create Customer", 500, true);

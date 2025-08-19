@@ -12,6 +12,9 @@ import useSWR from 'swr';
 import Select from 'react-select';
 import toast from 'react-hot-toast';
 import FormErrMsg from '@/components/shared/FormErrMsg';
+import TicketUserModal from './TicketUserModal';
+import { PlusIcon } from '@/icons';
+import TicketCategoryModal from './TicketCategoryModal';
 
 
 
@@ -40,7 +43,7 @@ const defaultValues: TicketFormValues = {
     description: '',
     customer: '',
     caller_phone: '',
-    flag: 'important',
+    flag: 'moderate',
     category: '',
     priority: 'medium',
     status: 'active',
@@ -61,7 +64,6 @@ export default function TicketModal() {
     // states
     const [categoryModal, setCategoryModal] = useState(false);
     const [userModal, setUserModal] = useState(false);
-    const [isOwn, setIsOwn] = useState<boolean>(false);
     const phoneOp = customers?.result?.map((customer: Kyc) => ({ label: customer.phone_number, value: customer._id }));
     const categoryOp = categories?.result?.map((category: TicketCategory) => ({ label: category.name, value: category._id }));
 
@@ -82,6 +84,7 @@ export default function TicketModal() {
         };
     });
 
+    const [isOwn, setIsOwn] = useState<boolean>(!!initialValues.caller_phone);
 
     // Actions
     useEffect(() => {
@@ -150,7 +153,7 @@ export default function TicketModal() {
 
                                 {
                                     isOwn && (
-                                        <fieldset className="ml-auto">
+                                        <div className="ml-auto">
                                             <label htmlFor="phoneNo" className='text-sm'>
                                                 Caller Phone Number
                                             </label>
@@ -160,6 +163,7 @@ export default function TicketModal() {
                                                 type="text"
                                                 placeholder="+___-___-___-___"
                                                 className={`form-input `}
+                                                defaultValue={ticket?.caller_phone}
                                                 required
                                                 mask={[
                                                     '+',
@@ -172,10 +176,10 @@ export default function TicketModal() {
                                                     /\d/, /\d/, /\d/  // Third group of three digits
                                                 ]}
                                             />
-
-                                        </fieldset>
+                                        </div>
                                     )
                                 }
+
                             </div>
                             <div className={`mb-5`}>
                                 <label htmlFor="phoneNo">Client Phone Number </label>
@@ -191,7 +195,12 @@ export default function TicketModal() {
                                                 value={phoneOp?.find((option: any) => option.value === initialValues.customer)}
                                                 onChange={option => setInitialValues(prev => ({ ...prev, customer: option?.value ? String(option.value) : '' }))}
                                             />
-                                            {/* <UserModal setUserModal={setUserModal} userModal={userModal} /> */}
+
+                                            <button onClick={() => setUserModal(true)} type="button" className="btn btn-outline-primary btn-sm">
+                                                <PlusIcon />
+                                            </button>
+
+                                            {userModal && <TicketUserModal userModal={userModal} onClose={() => setUserModal(false)} />}
                                         </div>)
                                 }
                                 {state?.errors?.customer && <FormErrMsg error={state.errors.customer} />}
@@ -224,7 +233,12 @@ export default function TicketModal() {
                                                 onChange={option => setInitialValues(prev => ({ ...prev, category: option?.value ? String(option.value) : '' }))}
                                             />
 
-                                            {/* <CategoryModal setCategoryModal={setCategoryModal} categoryModal={categoryModal} /> */}
+                                            <button onClick={() => setCategoryModal(true)} type="button" className="btn btn-outline-secondary btn-sm">
+                                                <PlusIcon />
+                                            </button>
+
+                                            {categoryModal && <TicketCategoryModal categoryModal={categoryModal} onClose={() => setCategoryModal(false)} />}
+
                                         </div>)
                                 }
                                 {state?.errors?.category && <FormErrMsg error={state.errors.category} />}
@@ -284,7 +298,7 @@ export default function TicketModal() {
                                     Cancel
                                 </button>
                                 <button type="submit" className="btn btn-primary ltr:ml-4 rtl:mr-4">
-                                    {ticket ? 'Update Ticket' : 'Create Ticket'}
+                                    {isLoading ? 'Loading...' : ticket ? 'Update Ticket' : 'Create Ticket'}
                                 </button>
                             </div>
                         </form>

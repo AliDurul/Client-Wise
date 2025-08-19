@@ -38,6 +38,7 @@ export function useDataTable<T extends { _id: string }>(config: UseDataTableConf
     });
     const [selectedRecords, setSelectedRecords] = useState<T[]>([]);
     const [expandedRecordIds, setExpandedRecordIds] = useState<unknown[]>([]);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
 
     // URL params
     const page = getParam('p', '1');
@@ -92,6 +93,7 @@ export function useDataTable<T extends { _id: string }>(config: UseDataTableConf
     const handleDelete = async ({ url, id }: { url: string; id: string }, e?: React.MouseEvent) => {
         e?.stopPropagation();
         if (!deleteAction) return;
+        setDeletingId(id);
         startTransition(() => {
             actionSingle({ url, id });
         });
@@ -112,6 +114,7 @@ export function useDataTable<T extends { _id: string }>(config: UseDataTableConf
             toast[stateSingle?.success ? 'success' : 'error'](
                 stateSingle?.message || 'Operation completed'
             );
+            setDeletingId(null);
         }
     }, [stateSingle]);
 
@@ -173,6 +176,7 @@ export function useDataTable<T extends { _id: string }>(config: UseDataTableConf
 
         // Loading states
         isPendingSingle,
+        deletingId,
         isPendingMulti,
 
         // Handlers
