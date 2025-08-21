@@ -13,7 +13,7 @@ export default function TicketLatestActivity({ ticket }: { ticket: Ticket }) {
 
 
   return (
-    <div className="panel col-span-1 md:col-span-1 lg:col-span-1 pb-0 relative " >
+    <div className="panel col-span-1 md:col-span-1 lg:col-span-1 pb-0 relative max-h-[calc(100vh-200px)]" >
       <div className="-mx-5 mb-5 flex items-start justify-between border-b border-white-light p-5 pt-0  dark:border-[#1b2e4b] dark:text-white-light">
         <h5 className="text-lg font-semibold ">Lastest Activity</h5>
       </div>

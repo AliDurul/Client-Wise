@@ -13,6 +13,8 @@ import { useAppDispatch } from '@/lib/hooks';
 import TicketEscModal from './TicketEscModal';
 import { ticketCommentCrUpAction } from '@/lib/features/tickets/ticketActions';
 import InputBox from '@/components/shared/InputBox';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+
 
 export default function TicketReview({ ticket }: { ticket: Ticket }) {
 
@@ -90,7 +92,7 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
 
 
     return (
-        <div className={` panel md:-h-[calc(100vh_-_200px)] col-span-1 md:col-span-2 lg:col-span-3 ${lightBgColor}`}>
+        <div className={` panel col-span-1 md:col-span-2 lg:col-span-3 ${lightBgColor}`}>
             {/* Header */}
             <div className=" mb-1 flex flex-col gap-3 lg:flex-row  items-start justify-between  p-5  ">
                 <div className="sm:text-2xl text-sm font-extrabold ">Ticket / <span className='text-sm'>{ticket?._id ?? ''}</span></div>
@@ -391,7 +393,11 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
                     </div>
                 </div>
 
-                <div>
+                <PerfectScrollbar
+                    // options={{ suppressScrollX: true }}
+                    className="perfect-scrollbar -mr-3  pr-3 max-h-[calc(100vh-500px)]"
+                >
+
                     <div
                         className="mt-4 text-lg font-semibold"
                     // dangerouslySetInnerHTML={{ __html: ticket?.description }}
@@ -400,9 +406,10 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
                         {ticket?.description}
                     </div>
                     <p className="mt-10 text-lg text-white-dark">{ticket?.assigned_agent?.first_name} {ticket?.assigned_agent?.last_name}</p>
-                </div>
+                </PerfectScrollbar>
 
-                <form action={actionComment} className='flex flex-col gap-4 mt-4'>
+
+                <form action={actionComment} className='flex flex-col gap-4 '>
                     <input type="text" name='ticketId' defaultValue={ticket?._id} hidden />
                     <div className="flex">
                         <div className={`${darkBgColor} flex justify-center items-center ltr:rounded-l-md  px-3 font-semibold border ltr:border-r-0  border-white-light dark:border-[#17263c] dark:bg-[#1b2e4b] whitespace-nowrap`}>
@@ -426,6 +433,7 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
                 </form>
 
             </div>
+
             {
                 isEscalation && (
                     <TicketEscModal
