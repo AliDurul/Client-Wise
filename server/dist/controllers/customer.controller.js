@@ -13,7 +13,7 @@ const sharp_1 = __importDefault(require("sharp"));
 const getCustomers = async (req, res) => {
     const result = await res.getModelList(customer_model_1.default);
     if (!result)
-        throw new common_1.CustomError("No Customers found", 404);
+        throw new common_1.CustomError("No Customers found", 404, true);
     for (const customer of result) {
         if (customer.profile_pic) {
             customer.profile_pic = await (0, common_1.getImageUrl)(customer.profile_pic);
@@ -68,6 +68,7 @@ const createCustomer = async (req, res) => {
         await common_1.s3.send(command);
         data.profile_pic = fileName;
     }
+    data.assigned_agent = req.user.id;
     const result = await customer_model_1.default.create(data);
     if (!result)
         throw new common_1.CustomError("Failed to create Customer", 500, true);
@@ -84,7 +85,7 @@ const getCustomerById = async (req, res) => {
         result.profile_pic = await (0, common_1.getImageUrl)(result.profile_pic);
     }
     if (!result)
-        throw new common_1.CustomError("Customer not found", 404);
+        throw new common_1.CustomError("Customer not found", 404, true);
     res.status(200).send({
         success: true,
         result,
@@ -98,7 +99,7 @@ const updateCustomer = async (req, res) => {
         runValidators: true,
     });
     if (!result)
-        throw new common_1.CustomError("Customer not found", 404);
+        throw new common_1.CustomError("Customer not found", 404, true);
     res.status(200).send({
         success: true,
         result
@@ -109,7 +110,7 @@ const deleteCustomer = async (req, res) => {
     const { id } = req.params;
     const customer = await customer_model_1.default.findById(id);
     if (!customer)
-        throw new common_1.CustomError("Customer not found", 404);
+        throw new common_1.CustomError("Customer not found", 404, true);
     const result = await customer_model_1.default.deleteOne({ _id: id });
     if (!result.deletedCount)
         throw new common_1.CustomError("Customer not found or already deleted.", 404, true);
@@ -128,11 +129,11 @@ exports.deleteCustomer = deleteCustomer;
 const multiDeleteCustomers = async (req, res) => {
     const { ids } = req.body;
     if (!Array.isArray(ids) || ids.length === 0) {
-        throw new common_1.CustomError("Invalid or empty 'ids' array", 400);
+        throw new common_1.CustomError("Invalid or empty 'ids' array", 400, true);
     }
     const customers = await customer_model_1.default.find({ _id: { $in: ids } });
     if (customers.length === 0) {
-        throw new common_1.CustomError("No customers found for the provided IDs", 404);
+        throw new common_1.CustomError("No customers found for the provided IDs", 404, true);
     }
     const deletePromises = customers.map(customer => {
         const params = {
@@ -145,7 +146,7 @@ const multiDeleteCustomers = async (req, res) => {
     await Promise.all(deletePromises);
     const result = await customer_model_1.default.deleteMany({ _id: { $in: ids } });
     if (!result)
-        throw new common_1.CustomError("Failed to delete customers", 500);
+        throw new common_1.CustomError("Failed to delete customers", 500, true);
     res.status(result.deletedCount ? 204 : 404).send({
         success: true,
         result,

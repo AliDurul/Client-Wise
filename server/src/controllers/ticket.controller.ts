@@ -244,7 +244,7 @@ export const getTicCats = async (req: Request, res: Response): Promise<void> => 
 export const createTicCat = async (req: Request, res: Response): Promise<void> => {
 
 
-    const userId = req.user?._id;
+    const userId = req.user?.id;
 
     req.body.assigned_agent = userId;
 

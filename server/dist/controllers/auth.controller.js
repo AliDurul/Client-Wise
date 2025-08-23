@@ -33,9 +33,13 @@ const login = async (req, res) => {
     const user = await user_model_1.default.findOne({ email, password });
     if (!user)
         throw new common_1.CustomError('Invalid email or password', 401, true);
-    // if (!user.isVerified) throw new CustomError('Email not verified', 403, true);
+    if (!user.is_verified)
+        throw new common_1.CustomError('Email not verified', 403, true);
     user.last_login = new Date();
     await user.save();
+    if (user.profile_pic) {
+        user.profile_pic = await (0, common_1.getImageUrl)(user.profile_pic);
+    }
     res.status(200).send((0, common_1.setToken)(user));
 };
 exports.login = login;
@@ -50,6 +54,9 @@ const refresh = async (req, res) => {
     const user = await user_model_1.default.findOne({ _id: decoded.id }).lean();
     if (!user)
         throw new common_1.CustomError('User not found.', 404, true);
+    if (user.profile_pic) {
+        user.profile_pic = await (0, common_1.getImageUrl)(user.profile_pic);
+    }
     res.status(200).send((0, common_1.setToken)(user, true));
 };
 exports.refresh = refresh;

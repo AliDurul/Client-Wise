@@ -12,6 +12,7 @@ const customer_route_1 = __importDefault(require("./customer.route"));
 const invoice_route_1 = __importDefault(require("./invoice.route"));
 const product_route_1 = __importDefault(require("./product.route"));
 const ticket_route_1 = __importDefault(require("./ticket.route"));
+const lead_route_1 = __importDefault(require("./lead.route"));
 const router = (0, express_1.Router)();
 // authRoutes
 router.use('/auth', auth_route_1.default);
@@ -29,5 +30,7 @@ router.use("/invoices", invoice_route_1.default);
 router.use("/products", product_route_1.default);
 // ticketRoutes
 router.use("/tickets", ticket_route_1.default);
+// leadRoutes
+router.use("/leads", lead_route_1.default);
 exports.default = router;
 //# sourceMappingURL=index.route.js.map

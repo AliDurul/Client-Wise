@@ -17,10 +17,12 @@ export default async function page({ searchParams }: PageSearchParams) {
     const limit = params.pl || '20';
     const sortBy = params.sb || 'first_name';
     const sort = params.s || 'asc';
+    const customer_type = params.ct || 'individual';
 
     const customerPromise = getAllData({
         url: 'customers/',
         searchQueries: { 'first_name': query },
+        filterQueries: { customer_type },
         customQuery: { page, limit },
         sortQueries: { [sortBy]: sort }
     });
@@ -36,14 +38,12 @@ export default async function page({ searchParams }: PageSearchParams) {
                     <CustomerHeaderBtns />
                 </div>
             </div>
-            
+
             <div className="panel mt-5 border-white-light px-0 dark:border-[#1b2e4b]">
 
-                {/* <ClientErrorBoundary> */}
-                    <Suspense fallback={<div className="flex h-full items-center justify-center">Loading...</div>}>
-                        <CustomerTable customerPromise={customerPromise} />
-                    </Suspense>
-                {/* </ClientErrorBoundary> */}
+                <Suspense fallback={<div className="flex h-full items-center justify-center">Loading...</div>}>
+                    <CustomerTable customerPromise={customerPromise} />
+                </Suspense>
             </div>
 
         </>

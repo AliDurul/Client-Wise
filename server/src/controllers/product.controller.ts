@@ -20,7 +20,7 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
 
     const result = await Product.create(req.body);
 
-    if (!result) throw new CustomError("Failed to create FAQ", 500);
+    if (!result) throw new CustomError("Failed to create Product", 500);
 
     res.send({
         success: true,
@@ -44,7 +44,7 @@ export const getProductById = async (req: Request, res: Response): Promise<void>
 export const updateProduct = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
 
-    const result = await Product.findByIdAndUpdate<IProduct>(id, req.body, { new: true });
+    const result = await Product.findByIdAndUpdate(id, req.body, { new: true });
 
     if (!result) throw new CustomError("Product not found", 404);
 

@@ -47,6 +47,21 @@ const escalationSchema = new mongoose_1.Schema({
         trim: true
     },
 }, { _id: false, timestamps: true });
+const commentSchema = new mongoose_1.Schema({
+    author: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
+    comment: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+}, {
+    timestamps: true,
+    _id: true,
+});
 const ticketSchema = new mongoose_1.Schema({
     assigned_agent: {
         type: mongoose_1.Schema.Types.ObjectId,
@@ -63,25 +78,7 @@ const ticketSchema = new mongoose_1.Schema({
         ref: 'TicCat',
         required: true,
     },
-    caller_details: {
-        first_name: {
-            type: String,
-            trim: true,
-        },
-        last_name: {
-            type: String,
-            trim: true,
-        },
-        email: {
-            type: String,
-            // required: true,
-            trim: true,
-        },
-        phone_number: {
-            type: String,
-            trim: true,
-        },
-    },
+    caller_phone: String,
     title: {
         type: String,
         required: true,
@@ -115,7 +112,11 @@ const ticketSchema = new mongoose_1.Schema({
     },
     escalation: {
         type: escalationSchema,
-        default: null, // Added default null
+        default: null,
+    },
+    comments: {
+        type: [commentSchema],
+        default: [],
     },
 }, {
     timestamps: true,
@@ -124,6 +125,7 @@ const ticketSchema = new mongoose_1.Schema({
 const Ticket = mongoose_1.default.model('Ticket', ticketSchema);
 exports.default = Ticket;
 // --------------------------------------------------------------
+// Ticket Category
 const categorySchema = new mongoose_1.Schema({
     name: {
         type: String,

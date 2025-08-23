@@ -7,6 +7,8 @@ import customerRoutes from "./customer.route";
 import invoiceRoutes from "./invoice.route";
 import productRoutes from "./product.route";
 import ticketRoutes from "./ticket.route";
+import leadRoutes from "./lead.route";
+import chatRoutes from './chat&message.route';
 
 const router = Router();
 
@@ -33,5 +35,11 @@ router.use("/products", productRoutes);
 
 // ticketRoutes
 router.use("/tickets", ticketRoutes);
+
+// leadRoutes
+router.use("/leads", leadRoutes);
+
+// Chats&Messages
+router.use("/chats", chatRoutes);
 
 export default router;

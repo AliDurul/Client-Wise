@@ -84,7 +84,6 @@ const Sidebar = () => {
                         className="relative h-[calc(100vh-80px)]">
                         <ul className="relative space-y-0.5 p-4 py-0 ">
 
-                            {/* Dashboard */}
                             <li className="menu nav-item">
                                 <button type="button" className={`${currentMenu === 'dashboard' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('dashboard')}>
                                     <div className="flex items-center">
@@ -131,151 +130,120 @@ const Sidebar = () => {
                                 <span>Modules</span>
                             </h2>
 
-                            {/* Modules */}
-                            <li className="nav-item  ">
-                                <ul>
-                                    <li className="menu nav-item">
-                                        <button type="button" className={`${currentMenu === 'leads' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('leads')}>
-                                            <div className="flex items-center">
-                                                <LeadsIcon />
-                                                <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light ">Lead Management</span>
-                                            </div>
-
-                                            <div className={currentMenu === 'leads' ? 'rotate-90' : 'rtl:rotate-180'}>
-                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M9 5L15 12L9 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                                </svg>
-                                            </div>
-                                        </button>
-
-                                        <AnimateHeight duration={300} height={currentMenu === 'leads' ? 'auto' : 0}>
-                                            <ul className="sub-menu text-gray-500">
-                                                <li>
-                                                    <Link href="/leads">Leads</Link>
-                                                </li>
-                                                <li>
-                                                    <Link href="/leads/dashboard">Leads Dashboard</Link>
-                                                </li>
-                                                <li>
-                                                    <Link href="#">Create Lead</Link>
-                                                </li>
-                                            </ul>
-                                        </AnimateHeight>
-                                    </li>
-
-                                    <li className="nav-item">
-                                        <Link href="/invoices" className="group">
-                                            <div className="flex items-center">
-                                                <InvoiceIcon />
-                                                <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light">Invoices</span>
-                                            </div>
-                                        </Link>
-                                    </li>
-
-                                    {/* Inbox */}
-                                    <li className="menu nav-item" >
-                                        <button type="button" className={`${currentMenu === 'social-media' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('social-media')}>
-                                            <div className="flex items-center">
-                                                <MailBox />
-                                                <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light ">Inbox</span>
-                                            </div>
-
-                                            <div className={currentMenu === 'social-media' ? 'rotate-90' : 'rtl:rotate-180'}>
-                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M9 5L15 12L9 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                                </svg>
-                                            </div>
-                                        </button>
-
-                                        <AnimateHeight duration={300} height={currentMenu === 'social-media' ? 'auto' : 0}>
-                                            <ul className="sub-menu text-gray-500">
-                                                <li>
-                                                    <Link href="/mailbox">Emails</Link>
-                                                </li>
-                                                <li>
-                                                    <Link href="/chats">Chats</Link>
-                                                </li>
-                                                <li>
-                                                    <Link href="/facebook">Facebook</Link>
-                                                </li>
-                                                <li>
-                                                    <Link href="/instagram">Instagram</Link>
-                                                </li>
-
-                                            </ul>
-                                        </AnimateHeight>
-                                    </li>
-
-                                    <li className="nav-item">
-                                        <Link href="/tickets" className="group">
-                                            <div className="flex items-center">
-                                                <TicketIcon />
-                                                <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light">Tickets</span>
-                                            </div>
-                                        </Link>
-                                    </li>
-
-
-                                    <li className="nav-item">
-                                        <Link href="/customers" className="group">
-                                            <div className="flex items-center">
-                                                <ContactIcon />
-                                                <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light">Customers</span>
-                                            </div>
-                                        </Link>
-                                    </li>
-
-                                    {/* <li className="menu nav-item">
-                                        <button type="button" className={`${currentMenu === 'customer' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('customer')}>
-                                            <div className="flex items-center">
-                                                <ContactIcon />
-                                                <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light ">KYC</span>
-                                            </div>
-
-                                            <div className={currentMenu === 'customer' ? 'rotate-90' : 'rtl:rotate-180'}>
-                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M9 5L15 12L9 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                                </svg>
-                                            </div>
-                                        </button>
-
-                                        <AnimateHeight duration={300} height={currentMenu === 'customer' ? 'auto' : 0}>
-                                            <ul className="sub-menu text-gray-500">
-                                                <li>
-                                                    <Link href="/customers">Individuals</Link>
-                                                </li>
-                                                <li>
-                                                    <Link href="/coparate">Coparates</Link>
-                                                </li>
-                                            </ul>
-                                        </AnimateHeight>
-                                    </li> */}
-
-                                    <li className="nav-item">
-                                        <Link href="/products" className="group">
-                                            <div className="flex items-center">
-                                                <ProductIcon />
-                                                <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light">Products</span>
-                                            </div>
-                                        </Link>
-                                    </li>
-
-                                    <li className="nav-item">
-                                        <Link href="/voice-records" className="group">
-                                            <div className="flex items-center">
-                                                <ProductIcon />
-                                                <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light">Voice Records</span>
-                                            </div>
-                                        </Link>
-                                    </li>
-                                </ul>
+                            <li className="nav-item">
+                                <Link href="/customers" className="group">
+                                    <div className="flex items-center">
+                                        <ContactIcon />
+                                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light">Customers</span>
+                                    </div>
+                                </Link>
                             </li>
+
+                            <li className="nav-item">
+                                <Link href="/invoices" className="group">
+                                    <div className="flex items-center">
+                                        <InvoiceIcon />
+                                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light">Invoices</span>
+                                    </div>
+                                </Link>
+                            </li>
+
+                            <li className="menu nav-item">
+                                <button type="button" className={`${currentMenu === 'leads' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('leads')}>
+                                    <div className="flex items-center">
+                                        <LeadsIcon />
+                                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light ">Lead Management</span>
+                                    </div>
+
+                                    <div className={currentMenu === 'leads' ? 'rotate-90' : 'rtl:rotate-180'}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 5L15 12L9 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    </div>
+                                </button>
+
+                                <AnimateHeight duration={300} height={currentMenu === 'leads' ? 'auto' : 0}>
+                                    <ul className="sub-menu text-gray-500">
+                                        <li>
+                                            <Link href="/leads">Leads</Link>
+                                        </li>
+                                        <li>
+                                            <Link href="/leads/dashboard">Leads Dashboard</Link>
+                                        </li>
+                                        <li>
+                                            <Link href="#">Create Lead</Link>
+                                        </li>
+                                    </ul>
+                                </AnimateHeight>
+                            </li>
+
+                            <li className="nav-item">
+                                <Link href="/tickets" className="group">
+                                    <div className="flex items-center">
+                                        <TicketIcon />
+                                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light">Tickets</span>
+                                    </div>
+                                </Link>
+                            </li>
+
+                            <li className="nav-item">
+                                <Link href="/products" className="group">
+                                    <div className="flex items-center">
+                                        <ProductIcon />
+                                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light">Products</span>
+                                    </div>
+                                </Link>
+                            </li>
+
+                            <li className="menu nav-item" >
+                                <button type="button" className={`${currentMenu === 'social-media' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('social-media')}>
+                                    <div className="flex items-center">
+                                        <MailBox />
+                                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light ">Inbox</span>
+                                    </div>
+
+                                    <div className={currentMenu === 'social-media' ? 'rotate-90' : 'rtl:rotate-180'}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 5L15 12L9 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    </div>
+                                </button>
+
+                                <AnimateHeight duration={300} height={currentMenu === 'social-media' ? 'auto' : 0}>
+                                    <ul className="sub-menu text-gray-500">
+                                        <li>
+                                            <Link href="/mailbox">Emails</Link>
+                                        </li>
+                                        <li>
+                                            <Link href="/chats">Chats</Link>
+                                        </li>
+                                        <li>
+                                            <Link href="/facebook">Facebook</Link>
+                                        </li>
+                                        <li>
+                                            <Link href="/instagram">Instagram</Link>
+                                        </li>
+
+                                    </ul>
+                                </AnimateHeight>
+                            </li>
+
+                            {/* <li className="nav-item">
+                                <Link href="/voice-records" className="group">
+                                    <div className="flex items-center">
+                                        <ProductIcon />
+                                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light">Voice Records</span>
+                                    </div>
+                                </Link>
+                            </li> */}
+
                             <h2 className="-mx-4 mb-1 flex items-center bg-white-light/30 py-3 px-7 font-extrabold uppercase dark:bg-dark dark:bg-opacity-[0.08]">
                                 <svg className="hidden h-5 w-4 flex-none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
                                     <line x1="5" y1="12" x2="19" y2="12"></line>
                                 </svg>
                                 <span>Apps</span>
                             </h2>
+
                             <li className="nav-item">
                                 <Link href="/tasks" className="group">
                                     <div className="flex items-center">
@@ -284,6 +252,7 @@ const Sidebar = () => {
                                     </div>
                                 </Link>
                             </li>
+
                             <li className="nav-item">
                                 <Link href="/notes" className="group">
                                     <div className="flex items-center">
@@ -292,6 +261,7 @@ const Sidebar = () => {
                                     </div>
                                 </Link>
                             </li>
+
                             <li className="nav-item">
                                 <Link href="/faqs" className="group">
                                     <div className="flex items-center">

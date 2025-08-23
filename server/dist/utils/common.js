@@ -63,12 +63,11 @@ const getImageUrl = async (key) => {
         Key: key,
     };
     const command = new client_s3_2.GetObjectCommand(getObjectParams);
-    const url = await (0, s3_request_presigner_1.getSignedUrl)(exports.s3, command, { expiresIn: 3600 });
+    const url = await (0, s3_request_presigner_1.getSignedUrl)(exports.s3, command, { expiresIn: 86400 });
     return url;
 };
 exports.getImageUrl = getImageUrl;
 function setToken(user, isRefresh = false) {
-    // const { password, verificationToken, resetPassToken, ...accessData } = user
     const accessData = {
         id: user._id,
         email: user.email,

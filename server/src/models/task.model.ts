@@ -7,7 +7,7 @@ export interface AsignAgent {
     profile_pic?: string;
 }
 
-const taskSchema: Schema<ITask> = new Schema({
+const taskSchema = new Schema<ITask>({
     title: {
         type: String,
         required: true,
@@ -36,7 +36,7 @@ const taskSchema: Schema<ITask> = new Schema({
     timestamps: true
 });
 
-const Task: Model<ITask> = mongoose.model<ITask>('Task', taskSchema);
+const Task = mongoose.model<ITask>('Task', taskSchema);
 export default Task;
 
 export interface ITask extends Document {

@@ -8,7 +8,7 @@ import helmet from "helmet";
 import cors from "cors";
 import compression from "compression";
 import { shouldCompress } from "./utils/common";
-import { initializeData } from "./seeders/user-seed";
+import { initializeData } from "./seeds";
 
 /* ------------------------------------- */
 //* Required packages  & configs & middewares

@@ -69,7 +69,7 @@ export const getImageUrl = async (key: string): Promise<string> => {
         Key: key,
     };
     const command = new GetObjectCommand(getObjectParams);
-    const url = await getSignedUrl(s3, command, { expiresIn: 86400 }); 
+    const url = await getSignedUrl(s3, command, { expiresIn: 86400 });
     return url;
 };
 
@@ -81,6 +81,17 @@ interface TokenResult {
     access: string;
     refresh: string | null;
 }
+
+export interface AuthUser {
+    id: string;
+    email: string;
+    phone: string | null;
+    first_name: string;
+    last_name: string;
+    profile_pic: string | null;
+    user_type: string;
+    isVerified: boolean;
+};
 export function setToken(user: IUser, isRefresh: boolean = false): TokenResult {
 
     const accessData = {

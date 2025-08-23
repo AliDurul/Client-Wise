@@ -161,7 +161,10 @@ export interface InvoicePerson {
 /* KYC */
 export interface Customer {
   _id: string;
-  customer_id: string;
+  customer_type: 'individual' | 'corporate';
+  company_name: string;
+  contact_person: string;
+  registration_number: string;
   first_name: string;
   last_name: string;
   full_name: string;
@@ -202,6 +205,42 @@ export interface Customer {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+
+
+export interface Lead {
+  _id: string;
+  assigned_agent?: PersonInfo | null;
+  company_name?: string;
+  person_name?: string;
+  email?: string;
+  mobile_number?: string;
+  lead_source?: string;
+  product?: string | null;
+  pipeline_stage?:
+  | "Qualification"
+  | "Proposal|Quotation"
+  | "Negotiation"
+  | "Pending Approval"
+  | "Closed-Won"
+  | "Closed-Lost";
+  deal_value?: number;
+  expected_revenue?: number;
+  follow_up_date?: Date | null;
+  close_date?: Date | null;
+  location?: {
+    province?: string;
+    town?: string;
+    address?: string;
+  };
+  converted_to_invoice?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+  status?: string;
+  probability?: number;
+}
+
+
 
 /* COPARATE */
 export interface Coparate {
@@ -447,27 +486,29 @@ export interface MsgSender {
 }
 
 /* Leads */
-export interface ILead {
-  _id?: number;
-  source: null | string;
-  owner: null | string;
-  name: null | string;
-  source_link: null | string;
-  courier: 'Yes' | 'No';
-  mobile_number: null | string;
-  email: null | string;
-  province: null | string;
-  town: null | string;
-  exact_location: null | string;
-  pipeline_stage: EPipelineStage;
-  deal_value: string;
-  probability: string;
-  expected_revenue: string;
-  follow_up_date: Date;
-  close_date: null | Date;
-  status: ELeadStatus;
-  comments: null | string;
-}
+// export interface ILead {
+//   _id?: number;
+//   source: null | string;
+//   owner: null | string;
+//   name: null | string;
+//   source_link: null | string;
+//   courier: 'Yes' | 'No';
+//   mobile_number: null | string;
+//   email: null | string;
+//   province: null | string;
+//   town: null | string;
+//   exact_location: null | string;
+//   pipeline_stage: EPipelineStage;
+//   deal_value: string;
+//   probability: string;
+//   expected_revenue: string;
+//   follow_up_date: Date;
+//   close_date: null | Date;
+//   status: ELeadStatus;
+//   comments: null | string;
+// }
+
+
 
 export enum EPipelineStage {
   Qualification = 'Qualification',

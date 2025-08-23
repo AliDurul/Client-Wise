@@ -18,7 +18,7 @@ exports.getProducts = getProducts;
 const createProduct = async (req, res) => {
     const result = await product_model_1.default.create(req.body);
     if (!result)
-        throw new common_1.CustomError("Failed to create FAQ", 500);
+        throw new common_1.CustomError("Failed to create Product", 500);
     res.send({
         success: true,
         result,

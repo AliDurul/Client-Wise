@@ -1,16 +1,18 @@
 'use client';
-import { formatDate } from '@/lib/utility/functions';
+import { capitalize, formatDate } from '@/lib/utility/functions';
 import { Customer, Pagination } from '@/types';
 import { LuMousePointerClick } from "react-icons/lu";
 import Image from 'next/image';
 import { DeleteIcon, EditIcon, PreviewIcon } from '@/icons';
-import { use } from 'react';
+import { use, useState } from 'react';
 import type { DataTableColumn, DataTableProps } from 'mantine-datatable';
 import { DataTable } from 'mantine-datatable';
 import SearchInput from '@/components/shared/SearchInput';
 import { delMultiCustomer } from '@/lib/features/customer/customerActions';
 import { useDataTable } from '@/hooks/useDataTable';
 import { delData, delMultiData } from '@/lib/features/shared/actionUtils';
+import Dropdown from '@/components/layout/Dropdown';
+import { useUrlParams } from '@/hooks/useUrlParams';
 
 interface CustomerMainProps {
   customerPromise: Promise<Pagination<Customer>>;
@@ -18,6 +20,7 @@ interface CustomerMainProps {
 
 export default function CustomerTable({ customerPromise }: CustomerMainProps) {
   const customers = use(customerPromise);
+  const { getParam, updateUrlParams } = useUrlParams()
 
   const {
     selectedRecords,
@@ -93,11 +96,35 @@ export default function CustomerTable({ customerPromise }: CustomerMainProps) {
 
   const columns: DataTableProps<Customer>['columns'] = [
     {
-      accessor: 'first_name',
-      title: 'Full Name',
+      accessor: 'name',
+      title: 'Name',
       sortable: true,
-      render: ({ full_name }) => `${full_name}`,
+      render: (record) =>
+        record.customer_type === 'corporate'
+          ? record.company_name
+          : `${record.first_name} ${record.last_name}`,
     },
+    ...(getParam('ct', 'individual') === 'corporate'
+      ? [
+        {
+          accessor: 'contact_person',
+          title: 'Contact Person',
+          sortable: true,
+        },
+        {
+          accessor: 'registration_number',
+          title: 'Registration No.',
+          sortable: true,
+        },
+      ]
+      : [
+        {
+          accessor: 'dob',
+          title: 'Date of Birth',
+          render: (record: Customer) => <span>{formatDate(record.dob ?? null)}</span>,
+          sortable: true,
+        },
+      ]),
     {
       accessor: 'email',
       sortable: true,
@@ -108,14 +135,7 @@ export default function CustomerTable({ customerPromise }: CustomerMainProps) {
       sortable: true,
     },
     {
-      accessor: 'dob',
-      title: 'Date of Birth',
-      render: ({ dob }) => <span >{formatDate(dob ?? null)}</span>,
-      sortable: true,
-    },
-    {
       accessor: 'actions',
-
       title: (
         <div className="flex items-center justify-center">
           <LuMousePointerClick />
@@ -125,7 +145,6 @@ export default function CustomerTable({ customerPromise }: CustomerMainProps) {
       render: renderActions,
     },
   ];
-
 
 
   return (
@@ -155,22 +174,30 @@ export default function CustomerTable({ customerPromise }: CustomerMainProps) {
           }
           {/* <TicketModal ticketModal={ticketModal} setTicketModal={setTicketModal} /> */}
         </div>
-        {/* <Flatpickr
-          options={{
-            mode: 'range',
-            dateFormat: 'd-m-Y',
-            position: 'auto right',
-            onClose: (selectedDates, dateStr, instance) => {
-              setDate3(selectedDates); // Assuming setDate3 is your state updater function
-              setActiveFilter(!activeFilter)
-            },
 
-          }}
-          // defaultValue={''}
-          placeholder="Please select a date range..."
-          className="form-input w-60"
-          onChange={(date3: any) => setDate3(date3)}
-        /> */}
+        <div className="inline-flex">
+          <button className="btn btn-outline-primary ltr:rounded-r-none rtl:rounded-l-none">{capitalize(getParam('ct', 'Individual'))}</button>
+          <div className="dropdown">
+            <Dropdown
+              placement='bottom-end'
+              btnClassName="btn btn-outline-primary ltr:rounded-l-none rtl:rounded-r-none dropdown-toggle before:border-[5px] before:border-l-transparent before:border-r-transparent before:border-t-inherit before:border-b-0 before:inline-block hover:before:border-t-white-light h-full"
+              button={<span className="sr-only">Toggle dropdown</span>}
+            >
+              <ul className="!min-w-[170px]">
+                <li>
+                  <button type="button" onClick={() => updateUrlParams({ ct: 'individual' })}>
+                    Individual
+                  </button>
+                </li>
+                <li>
+                  <button type="button" onClick={() => updateUrlParams({ ct: 'corporate' })}>
+                    Corporate
+                  </button>
+                </li>
+              </ul>
+            </Dropdown>
+          </div>
+        </div>
 
         <SearchInput />
 

@@ -3,22 +3,35 @@ import mongoose, { Document, Schema, Model } from "mongoose";
 
 
 const customerSchema: Schema<ICustomer> = new Schema({
-    customer_id: {
+    customer_type: {
         type: String,
-        default: () => `CUST-${Date.now()}`,
-        trim: true,
+        enum: ['individual', 'corporate'],
+        required: true
     },
     first_name: {
         type: String,
-        required: true,
         trim: true,
         maxlength: [50, 'First name cannot exceed 50 characters'],
     },
     last_name: {
         type: String,
-        required: true,
         trim: true,
         maxlength: [50, 'Last name cannot exceed 50 characters'],
+    },
+    company_name: {
+        type: String,
+        trim: true,
+        maxlength: [100, 'Company name cannot exceed 100 characters'],
+    },
+    contact_person: {
+        type: String,
+        trim: true,
+        maxlength: [100, 'Contact person cannot exceed 100 characters'],
+    },
+    registration_number: {
+        type: String,
+        trim: true,
+        maxlength: [20, 'Registration number cannot exceed 20 characters'],
     },
     email: {
         type: String,
@@ -174,7 +187,10 @@ export default Customer;
 
 
 export interface ICustomer extends Document {
-    customer_id: string;
+    customer_type: 'individual' | 'corporate';
+    company_name: string;
+    contact_person: string;
+    registration_number: string;
     first_name: string;
     last_name: string;
     full_name?: string;

@@ -35,22 +35,35 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const customerSchema = new mongoose_1.Schema({
-    customer_id: {
+    customer_type: {
         type: String,
-        default: () => `CUST-${Date.now()}`,
-        trim: true,
+        enum: ['individual', 'corporate'],
+        required: true
     },
     first_name: {
         type: String,
-        required: true,
         trim: true,
         maxlength: [50, 'First name cannot exceed 50 characters'],
     },
     last_name: {
         type: String,
-        required: true,
         trim: true,
         maxlength: [50, 'Last name cannot exceed 50 characters'],
+    },
+    company_name: {
+        type: String,
+        trim: true,
+        maxlength: [100, 'Company name cannot exceed 100 characters'],
+    },
+    contact_person: {
+        type: String,
+        trim: true,
+        maxlength: [100, 'Contact person cannot exceed 100 characters'],
+    },
+    registration_number: {
+        type: String,
+        trim: true,
+        maxlength: [20, 'Registration number cannot exceed 20 characters'],
     },
     email: {
         type: String,
@@ -176,6 +189,7 @@ const customerSchema = new mongoose_1.Schema({
     assigned_agent: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: 'User',
+        required: true,
     },
     full_name: {
         type: String,

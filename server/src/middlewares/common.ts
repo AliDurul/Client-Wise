@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import { Model, Document, RootFilterQuery, SortOrder } from "mongoose";
 import { ZodSchema } from "zod";
-import { CustomError, sendMail } from "../utils/common";
+import { AuthUser, CustomError, sendMail } from "../utils/common";
 import { errorEmailTemp } from "../utils/emailTemplates";
 import morgan from "morgan";
 import fs from "node:fs";
@@ -121,10 +121,11 @@ export function logger(): RequestHandler {
 declare global {
     namespace Express {
         interface Request {
-            user?: string | jwt.JwtPayload;
+            user: null | AuthUser;
         }
     }
 }
+
 
 export const authenticate: RequestHandler = async (req, res, next) => {
     const auth = req.headers?.authorization;
@@ -134,7 +135,7 @@ export const authenticate: RequestHandler = async (req, res, next) => {
 
     if (tokenParts[0] === "Bearer" && tokenParts[1]) {
 
-        jwt.verify(tokenParts[1], env.JWT_SECRET, (err: jwt.VerifyErrors | null, userData: jwt.JwtPayload | undefined) => {
+        jwt.verify(tokenParts[1], env.JWT_SECRET, (err: jwt.VerifyErrors | null, userData: AuthUser | undefined) => {
             if (err) {
                 return next(new CustomError("Invalid or expired token", 401, true));
             }

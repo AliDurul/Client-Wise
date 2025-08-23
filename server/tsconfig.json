@@ -21,11 +21,11 @@
     "outDir": "./dist",                   // Specifies the output directory for compiled files.
     "sourceMap": true,                    // Generates source map files for debugging.
     /* Base Url & Paths */
-    "baseUrl": ".",                       // Sets the base directory for module resolution.
+    "baseUrl": "src",                       // Sets the base directory for module resolution.
     "paths": {
       "*": [
-        "node_modules/*", 
-        "src/types/*" 
+        "*", 
+        "/types/*" 
       ]
     },
     // "typeRoots": ["./src/types", "./node_modules/@types"] // Specifies folders for global type declarations.

@@ -128,7 +128,8 @@ const queryHandler = (req, res, next) => {
     }
     ;
     // URL?sort[key1]=asc&sort[key2]=desc
-    const rawSort = req.query?.sort || {};
+    // const rawSort = req.query?.sort || {};
+    const rawSort = req.query?.sort || { createdAt: 'desc' };
     const sort = {};
     if (typeof rawSort === "object" && !Array.isArray(rawSort)) {
         for (const key in rawSort) {
@@ -146,13 +147,13 @@ const queryHandler = (req, res, next) => {
     let skip = parseInt(req.query?.skip);
     skip = skip > 0 ? skip : (page * limit);
     // List
-    res.getModelList = async (Model, customFilter = {}, populate = null) => {
+    res.getModelList = async (Model, customFilter = {}, populate = null, select = '') => {
         const query = {
             ...(typeof filter === "object" && filter),
             ...(typeof search === "object" && search),
             ...(typeof customFilter === "object" && customFilter),
         };
-        return await Model.find(query).sort(sort).skip(skip).limit(limit).populate(populate).exec();
+        return await Model.find(query).sort(sort).skip(skip).limit(limit).select(select).populate(populate).lean();
     };
     // Details:
     res.getModelListDetails = async (Model, customFilter = {}) => {

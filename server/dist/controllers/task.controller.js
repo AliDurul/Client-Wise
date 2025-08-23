@@ -91,11 +91,11 @@ const getTasks = async (req, res) => {
             path: 'assigned_agent',
             select: 'name email profile_pic first_name last_name phone_number'
         }]);
-    for (const task of result) {
+    await Promise.all(result.map(async (task) => {
         if (task.assigned_agent?.profile_pic) {
             task.assigned_agent.profile_pic = await (0, common_1.getImageUrl)(task.assigned_agent.profile_pic);
         }
-    }
+    }));
     res.send({
         success: true,
         details: await res.getModelListDetails(task_model_1.default),
