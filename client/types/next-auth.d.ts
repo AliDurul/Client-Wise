@@ -32,7 +32,7 @@ declare module "next-auth/jwt" {
 
 export interface userInfo {
 
-    id: number;
+    id: string;
     email: string;
     phone: string | null;
     first_name: string;

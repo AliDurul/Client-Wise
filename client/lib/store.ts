@@ -8,7 +8,7 @@ import { customerSlice } from "./features/customer/customerSlice";
 import { productSlice } from "./features/products/productSlice";
 import { faqSlice } from "./features/faq/faqSlice";
 import { taskSlice } from "./features/task/taskSlice";
-// import { chatSlice } from "./features/chat/chatSlice";
+import { chatSlice } from "./features/chat/chatSlice";
 // import { leadSlice } from "./features/leads/leadSlice";
 // import { coparateSlice } from "./features/coparate/coparateSlice";
 
@@ -21,7 +21,7 @@ const rootReducer = combineSlices(
     productSlice,
     faqSlice,
     taskSlice,
-    // chatSlice,
+    chatSlice,
     // leadSlice,
     // coparateSlice
 );

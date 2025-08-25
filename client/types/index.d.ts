@@ -32,9 +32,19 @@ export type PageSearchParams = { searchParams: Promise<{ [key: string]: string |
 
 export type PageParams = { params: Promise<{ [key: string]: string }> }
 
+export interface PersonInfo {
+  _id: string;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  email: string;
+  phone_number: string;
+  profile_pic: string | null;
+};
+
 /* -------------------------- Pages -------------------------- */
 
-/* Authorization */
+/* ---------------------------- Authorization ----------------------------*/
 export interface Login {
   email: string;
   password: string;
@@ -47,7 +57,7 @@ export interface Register {
 }
 
 
-/* TIKCET */
+/* ---------------------------- TIKCET ---------------------------- */
 export interface Ticket {
   _id: string;
   caller_phone: string;
@@ -81,16 +91,6 @@ export interface Escalation {
   createdAt: Date;
 }
 
-export interface PersonInfo {
-  _id: string;
-  first_name: string;
-  last_name: string;
-  full_name: string;
-  email: string;
-  phone_number: string;
-  profile_pic: string | null;
-};
-
 export interface TicketCategory {
   _id: string;
   name: string;
@@ -113,12 +113,12 @@ export interface TicketStats {
 
 
 
-/* INVOICE */
+/*---------------------------- INVOICE ----------------------------*/
 
 export interface Invoice {
   _id: string;
-  creator: InvoicePerson;
-  customer: InvoicePerson;
+  creator: PersonInfo;
+  customer: PersonInfo;
   invoice_items: InvoiceItem[];
   status: 'draft' | 'sent' | 'paid' | 'overdue' | 'closed' | 'refunded';
   shipping_cost: number;
@@ -145,20 +145,9 @@ export interface InvoiceItem {
   total_price: number;
 }
 
-export interface InvoicePerson {
-  _id: string;
-  first_name: string;
-  last_name: string;
-  full_name: string;
-  email: string;
-  phone_number: string | null;
-  profile_pic: string | null;
-}
 
 
-
-
-/* KYC */
+/*---------------------------- KYC ----------------------------*/
 export interface Customer {
   _id: string;
   customer_type: 'individual' | 'corporate';
@@ -206,7 +195,7 @@ export interface Customer {
   updatedAt?: Date;
 }
 
-
+/*---------------------------- LEADS ----------------------------*/
 
 export interface Lead {
   _id: string;
@@ -242,7 +231,7 @@ export interface Lead {
 
 
 
-/* COPARATE */
+/* ---------------------------- COPARATE ?---------------------------- */
 export interface Coparate {
   _id: number;
   name: string;
@@ -256,7 +245,7 @@ export interface Coparate {
 }
 
 
-/* PRODUCT */
+/*---------------------------- PRODUCT ----------------------------*/
 export interface Product {
   _id: string;
   name: string;
@@ -284,29 +273,29 @@ export interface ProductDefaultParams {
   price: number | string;
 }
 
-export interface Author {
-  _id: number;
-  first_name: string;
-  last_name: string;
-  phone_number: null;
-  email: string;
-  location: string;
-}
+// export interface Author {
+//   _id: number;
+//   first_name: string;
+//   last_name: string;
+//   phone_number: null;
+//   email: string;
+//   location: string;
+// }
 
-export type ProductTableProp = {
-  filteredItems: Product[],
-  deleteProduct: (ProductId: number) => void,
-  editProduct: (product: Product) => void
-}
+// export type ProductTableProp = {
+//   filteredItems: Product[],
+//   deleteProduct: (ProductId: number) => void,
+//   editProduct: (product: Product) => void
+// }
 
-/* FAQ */
+/*---------------------------- FAQ ----------------------------*/
 export interface Faq {
   _id?: number;
   question: string;
   answer: string;
 }
 
-/* EMAIL */
+/*---------------------------- EMAIL? ----------------------------*/
 export interface Email {
   "@odata.etag": string;
   _id: string;
@@ -386,142 +375,76 @@ export interface Folder {
 }
 
 
-/* TASK */
+/*---------------------------- TASK ----------------------------*/
 export interface Task {
   _id: number;
   title: string;
-  assigned_agent: AsignAgent;
+  assigned_agent: PersonInfo;
   description: string;
   priority: string;
   status: string;
   created_at: Date;
 }
 
-export interface AsignAgent {
-  _id: number;
-  first_name: string;
-  last_name: string;
-  phone_number: string;
-  email: string;
-  profile_pic: string;
-}
 
-/* CHAT START */
+/*---------------------------- CHAT ----------------------------*/
 export interface Chat {
   _id: number;
-  chat_name: string;
-  chat_picture: null | string
-  is_group_chat: boolean;
-  created_at: Date;
-  updated_at: Date;
-  deleted_at: Date;
-  group_admin: null | number
-  chat_users: ChatUser[];
-  letestMessage: LetestMessage;
-  groupAdmin: null | GroupAdmin;
-}
-
-export interface ChatDetail {
-  isError: boolean;
-  selectedChat: Chat;
-  messages: Message[];
-}
-
-export interface ChatUser {
-  _id: number;
-  first_name: string;
-  last_name: string;
-  phone_number: null;
-  email: string;
-  profile_pic: null;
+  is_group: boolean;
+  group_admin: null | string
+  chat_name: null | string;
+  chat_pic: null | string;
+  users: PersonInfo[];
+  latest_message: LetestMessage;
+  groupAdmin: null | string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface LetestMessage {
   _id: number;
   content: string;
-  created_at: Date;
-}
-
-export interface GroupAdmin {
-  _id: number;
-  first_name: string;
-  last_name: string;
-  phone_number: null | string;
-  email: string;
-  profile_pic: null | string;
-}
-
-export interface Message {
-  _id: number;
-  content: string;
-  chat: number;
-  sender: number,
-  image: null | string;
-  video: null | string;
-  created_at: Date;
-}
-
-export interface MessageNotification {
-  _id: number;
-  content: string;
-  senderId: number;
-  chatId: number;
-  updatedAt: Date;
   createdAt: Date;
-  deletedAt: null;
-  isGroupChat: boolean;
-  chatPicture: null | string;
-  chatName: null | string;
-  sender: MsgSender;
+  updatedAt: Date;
 }
 
-export interface MsgSender {
-  _id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  profilePic: string;
-  phoneNo: string;
-  role: number;
-}
-
-/* Leads */
-// export interface ILead {
-//   _id?: number;
-//   source: null | string;
-//   owner: null | string;
-//   name: null | string;
-//   source_link: null | string;
-//   courier: 'Yes' | 'No';
-//   mobile_number: null | string;
-//   email: null | string;
-//   province: null | string;
-//   town: null | string;
-//   exact_location: null | string;
-//   pipeline_stage: EPipelineStage;
-//   deal_value: string;
-//   probability: string;
-//   expected_revenue: string;
-//   follow_up_date: Date;
-//   close_date: null | Date;
-//   status: ELeadStatus;
-//   comments: null | string;
+// export interface ChatDetail {
+//   isError: boolean;
+//   selectedChat: Chat;
+//   messages: Message[];
 // }
 
 
+// export interface Message {
+//   _id: number;
+//   content: string;
+//   chat: number;
+//   sender: number,
+//   image: null | string;
+//   video: null | string;
+//   created_at: Date;
+// }
 
-export enum EPipelineStage {
-  Qualification = 'Qualification',
-  ProposalQuotation = 'Proposal|Quotation',
-  Negotiation = 'Negotiation',
-  PendingApproval = 'Pending Approval',
-  ClosedWon = 'Closed-Won',
-  ClosedLost = 'Closed-Lost'
-}
+// export interface MessageNotification {
+//   _id: number;
+//   content: string;
+//   senderId: number;
+//   chatId: number;
+//   updatedAt: Date;
+//   createdAt: Date;
+//   deletedAt: null;
+//   isGroupChat: boolean;
+//   chatPicture: null | string;
+//   chatName: null | string;
+//   sender: MsgSender;
+// }
 
-export enum ELeadStatus {
-  Open = 'Open',
-  InProgress = 'In Progress',
-  ClosedWon = 'Closed-Won',
-  ClosedLost = 'Closed-Lost',
-}
+// export interface MsgSender {
+//   _id: number;
+//   firstName: string;
+//   lastName: string;
+//   email: string;
+//   profilePic: string;
+//   phoneNo: string;
+//   role: number;
+// }

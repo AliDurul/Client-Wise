@@ -1,16 +1,30 @@
 import { Request, Response } from "express";
-import { Chat, IChat, Message } from "../models/chat&message.model";
-import { CustomError } from "../utils/common";
-import { Types } from "mongoose";
+import { Chat, ChatUser, IChat, Message } from "../models/chat&message.model";
+import { CustomError, getImageUrl, s3 } from "../utils/common";
+import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import crypto from 'crypto';
+import sharp from 'sharp';
+import env from '../configs/env';
+
 
 export const getChats = async (req: Request, res: Response) => {
 
     const currenUser = req.user.id
 
-    const result = await Chat.find({ users: { $in: [currenUser] } }).populate({
-        path: 'latest_message', select: '-chat -__v',
-        populate: { path: 'sender', select: 'profile_pic full_name' }
-    }).lean();
+    const result = await Chat.find({ users: { $in: [currenUser] } }).populate([
+        { path: 'latest_message', select: '-chat -__v -sender -updatedAt' },
+        { path: 'users', select: 'full_name email phone_number profile_pic' }
+    ]).sort({ updatedAt: -1 }).lean();
+
+    await Promise.all(result.map(async (chat: IChat) => {
+        if (!chat.is_group) {
+            await Promise.all(chat.users.map(async (user: ChatUser) => {
+                if ((user._id.toString() !== currenUser) && user.profile_pic) {
+                    user.profile_pic = await getImageUrl(user.profile_pic);
+                }
+            }));
+        }
+    }));
 
     res.status(200).send({
         success: true,
@@ -85,6 +99,48 @@ export const createMessage = async (req: Request, res: Response) => {
     })
 };
 
+export const createGroup = async (req: Request, res: Response) => {
+    const { users, chat_name } = req.body;
+    const currentUser = req.user.id;
+
+    if (!users || !Array.isArray(users) || users.length <= 1) throw new CustomError('User IDs are required to create a group.', 400, true);
+
+    if (!chat_name) throw new CustomError('Chat name is required.', 400, true);
+
+    const chat = await Chat.create({
+        is_group: true,
+        users: [...users, currentUser],
+        group_admin: currentUser,
+        chat_name
+    });
+
+    if (!chat) throw new CustomError('Group chat not created', 404, true);
+
+    if (req.file && req.file.size > 0 && req.file.buffer) {
+        const randomSuffix = crypto.randomBytes(8).toString('hex');
+        const fileName = `group_pics/${randomSuffix}_${req.file.originalname}`;
+
+        const buffer = await sharp(req.file.buffer).resize({ height: 90, width: 90, fit: 'contain' }).toBuffer();
+
+        const params = {
+            Bucket: env.AWS_BUCKET_NAME,
+            Key: fileName,
+            Body: buffer,
+            ContentType: req.file.mimetype
+        };
+        const command = new PutObjectCommand(params)
+
+        await s3.send(command);
+
+        chat.chat_pic = fileName
+        await chat.save();
+    }
+
+    res.status(201).send({
+        success: true,
+        chat
+    });
+}
 
 export const deleteChat = async (req: Request, res: Response) => {
 
@@ -96,7 +152,7 @@ export const deleteChat = async (req: Request, res: Response) => {
 
     if (result.deletedCount > 0) {
         res.sendStatus(204);
-    } 
+    }
 
     throw new CustomError('Chat not found.', 404, true);
 

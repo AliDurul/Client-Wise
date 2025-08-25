@@ -1,9 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
 import User, { IUser } from "../models/user.model";
-import { CustomError } from "../utils/common";
+import { CustomError, getImageUrl } from "../utils/common";
 
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
+
   const result = await res.getModelList(User);
+
+  await Promise.all(result.map(async (user: any) => {
+    if (user.profile_pic) {
+      user.profile_pic = await getImageUrl(user.profile_pic)
+    }
+  }));
+
 
   res.send({
     success: true,

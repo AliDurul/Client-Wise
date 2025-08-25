@@ -158,7 +158,7 @@ declare global {
                 Model: Model<T>,
                 customFilter?: Record<string, any>,
                 populate?: string | Array<{ path: string; select?: string | string[] }> | null,
-                select?: string | null
+                customSelect?: string | null
             ) => Promise<T[]>;
             getModelListDetails: <T extends Document>(
                 Model: Model<T>,
@@ -219,12 +219,20 @@ export const queryHandler: RequestHandler = (req, res, next) => {
     let skip = parseInt(req.query?.skip as string);
     skip = skip > 0 ? skip : (page * limit);
 
+    // URL?select=key1,key2
+
+    let select: string = req.query?.select as string;
+    if (select) {
+        select = select.replace(/['"]/g, '').replace(/,/g, ' ');
+    }
+
+
     // List
     res.getModelList = async <T extends Document>(
         Model: Model<T>,
         customFilter = {},
         populate: string | null = null,
-        select: string | null = ''
+        customSelect: string | null = ''
     ): Promise<any[]> => {
 
         const query: RootFilterQuery<T> = {
@@ -232,6 +240,8 @@ export const queryHandler: RequestHandler = (req, res, next) => {
             ...(typeof search === "object" && search),
             ...(typeof customFilter === "object" && customFilter),
         } as RootFilterQuery<T>;
+
+        // console.log('select', select);
 
         return await Model.find(query).sort(sort).skip(skip).limit(limit).select(select).populate(populate).lean();
     };

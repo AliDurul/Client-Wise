@@ -6,22 +6,30 @@ import { CustomError, getImageUrl } from "../utils/common";
 
 export const getTickets = async (req: Request, res: Response): Promise<void> => {
 
-    let result: ITicket[] = [];
 
-    if (req.query.select) {
-        const selectFields = req.query.select ? String(req.query.select).split(',').join(' ') : '';
-        result = await Ticket.find({})
-            .select(selectFields)
-            .limit(100)
-            .lean();
-    } else {
-        result = await res.getModelList(Ticket, {}, [
-            { path: 'customer', select: 'full_name first_name last_name email phone_number profile_pic' },
-            { path: 'assigned_agent', select: 'full_name first_name last_name email phone_number profile_pic' },
-            { path: 'category', select: 'name' },
-            { path: 'escalation.raised_by', select: 'full_name first_name last_name email phone_number profile_pic' }
-        ], '-comments');
-    }
+    const result = await res.getModelList(Ticket, {}, [
+        { path: 'customer', select: 'full_name first_name last_name email phone_number profile_pic' },
+        { path: 'assigned_agent', select: 'full_name first_name last_name email phone_number profile_pic' },
+        { path: 'category', select: 'name' },
+        { path: 'escalation.raised_by', select: 'full_name first_name last_name email phone_number profile_pic' }
+    ], '-comments');
+
+    // let result: ITicket[] = [];
+
+    // if (req.query.select) {
+    //     const selectFields = req.query.select ? String(req.query.select).split(',').join(' ') : '';
+    //     result = await Ticket.find({})
+    //         .select(selectFields)
+    //         .limit(100)
+    //         .lean();
+    // } else {
+    //     result = await res.getModelList(Ticket, {}, [
+    //         { path: 'customer', select: 'full_name first_name last_name email phone_number profile_pic' },
+    //         { path: 'assigned_agent', select: 'full_name first_name last_name email phone_number profile_pic' },
+    //         { path: 'category', select: 'name' },
+    //         { path: 'escalation.raised_by', select: 'full_name first_name last_name email phone_number profile_pic' }
+    //     ], '-comments');
+    // }
 
     await Promise.all(result.map(async (ticket: ITicket) => {
         if (ticket.customer?.profile_pic) {
@@ -143,7 +151,7 @@ export const getTicketStats = async (req: Request, res: Response): Promise<void>
         Cancelled: 0,
         Escalated: 0
     };
-    
+
     let total_count = 0;
     stats.forEach(s => {
         switch (s._id) {

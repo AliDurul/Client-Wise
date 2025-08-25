@@ -128,12 +128,13 @@ export const getAllData = async ({ url, searchQueries, customQuery, filterQuerie
     console.log('Final URL:', finalUrl);
 
     try {
-        // const headers = await authConfig();
+        const headers = await authConfig();
 
         const response = await fetch(finalUrl, {
-            headers: {
-                "Content-Type": "application/json"
-            },
+            // headers: {
+            //     "Content-Type": "application/json"
+            // },
+            headers,
             next: { tags: [url] }
         });
 

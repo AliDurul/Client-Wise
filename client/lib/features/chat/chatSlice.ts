@@ -1,23 +1,23 @@
 import { createAppSlice } from "@/lib/createAppSlice"
 import { PayloadAction } from "@reduxjs/toolkit";
-import { getAllChats } from "./chatActions";
 import { Chat } from "@/types";
-import { createApiThunk, createAsyncThunkConfig } from "../shared/sliceUtils";
 
 export interface ChatSliceState {
     chats: Chat[];
     status: "idle" | "loading" | "failed";
     error: string | null
-    chat: null | Chat;
+    selectedChat: null | Chat;
     isShowChatMenu: boolean;
+    isShowUserChat: boolean;
 }
 
 const initialState: ChatSliceState = {
     chats: [],
     status: "idle",
     error: null,
-    chat: null,
-    isShowChatMenu: false
+    selectedChat: null,
+    isShowChatMenu: false,
+    isShowUserChat: false
 }
 
 
@@ -26,12 +26,12 @@ export const chatSlice = createAppSlice({
     initialState,
     reducers: ({ reducer, asyncThunk }) => ({
         // Entity management
-        setChat: reducer((state, action: PayloadAction<Chat>) => {
+        setSelectedChat: reducer((state, action: PayloadAction<Chat>) => {
             state.status = 'idle';
-            state.chat = action.payload;
+            state.selectedChat = action.payload;
         }),
-        clearChat: reducer((state) => {
-            state.chat = null;
+        clearSelectedChat: reducer((state) => {
+            state.selectedChat = null;
         }),
 
         // Collection management
@@ -39,9 +39,9 @@ export const chatSlice = createAppSlice({
             state.status = 'idle';
             state.chats = action.payload;
         }),
-        updateChatsState: reducer((state, action: PayloadAction<Chat>) => {
+        updateChats: reducer((state, action: PayloadAction<Chat>) => {
             state.status = 'idle';
-            if (!state.chats.some(chat => chat.id === action.payload.id)) {
+            if (!state.chats.some(chat => chat._id === action.payload._id)) {
                 state.chats.push(action.payload)
             }
         }),
@@ -53,43 +53,38 @@ export const chatSlice = createAppSlice({
         toggleChatMenu: reducer((state) => {
             state.isShowChatMenu = !state.isShowChatMenu;
         }),
+        setIsShowUserChat: reducer((state, action: PayloadAction<boolean>) => {
+            state.isShowUserChat = action.payload;
+        }),
 
-        // Async actions
-        fetchAllChatsAsync: asyncThunk(
-            async () => {
-                return createApiThunk(
-                    () => getAllChats(),
-                    "Failed to fetch chats"
-                );
-            },
-            createAsyncThunkConfig('chats')
-        ),
     }),
     selectors: {
         selectChats: (chat) => chat.chats,
-        selectChat: (chat) => chat.chat,
+        selectSelectedChat: (chat) => chat.selectedChat,
         selectChatStatus: (chat) => chat.status,
         selectChatError: (chat) => chat.error,
         selectIsShowChatMenu: (chat) => chat.isShowChatMenu,
+        selectIsShowUserChat: (chat) => chat.isShowUserChat,
         selectChatStates: (chat) => chat
     }
 })
 
-export const { 
-    setChat, 
-    clearChat,
-    setChats, 
-    fetchAllChatsAsync, 
-    setIsShowChatMenu, 
+export const {
+    setSelectedChat,
+    clearSelectedChat,
+    setChats,
+    setIsShowChatMenu,
     toggleChatMenu,
-    updateChatsState 
+    updateChats,
+    setIsShowUserChat
 } = chatSlice.actions;
 
-export const { 
-    selectChats, 
-    selectChat, 
-    selectChatStatus, 
+export const {
+    selectChats,
+    selectSelectedChat,
+    selectChatStatus,
     selectChatError,
     selectIsShowChatMenu,
-    selectChatStates 
+    selectChatStates,
+    selectIsShowUserChat
 } = chatSlice.selectors;
