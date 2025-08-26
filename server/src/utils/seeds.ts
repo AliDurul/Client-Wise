@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
-import User, { USER_ROLES } from "./models/user.model";
-import Customer from "./models/customer.model";
-import Faq from "./models/faq.model";
-import Product from "./models/product.model";
-import Task from "./models/task.model";
-import Ticket, { TicCat } from "./models/ticket.model";
-import Invoice from "./models/invoice.model";
+import User, { USER_ROLES } from "../models/user.model";
+import Customer from "../models/customer.model";
+import Faq from "../models/faq.model";
+import Product from "../models/product.model";
+import Task from "../models/task.model";
+import Ticket, { TicCat } from "../models/ticket.model";
+import Invoice from "../models/invoice.model";
 
 export async function initializeData() {
     // Clear all collections before seeding
