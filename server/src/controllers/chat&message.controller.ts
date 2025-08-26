@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Chat, ChatUser, IChat, Message } from "../models/chat&message.model";
+import { Chat, ChatUser, IChat, IMessage, Message } from "../models/chat&message.model";
 import { CustomError, getImageUrl, s3 } from "../utils/common";
 import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import crypto from 'crypto';
@@ -35,6 +35,7 @@ export const getChats = async (req: Request, res: Response) => {
 export const getChatMessages = async (req: Request, res: Response) => {
 
     const { chatId } = req.params;
+    const currenUser = req.user.id
 
     if (!chatId) throw new CustomError('Chat ID is required.', 400, true);
 
@@ -42,6 +43,13 @@ export const getChatMessages = async (req: Request, res: Response) => {
         { path: 'sender', select: 'profile_pic full_name' },
         { path: 'chat', select: '-__v', populate: { path: 'users', select: 'profile_pic full_name' } }
     ]).lean();
+
+
+    await Promise.all(result.map(async (chat: IMessage) => {
+        if ((chat.sender._id.toString() !== currenUser) && chat.sender.profile_pic) {
+            chat.sender.profile_pic = await getImageUrl(chat.sender.profile_pic);
+        }
+    }));
 
     res.status(200).send({
         success: true,

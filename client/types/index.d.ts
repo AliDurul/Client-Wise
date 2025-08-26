@@ -42,8 +42,6 @@ export interface PersonInfo {
   profile_pic: string | null;
 };
 
-/* -------------------------- Pages -------------------------- */
-
 /* ---------------------------- Authorization ----------------------------*/
 export interface Login {
   email: string;
@@ -147,7 +145,7 @@ export interface InvoiceItem {
 
 
 
-/*---------------------------- KYC ----------------------------*/
+/*---------------------------- Customers ----------------------------*/
 export interface Customer {
   _id: string;
   customer_type: 'individual' | 'corporate';
@@ -389,41 +387,36 @@ export interface Task {
 
 /*---------------------------- CHAT ----------------------------*/
 export interface Chat {
-  _id: number;
+  _id: string;
   is_group: boolean;
   group_admin: null | string
   chat_name: null | string;
   chat_pic: null | string;
   users: PersonInfo[];
-  latest_message: LetestMessage;
+  latest_message: LatestMessage;
   groupAdmin: null | string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface LetestMessage {
-  _id: number;
+export interface LatestMessage {
+  _id: string;
   content: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-// export interface ChatDetail {
-//   isError: boolean;
-//   selectedChat: Chat;
-//   messages: Message[];
-// }
 
-
-// export interface Message {
-//   _id: number;
-//   content: string;
-//   chat: number;
-//   sender: number,
-//   image: null | string;
-//   video: null | string;
-//   created_at: Date;
-// }
+export interface Message {
+  _id: string;
+  content: string;
+  chat: Chat;
+  sender: PersonInfo;
+  createdAt: Date;
+  updatedAt: Date;
+  // image: null | string;
+  // video: null | string;
+}
 
 // export interface MessageNotification {
 //   _id: number;

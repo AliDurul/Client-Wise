@@ -9,12 +9,14 @@ router.get("/", getChats);
 router.route('/:chatId')
     .delete(deleteChat);
 
+router.route('/:chatId/messages')
+    .get(getChatMessages)
+    .post(createMessage);
+
 router.post("/group", createGroup)
 // router.route('/group/:groupId').put(updateGroup)
 
 
-router.route('/message/:chatId')
-    .get(getChatMessages)
-    .post(createMessage);
+
 
 export default router;

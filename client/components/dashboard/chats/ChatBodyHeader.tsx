@@ -1,10 +1,14 @@
 import Dropdown from '@/components/layout/Dropdown'
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { selectSelectedChat, toggleChatMenu } from '@/lib/features/chat/chatSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { PersonInfo } from '@/types';
+import Image from 'next/image';
 import React from 'react'
 
-export default function ChatBodyHeader() {
+export default function ChatBodyHeader({ displayName, displayPic }: { displayName: string; displayPic: string }) {
     const dispatch = useAppDispatch();
+    const userInfo = useCurrentUser();
     const selectedChat = useAppSelector(selectSelectedChat);
 
 
@@ -19,14 +23,14 @@ export default function ChatBodyHeader() {
                     </svg>
                 </button>
                 <div className="relative flex-none">
-                    <img src={`/assets/images/${selectedChat.path}`} className="h-10 w-10 rounded-full object-cover sm:h-12 sm:w-12" alt="" />
+                    <Image src={displayPic} height={48} width={48} className="h-10 w-10 rounded-full object-cover sm:h-12 sm:w-12" alt={displayName} />
                     <div className="absolute bottom-0 ltr:right-0 rtl:left-0">
                         <div className="h-4 w-4 rounded-full bg-success"></div>
                     </div>
                 </div>
                 <div className="mx-3">
-                    <p className="font-semibold">{selectedChat.name}</p>
-                    <p className="text-xs text-white-dark">{selectedChat.active ? 'Active now' : 'Last seen at ' + selectedChat.time}</p>
+                    <p className="font-semibold">{displayName}</p>
+                    {/* <p className="text-xs text-white-dark">{selectedChat.active ? 'Active now' : 'Last seen at ' + selectedChat.time}</p> */}
                 </div>
             </div>
             <div className="flex gap-3 sm:gap-5">

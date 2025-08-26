@@ -1,3 +1,4 @@
+import { useChatDisplayInfo } from '@/hooks/useChatDisplayInfo';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { selectSelectedChat } from '@/lib/features/chat/chatSlice';
 import { getAllData } from '@/lib/features/shared/actionUtils';
@@ -7,6 +8,8 @@ import { Chat, PersonInfo } from '@/types';
 import Image from 'next/image';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import useSWR from 'swr';
+import ChatGroupModal from './ChatGroupModal';
+import { useState } from 'react';
 
 interface ChatSidebarListProps {
     filteredItems: Chat[];
@@ -18,6 +21,8 @@ export default function ChatSidebarList({ filteredItems, selectUser, showGroupBt
 
     const { userInfo } = useCurrentUser();
     const selectedChat = useAppSelector(selectSelectedChat);
+    const [groupModal, setGroupModal] = useState(false)
+
 
     return (
         <div className="!mt-0">
@@ -28,18 +33,9 @@ export default function ChatSidebarList({ filteredItems, selectUser, showGroupBt
                             <p className="text-gray-400 dark:text-gray-500">No Chat found</p>
                         </div>
                     ) : (
-                        filteredItems.map((chat: Chat) => {
+                        filteredItems?.map((chat: Chat) => {
 
-                            let displayName = chat.chat_name || 'Group Chat'
-                            let displayPath = chat.chat_pic || '/assets/images/profile-pic.png';
-
-                            if (!chat.is_group) {
-                                const otherUser = chat.users.find((member: PersonInfo) => member._id.toString() !== userInfo?.id);
-                                if (otherUser) {
-                                    displayName = otherUser.full_name;
-                                    displayPath = otherUser.profile_pic || '/assets/images/profile-pic.png';
-                                }
-                            }
+                            const { displayName, displayPic } = useChatDisplayInfo(chat, userInfo?.id);
 
                             return (
                                 <div className='p-0' key={chat._id}>
@@ -51,7 +47,7 @@ export default function ChatSidebarList({ filteredItems, selectUser, showGroupBt
                                         <div className="flex-1">
                                             <div className="flex items-center">
                                                 <div className="relative flex-shrink-0">
-                                                    <Image src={displayPath} width={48} height={48} className="h-12 w-12 rounded-full object-cover" alt={displayName} />
+                                                    <Image src={displayPic} width={48} height={48} className="h-12 w-12 rounded-full object-cover" alt={displayName} />
                                                     {/* {chat.active && (
                                                     <div>
                                                         <div className="absolute bottom-0 ltr:right-0 rtl:left-0">
@@ -76,10 +72,13 @@ export default function ChatSidebarList({ filteredItems, selectUser, showGroupBt
                     )
                 }
                 {showGroupBtn && <button className='btn btn-primary btn-md absolute bottom-10 right-5'
-                // onClick={() => setGroupModal(!groupModal)}
+                    onClick={() => setGroupModal(!groupModal)}
                 >+</button>}
-                {/* <GroupModal isOpen={groupModal} onClose={() => setGroupModal(false)} /> */}
+                {
+                    groupModal && <ChatGroupModal isOpen={groupModal} onClose={() => setGroupModal(false)} />
+                }
             </PerfectScrollbar>
+
         </div>
     )
 }

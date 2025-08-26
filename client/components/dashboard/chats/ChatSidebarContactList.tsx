@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import useSWR from 'swr';
 import ChatSidebarListSkeleton from './ChatSidebarListSkeleton';
+import ChatGroupModal from './ChatGroupModal';
 
 
 export default function ChatSidebarContactList() {
@@ -61,7 +62,7 @@ export default function ChatSidebarContactList() {
                     </svg>
                 </div>
             </div>
-            
+
             {
                 isLoading
                     ? <ChatSidebarListSkeleton />
@@ -103,6 +104,7 @@ export default function ChatSidebarContactList() {
                         </PerfectScrollbar >
                     )
             }
+
         </div>
     )
 }

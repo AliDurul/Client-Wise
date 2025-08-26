@@ -25,7 +25,6 @@ export default function page() {
 
             <div className={`absolute z-[5] hidden h-full w-full rounded-md bg-black/60 ${isShowChatMenu ? '!block xl:!hidden' : ''}`} onClick={() => setIsShowChatMenu(!isShowChatMenu)} />
 
-
             <div className="panel flex-1 p-0">
 
                 {isShowUserChat ? <ChatBody /> : <ChatBodyPlaceHolder />}

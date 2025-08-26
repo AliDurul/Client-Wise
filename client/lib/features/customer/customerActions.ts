@@ -4,19 +4,20 @@ import { customerQuickSchema, customerSchema } from "@/lib/utility/zod";
 import { Customer } from "@/types";
 import { revalidateTag } from "next/cache";
 import { authConfig } from "../shared/actionUtils";
+import { cachedAuth } from "@/lib/utility/functions";
 
 const BASE_URL = process.env.API_BASE_URL + '/';
 
 
 const authConfigFormData = async () => {
-  const session = await auth();
+  const session = await cachedAuth();
   const accessToken = session?.access;
 
   return {
     Authorization: `Bearer ${accessToken}`,
   };
 }
-
+authConfig
 
 export const customerCrUpAction = async (_: unknown, payload: FormData) => {
 
