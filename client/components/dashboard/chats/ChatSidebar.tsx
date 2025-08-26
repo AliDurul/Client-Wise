@@ -4,19 +4,13 @@ import { AllChatsIcon, ContactIcon, GroupChatIcon, HelpIcon, SettingIcon, Single
 import { selectIsShowChatMenu, selectIsShowUserChat, selectSelectedChat, setIsShowChatMenu, setIsShowUserChat, setSelectedChat } from '@/lib/features/chat/chatSlice';
 import { getAllData } from '@/lib/features/shared/actionUtils';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { formatDate } from '@/lib/utility/functions';
 import { Chat, PersonInfo } from '@/types';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
-import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import useSWR from 'swr';
 import ChatSidebarList from './ChatSidebarList';
 import ChatSidebarListSkeleton from './ChatSidebarListSkeleton';
 import ChatSidebarContactList from './ChatSidebarContactList';
-import ChatGroupModal from './ChatGroupModal';
-
-
 
 const Tabs = [
     { name: 'All', icon: <AllChatsIcon /> },
@@ -39,12 +33,11 @@ export default function ChatSidebar() {
 
     // api
     const { data: chats, isLoading } = useSWR('chats', () => getAllData({ url: 'chats/', customQuery: { limit: 100 } }), {
-        revalidateOnFocus: false,
-        revalidateOnReconnect: false,
         onSuccess: (data) => {
             setFilteredItems(data.result);
         }
     });
+
 
     // functions
     useEffect(() => {
@@ -173,7 +166,7 @@ export default function ChatSidebar() {
 
             <div className="h-px w-full border-b border-white-light dark:border-[#1b2e4b]" />
 
-         
+
         </aside>
     )
 }

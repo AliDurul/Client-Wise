@@ -22,15 +22,9 @@ export default function ChatBody() {
 
     // states
     // const [messages, setMessages] = useState<Message[]>([]);
-console.log('body', `chats/${selectedChat?._id}`);
+
     // api
-    const { data:messages, isLoading } = useSWR<{ result: Message[] }>(`chats/${selectedChat?._id}`, () => getAllData({ url: `chats/${selectedChat?._id}/messages`, customQuery: { limit: 100 } }), {
-        revalidateOnFocus: false,
-        revalidateOnReconnect: false,
-        // onSuccess: (data) => {
-        //     setMessages(data?.result);
-        // }
-    });
+    const { data: messages, isLoading } = useSWR<{ result: Message[] }>(`chats/${selectedChat?._id}`, () => getAllData({ url: `chats/${selectedChat?._id}/messages`, customQuery: { limit: 100 } }));
 
     // functions
 

@@ -7,20 +7,18 @@ import { authConfig } from "../shared/actionUtils";
 const BASE_URL = process.env.API_BASE_URL + '/'
 
 
-export const postMessage = async (_: unknown, payload: FormData) => {
+export const postMessage = async (url: string, { arg }: { arg: { chatId: string | undefined, content: string } }) => {
 
-    const chatId = payload.get('chatId') || null;
-    payload.delete('chatId');
-    console.log('chatId:', chatId);
-    const rowData = { ...Object.fromEntries(payload) };
+    // const chatId = arg.chatId || null;
+    const content = arg.content || null;
 
     try {
         const headers = await authConfig();
 
-        const response = await fetch(`${BASE_URL}chats/${chatId}/messages`, {
+        const response = await fetch(`${BASE_URL}${url}/messages`, {
             method: 'POST',
             headers,
-            body: JSON.stringify(rowData),
+            body: JSON.stringify({ content }),
         });
 
         const data = await response.json();
@@ -29,18 +27,10 @@ export const postMessage = async (_: unknown, payload: FormData) => {
             throw new Error(data.message || "Something went wrong, Please try again!");
         }
 
-        // revalidateTag('invoices');
-        return {
-            message: "Message sent successfully!",
-            success: true
-        };
+        return data
 
     } catch (error: any) {
-        return {
-            message: error.message || "Something went wrong, Please try again!",
-            success: false,
-            // inputs: result.data
-        };
+        throw error
     }
 
 }

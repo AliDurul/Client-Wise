@@ -9,6 +9,8 @@ import env from '../configs/env';
 
 export const getChats = async (req: Request, res: Response) => {
 
+    // throw new Error('Test Error Handling');
+
     const currenUser = req.user.id
 
     const result = await Chat.find({ users: { $in: [currenUser] } }).populate([

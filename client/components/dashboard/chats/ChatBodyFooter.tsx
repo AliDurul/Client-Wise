@@ -1,17 +1,19 @@
 import { postMessage } from '@/lib/features/chat/chatActions';
 import React, { startTransition, useActionState, useEffect, useRef, useState } from 'react'
+import useSWRMutation from 'swr/mutation'
 import { mutate } from 'swr';
+import { current } from '@reduxjs/toolkit';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 export default function ChatBodyFooter({ selectedChatId, scrollToBottom }: { selectedChatId: string | undefined, scrollToBottom: () => void }) {
 
-    // hooks
-    const inputRef = useRef<HTMLInputElement>(null);
-    const [state, action, isLoading] = useActionState(postMessage, null)
-
     // states
     const [textMessage, setTextMessage] = useState('');
+    const { userInfo } = useCurrentUser()
 
-
+    // hooks
+    const { trigger } = useSWRMutation(`chats/${selectedChatId}`, postMessage)
+    const inputRef = useRef<HTMLInputElement>(null);
 
     // functions
 
@@ -19,21 +21,52 @@ export default function ChatBodyFooter({ selectedChatId, scrollToBottom }: { sel
         inputRef.current?.focus();
     }, [selectedChatId]);
 
-    const sendMessage = (e: React.FormEvent<HTMLFormElement>) => {
+    const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const formData = new FormData(e.currentTarget);
-
         if (textMessage.trim()) {
-            startTransition(() => {
-                action(formData);
-            });
-            console.log(`chats/${selectedChatId}`);
-            mutate(`chats/${selectedChatId}`);
-            mutate('chats');
+            trigger({ chatId: selectedChatId, content: textMessage }, {
+                optimisticData: (currentData) => {
+                    const prev = currentData?.result ? currentData : { result: [] };
 
-            scrollToBottom();
-            setTextMessage('');
+                    const optimisticMessage = {
+                        _id: 'temp-id-' + Date.now(),
+                        content: textMessage,
+                        sender: { _id: userInfo?.id, profile_pic: userInfo?.profile_pic },
+                        createdAt: new Date().toISOString(),
+                    };
+
+                    return {
+                        ...prev,
+                        result: [...prev.result, optimisticMessage]
+                    };
+                },
+                rollbackOnError: true,
+                populateCache: (res, currentData) => {
+                    console.log('newMessage:', res);
+
+                    const prev = currentData?.result ? currentData : { result: [] };
+
+                    const optimisticMessage = {
+                        _id: res.message._id,
+                        content: textMessage,
+                        sender: { _id: userInfo?.id, profile_pic: userInfo?.profile_pic },
+                        createdAt: res.message.createdAt,
+                    };
+
+                    return {
+                        ...prev,
+                        result: [...prev.result, optimisticMessage]
+                    };
+                },
+                revalidate: false,
+                onSuccess: () => {
+                    setTextMessage('');
+                    scrollToBottom();
+                    mutate('chats');
+                }
+            }
+            );
         }
     };
 

@@ -6,8 +6,6 @@ import { selectThemeConfig, toggleSidebar } from '@/lib/features/theme/themeSlic
 import AppContainer from './AppContainer';
 import Sidebar from './Sidebar';
 import Header from './header/Header';
-import Footer from './Footer';
-import Portals from './Portals';
 
 const DefaultLayout = ({ children }: PropsWithChildren) => {
     const pathname = usePathname()

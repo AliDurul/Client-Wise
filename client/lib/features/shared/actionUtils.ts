@@ -145,7 +145,8 @@ export const getAllData = async ({ url, searchQueries, customQuery, filterQuerie
         return data
 
     } catch (error: any) {
-        return { message: error.message, success: false };
+        throw error
+        // return { message: error.message, success: false };
     }
 };
 

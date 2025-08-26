@@ -8,11 +8,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { Chat } from '@/types';
 import React, { useEffect, useState } from 'react'
 
-
-
-
 export default function page() {
-
 
     const isShowChatMenu = useAppSelector(selectIsShowChatMenu);
     const isShowUserChat = useAppSelector(selectIsShowUserChat);

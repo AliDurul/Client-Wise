@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 import { SessionProvider } from "next-auth/react";
 import DefaultLayout from '@/components/layout/DefaultLayout';
+import SwrProvider from './SwrProvider';
 
 
 interface Props {
@@ -10,7 +11,11 @@ interface Props {
 export default async function layout({ children }: Props) {
   return (
     <SessionProvider >
-      <DefaultLayout>{children}</DefaultLayout>
+      <DefaultLayout>
+        {/* <SwrProvider> */}
+          {children}
+        {/* </SwrProvider> */}
+      </DefaultLayout>
     </SessionProvider>
   )
 }
