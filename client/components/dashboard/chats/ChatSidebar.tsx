@@ -11,6 +11,7 @@ import useSWR from 'swr';
 import ChatSidebarList from './ChatSidebarList';
 import ChatSidebarListSkeleton from './ChatSidebarListSkeleton';
 import ChatSidebarContactList from './ChatSidebarContactList';
+import Image from 'next/image';
 
 const Tabs = [
     { name: 'All', icon: <AllChatsIcon /> },
@@ -81,7 +82,7 @@ export default function ChatSidebar() {
             <div className="flex items-center justify-between">
                 <div className="flex items-center">
                     <div className="flex-none">
-                        <img src="/assets/images/profile-34.jpeg" className="h-12 w-12 rounded-full object-cover" alt="" />
+                        <Image src={userInfo?.profile_pic || '/assets/images/profile-pic.jpeg'} width={48} height={48} className="h-12 w-12 rounded-full object-cover" alt="" />
                     </div>
                     <div className="mx-3">
                         <p className="mb-1 font-semibold">{userInfo?.first_name} {userInfo?.last_name}</p>

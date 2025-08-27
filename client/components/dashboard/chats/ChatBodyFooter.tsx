@@ -4,6 +4,9 @@ import useSWRMutation from 'swr/mutation'
 import { mutate } from 'swr';
 import { current } from '@reduxjs/toolkit';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import socket from '@/lib/sockets';
+
+let typingTimeout: NodeJS.Timeout | null = null;
 
 export default function ChatBodyFooter({ selectedChatId, scrollToBottom }: { selectedChatId: string | undefined, scrollToBottom: () => void }) {
 
@@ -28,14 +31,12 @@ export default function ChatBodyFooter({ selectedChatId, scrollToBottom }: { sel
             trigger({ chatId: selectedChatId, content: textMessage }, {
                 optimisticData: (currentData) => {
                     const prev = currentData?.result ? currentData : { result: [] };
-
                     const optimisticMessage = {
                         _id: 'temp-id-' + Date.now(),
                         content: textMessage,
                         sender: { _id: userInfo?.id, profile_pic: userInfo?.profile_pic },
                         createdAt: new Date().toISOString(),
                     };
-
                     return {
                         ...prev,
                         result: [...prev.result, optimisticMessage]
@@ -43,34 +44,42 @@ export default function ChatBodyFooter({ selectedChatId, scrollToBottom }: { sel
                 },
                 rollbackOnError: true,
                 populateCache: (res, currentData) => {
-                    console.log('newMessage:', res);
-
                     const prev = currentData?.result ? currentData : { result: [] };
-
                     const optimisticMessage = {
                         _id: res.message._id,
                         content: textMessage,
                         sender: { _id: userInfo?.id, profile_pic: userInfo?.profile_pic },
                         createdAt: res.message.createdAt,
                     };
-
                     return {
                         ...prev,
                         result: [...prev.result, optimisticMessage]
                     };
                 },
                 revalidate: false,
-                onSuccess: () => {
+                onSuccess: (res) => {
+                    socket.emit('newMessage', { ...res.message, sender: { _id: userInfo?.id, profile_pic: userInfo?.profile_pic } });
                     setTextMessage('');
                     scrollToBottom();
                     mutate('chats');
                 }
             }
             );
+            socket.emit('stopTyping', { chatId: selectedChatId, user: { id: userInfo?.id } });
         }
     };
 
+    const handleOnchange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setTextMessage(e.target.value);
 
+        socket.emit('typing', { chatId: selectedChatId, user: { id: userInfo?.id, profile_pic: userInfo?.profile_pic, name: userInfo?.first_name } });
+
+        if (typingTimeout) clearTimeout(typingTimeout);
+
+        typingTimeout = setTimeout(() => {
+            socket.emit('stopTyping', { chatId: selectedChatId, user: { id: userInfo?.id } });
+        }, 1500);
+    };
 
     return (
         <div className="absolute bottom-0 left-0 w-full p-4">
@@ -82,7 +91,7 @@ export default function ChatBodyFooter({ selectedChatId, scrollToBottom }: { sel
                         className="form-input rounded-full border-0 bg-[#f4f4f4] px-12 py-2 focus:outline-none"
                         placeholder="Type a message"
                         value={textMessage}
-                        onChange={(e: any) => setTextMessage(e.target.value)}
+                        onChange={handleOnchange}
                         autoComplete="off"
                         spellCheck={false}
                         ref={inputRef}

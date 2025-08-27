@@ -2,7 +2,6 @@
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import React, { useEffect, useState } from 'react'
 import AnimateHeight from 'react-animate-height'
-import useDeleteToasts from '@/hooks/useDeleteToasts';
 import { DeleteIcon, EditIcon } from '@/icons';
 import { delFaq } from '@/lib/features/faq/faqActions';
 import FaqModal from './FaqModal';
@@ -13,13 +12,7 @@ import { Faq } from '@/types';
 export default function FaqList({ faqs }: { faqs: Faq[] }) {
 
     const dispatch = useAppDispatch()
-    const { deleteToast } = useDeleteToasts();
 
-    const deleteRow = async (id: any = null) => {
-        if (id) {
-            deleteToast(id, delFaq, updateFaqs);
-        }
-    };
 
     const [active, setActive] = useState<Number>();
     const togglePara = (value: Number) => {
@@ -53,7 +46,9 @@ export default function FaqList({ faqs }: { faqs: Faq[] }) {
                                     >
                                         <EditIcon />
                                     </button>
-                                    <button type="button" className="flex hover:text-danger mt-5" onClick={(e) => deleteRow(faq._id)}>
+                                    <button type="button" className="flex hover:text-danger mt-5"
+                                        // onClick={(e) => deleteRow(faq._id)}
+                                    >
                                         <DeleteIcon />
                                     </button>
                                 </div>

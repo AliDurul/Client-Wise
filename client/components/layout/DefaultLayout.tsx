@@ -6,14 +6,20 @@ import { selectThemeConfig, toggleSidebar } from '@/lib/features/theme/themeSlic
 import AppContainer from './AppContainer';
 import Sidebar from './Sidebar';
 import Header from './header/Header';
+import { useSocket } from '@/hooks/useSocket';
 
 const DefaultLayout = ({ children }: PropsWithChildren) => {
-    const pathname = usePathname()
-    const [showTopButton, setShowTopButton] = useState(false);
-    const themeConfig = useAppSelector(selectThemeConfig)
-    const [animation, setAnimation] = useState(themeConfig.animation);
-    const dispatch = useAppDispatch();
 
+    // hooks
+    useSocket();
+    const pathname = usePathname()
+    const themeConfig = useAppSelector(selectThemeConfig)
+    const dispatch = useAppDispatch();
+    
+    const [animation, setAnimation] = useState(themeConfig.animation);
+    const [showTopButton, setShowTopButton] = useState(false);
+    
+    // functions
     const goToTop = () => {
         document.body.scrollTop = 0;
         document.documentElement.scrollTop = 0;
