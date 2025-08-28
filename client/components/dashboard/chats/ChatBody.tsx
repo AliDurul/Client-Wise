@@ -166,28 +166,28 @@ export default function ChatBody() {
                                                         </h4>
                                                     </div>
                                                 )}
-                                                <div className={`flex items-start gap-3 ${isCurrentUser ? 'justify-end' : ''}`}>
+                                                <div className={`flex items-center gap-3 ${isCurrentUser ? 'justify-end' : ''}`}>
                                                     <div className={`flex-none ${isCurrentUser ? 'order-2' : ''}`}>
                                                         {showAvatar ? (
                                                             isCurrentUser ? (
                                                                 <Image
-                                                                    width={40}
-                                                                    height={40}
+                                                                    width={36}
+                                                                    height={36}
                                                                     src={userInfo?.profile_pic || ''}
-                                                                    className="h-10 w-10 rounded-full object-cover"
+                                                                    className="h-8 w-8 rounded-full object-cover"
                                                                     alt={userInfo?.first_name || ''}
                                                                 />
                                                             ) : (
                                                                 <Image
-                                                                    width={40}
-                                                                    height={40}
+                                                                    width={36}
+                                                                    height={36}
                                                                     src={message.sender.profile_pic || ''}
-                                                                    className="h-10 w-10 rounded-full object-cover"
+                                                                    className="h-8 w-8 rounded-full object-cover"
                                                                     alt={message.sender.full_name || ''}
                                                                 />
                                                             )
                                                         ) : (
-                                                            <div style={{ width: 40, height: 40 }} />
+                                                            <div className='h-8 w-8' />
                                                         )}
                                                     </div>
                                                     <div className="flex items-center gap-2">

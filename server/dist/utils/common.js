@@ -67,6 +67,7 @@ const getImageUrl = async (key) => {
     return url;
 };
 exports.getImageUrl = getImageUrl;
+;
 function setToken(user, isRefresh = false) {
     const accessData = {
         id: user._id,

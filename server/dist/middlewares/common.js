@@ -146,13 +146,19 @@ const queryHandler = (req, res, next) => {
     page = page > 0 ? (page - 1) : 0;
     let skip = parseInt(req.query?.skip);
     skip = skip > 0 ? skip : (page * limit);
+    // URL?select=key1,key2
+    let select = req.query?.select;
+    if (select) {
+        select = select.replace(/['"]/g, '').replace(/,/g, ' ');
+    }
     // List
-    res.getModelList = async (Model, customFilter = {}, populate = null, select = '') => {
+    res.getModelList = async (Model, customFilter = {}, populate = null, customSelect = '') => {
         const query = {
             ...(typeof filter === "object" && filter),
             ...(typeof search === "object" && search),
             ...(typeof customFilter === "object" && customFilter),
         };
+        // console.log('select', select);
         return await Model.find(query).sort(sort).skip(skip).limit(limit).select(select).populate(populate).lean();
     };
     // Details:

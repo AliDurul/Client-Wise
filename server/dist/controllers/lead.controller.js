@@ -4,10 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.multiDeleteLeads = exports.deleteLead = exports.updateLead = exports.getLeadById = exports.createLead = exports.getLeads = void 0;
-const lead_model_1 = __importDefault(require("models/lead.model"));
-const common_1 = require("utils/common");
+const lead_model_1 = __importDefault(require("../models/lead.model"));
+const common_1 = require("../utils/common");
 const getLeads = async (req, res) => {
     const result = await res.getModelList(lead_model_1.default);
+    console.log('selam ', req.user);
     res.send({
         success: true,
         details: await res.getModelListDetails(lead_model_1.default),
@@ -16,6 +17,7 @@ const getLeads = async (req, res) => {
 };
 exports.getLeads = getLeads;
 const createLead = async (req, res) => {
+    req.body.assigned_agent = req.user.id;
     const result = await lead_model_1.default.create(req.body);
     if (!result)
         throw new common_1.CustomError("Failed to create Lead", 500);

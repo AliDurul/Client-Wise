@@ -8,6 +8,11 @@ const user_model_1 = __importDefault(require("../models/user.model"));
 const common_1 = require("../utils/common");
 const getUsers = async (req, res) => {
     const result = await res.getModelList(user_model_1.default);
+    await Promise.all(result.map(async (user) => {
+        if (user.profile_pic) {
+            user.profile_pic = await (0, common_1.getImageUrl)(user.profile_pic);
+        }
+    }));
     res.send({
         success: true,
         details: await res.getModelListDetails(user_model_1.default),

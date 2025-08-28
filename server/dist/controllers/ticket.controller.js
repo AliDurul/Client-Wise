@@ -37,22 +37,27 @@ exports.deleteTicCat = exports.updateTicCat = exports.getTicCatById = exports.cr
 const ticket_model_1 = __importStar(require("../models/ticket.model"));
 const common_1 = require("../utils/common");
 const getTickets = async (req, res) => {
-    let result = [];
-    if (req.query.select) {
-        const selectFields = req.query.select ? String(req.query.select).split(',').join(' ') : '';
-        result = await ticket_model_1.default.find({})
-            .select(selectFields)
-            .limit(100)
-            .lean();
-    }
-    else {
-        result = await res.getModelList(ticket_model_1.default, {}, [
-            { path: 'customer', select: 'full_name first_name last_name email phone_number profile_pic' },
-            { path: 'assigned_agent', select: 'full_name first_name last_name email phone_number profile_pic' },
-            { path: 'category', select: 'name' },
-            { path: 'escalation.raised_by', select: 'full_name first_name last_name email phone_number profile_pic' }
-        ], '-comments');
-    }
+    const result = await res.getModelList(ticket_model_1.default, {}, [
+        { path: 'customer', select: 'full_name first_name last_name email phone_number profile_pic' },
+        { path: 'assigned_agent', select: 'full_name first_name last_name email phone_number profile_pic' },
+        { path: 'category', select: 'name' },
+        { path: 'escalation.raised_by', select: 'full_name first_name last_name email phone_number profile_pic' }
+    ], '-comments');
+    // let result: ITicket[] = [];
+    // if (req.query.select) {
+    //     const selectFields = req.query.select ? String(req.query.select).split(',').join(' ') : '';
+    //     result = await Ticket.find({})
+    //         .select(selectFields)
+    //         .limit(100)
+    //         .lean();
+    // } else {
+    //     result = await res.getModelList(Ticket, {}, [
+    //         { path: 'customer', select: 'full_name first_name last_name email phone_number profile_pic' },
+    //         { path: 'assigned_agent', select: 'full_name first_name last_name email phone_number profile_pic' },
+    //         { path: 'category', select: 'name' },
+    //         { path: 'escalation.raised_by', select: 'full_name first_name last_name email phone_number profile_pic' }
+    //     ], '-comments');
+    // }
     await Promise.all(result.map(async (ticket) => {
         if (ticket.customer?.profile_pic) {
             ticket.customer.profile_pic = await (0, common_1.getImageUrl)(ticket.customer.profile_pic);
@@ -229,7 +234,7 @@ const getTicCats = async (req, res) => {
 };
 exports.getTicCats = getTicCats;
 const createTicCat = async (req, res) => {
-    const userId = req.user?._id;
+    const userId = req.user?.id;
     req.body.assigned_agent = userId;
     const result = await ticket_model_1.TicCat.create(req.body);
     if (!result)

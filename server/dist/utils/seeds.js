@@ -37,13 +37,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializeData = initializeData;
-const user_model_1 = __importStar(require("./models/user.model"));
-const customer_model_1 = __importDefault(require("./models/customer.model"));
-const faq_model_1 = __importDefault(require("./models/faq.model"));
-const product_model_1 = __importDefault(require("./models/product.model"));
-const task_model_1 = __importDefault(require("./models/task.model"));
-const ticket_model_1 = __importStar(require("./models/ticket.model"));
-const invoice_model_1 = __importDefault(require("./models/invoice.model"));
+const user_model_1 = __importStar(require("../models/user.model"));
+const customer_model_1 = __importDefault(require("../models/customer.model"));
+const faq_model_1 = __importDefault(require("../models/faq.model"));
+const product_model_1 = __importDefault(require("../models/product.model"));
+const task_model_1 = __importDefault(require("../models/task.model"));
+const ticket_model_1 = __importStar(require("../models/ticket.model"));
+const invoice_model_1 = __importDefault(require("../models/invoice.model"));
 async function initializeData() {
     // Clear all collections before seeding
     console.log("Clearing all collections...");
@@ -83,9 +83,14 @@ async function initializeData() {
     console.log("Seeding customers...");
     const customers = [];
     for (let i = 1; i <= 10; i++) {
+        const customer_type = ["individual", "corporate"][i % 2];
         customers.push({
-            first_name: `CustFirst${i}`,
-            last_name: `CustLast${i}`,
+            customer_type,
+            first_name: customer_type === "individual" ? `CustFirst${i}` : null,
+            last_name: customer_type === "individual" ? `CustLast${i}` : null,
+            company_name: customer_type === "corporate" ? `Company${i}` : null,
+            contact_person: customer_type === "corporate" ? `ContactPerson${i}` : null,
+            registration_number: customer_type === "corporate" ? `REG${i}` : null,
             phone_number: `+1987654321${i}`,
             email: `customer${i}@example.com`,
             nationality: "CountryX",
