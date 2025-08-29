@@ -5,17 +5,26 @@ import { mutate } from 'swr';
 import { current } from '@reduxjs/toolkit';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import socket from '@/lib/sockets';
+import { setSelectedChat } from '@/lib/features/chat/chatSlice';
+import { useAppDispatch } from '@/lib/hooks';
 
 let typingTimeout: NodeJS.Timeout | null = null;
 
-export default function ChatBodyFooter({ selectedChatId, scrollToBottom }: { selectedChatId: string | undefined, scrollToBottom: () => void }) {
+interface ChatBodyFooterProps {
+    selectedChatId: string;
+    scrollToBottom: () => void;
+    isExistChat: boolean;
+}
+
+export default function ChatBodyFooter({ selectedChatId, scrollToBottom, isExistChat }: ChatBodyFooterProps) {
 
     // states
     const [textMessage, setTextMessage] = useState('');
     const { userInfo } = useCurrentUser()
 
     // hooks
-    const { trigger } = useSWRMutation(`chats/${selectedChatId}`, postMessage)
+    const dispatch = useAppDispatch();
+    const { trigger } = useSWRMutation(`chats/${isExistChat ? selectedChatId : null}`, postMessage)
     const inputRef = useRef<HTMLInputElement>(null);
 
     // functions
@@ -28,7 +37,14 @@ export default function ChatBodyFooter({ selectedChatId, scrollToBottom }: { sel
         e.preventDefault();
 
         if (textMessage.trim()) {
-            trigger({ chatId: selectedChatId, content: textMessage }, {
+
+            const sendData = {
+                chatId: isExistChat ? selectedChatId : null,
+                content: textMessage,
+                receiverId: !isExistChat ? selectedChatId : null
+            };
+
+            trigger(sendData, {
                 optimisticData: (currentData) => {
                     const prev = currentData?.result ? currentData : { result: [] };
                     const optimisticMessage = {
@@ -59,6 +75,8 @@ export default function ChatBodyFooter({ selectedChatId, scrollToBottom }: { sel
                 revalidate: false,
                 onSuccess: (res) => {
                     socket.emit('newMessage', { ...res.message, sender: { _id: userInfo?.id, profile_pic: userInfo?.profile_pic } });
+                    console.log(res.chat);
+                    dispatch(setSelectedChat(res.chat));
                     setTextMessage('');
                     scrollToBottom();
                     mutate('chats');

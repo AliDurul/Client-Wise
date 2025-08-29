@@ -1,54 +1,55 @@
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { getAllData } from '@/lib/features/shared/actionUtils';
-import { PersonInfo } from '@/types';
+import { Chat, PersonInfo } from '@/types';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import useSWR from 'swr';
 import ChatSidebarListSkeleton from './ChatSidebarListSkeleton';
 import ChatGroupModal from './ChatGroupModal';
+import { selectChat } from '@/lib/features/chat/chatSlice';
+import { useAppDispatch } from '@/lib/hooks';
 
 
-export default function ChatSidebarContactList() {
+export default function ChatSidebarContactList({ chats, setTabAll }: { chats: Chat[]; setTabAll: () => void }) {
 
     // hooks
+    const dispatch = useAppDispatch();
     const { userInfo } = useCurrentUser()
     const [searchQuery, setSearchQuery] = useState('')
-    const [filteredItems, setfilteredItems] = useState<any[]>([])
-
-
+    const [filteredUsers, setFilteredUsers] = useState<any[]>([])
 
     // api
     const { data: users, isLoading } = useSWR('users', () => getAllData({ url: 'users/', customQuery: { limit: 100, select: 'full_name profile_pic email phone_number' } }), {
-        revalidateOnFocus: false,
-        revalidateOnReconnect: false,
         onSuccess: (data) => {
-            setfilteredItems(data.result);
+            setFilteredUsers(data.result);
         }
     });
 
 
-    // useEffect(() => {
-    //     setfilteredItems(() => {
-    //         return users.filter((user: any) => {
-    //             const searchTerm = searchQuery.toLowerCase()
-    //             return user.firstName.toLowerCase().includes(searchTerm) || user.lastName.toLowerCase().includes(searchTerm)
-    //         })
-    //     })
+    useEffect(() => {
+        const filtered = users?.result?.filter((user: PersonInfo) => user.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
+        setFilteredUsers(filtered || []);
+    }, [searchQuery, users]);
 
-    // }, [searchQuery, users])
 
-    // async function handleSelectUser(user: User) {
-    //     if (user.id) {
-    //         const res = await postMessage(null, { receiverId: user?.id })
-    //         if (!res.isError) {
-    //             navigate.push(`/chats/${res.chat.id}`)
-    //             dispatch(updateChatsState(res.chat))
-    //             setSelectedTab('Chats')
-    //         }
-    //         else coloredToast('danger', res.message)
-    //     }
-    // }
+
+    const handleClick = (user: PersonInfo) => {
+
+        const existingChat = chats.find(
+            chat =>
+                !chat.is_group &&
+                chat.users.some(u => u._id === userInfo?.id) &&
+                chat.users.some(u => u._id === user._id)
+        );
+
+        if (existingChat) {
+            dispatch(selectChat(existingChat));
+        } else {
+            dispatch(selectChat(user));
+        }
+        setTabAll();
+    };
 
     return (
         <div className='relative'>
@@ -70,8 +71,8 @@ export default function ChatSidebarContactList() {
                         <PerfectScrollbar options={{ suppressScrollX: true }} className="user-users relative -mr-3.5 h-full min-h-[100px] space-y-0.5 pb-5 pr-3.5 sm:h-[calc(100vh_-_357px)]">
 
                             {
-                                filteredItems.length > 0 ? (
-                                    filteredItems.map((user: PersonInfo, i: number) => {
+                                filteredUsers.length > 0 ? (
+                                    filteredUsers.map((user: PersonInfo, i: number) => {
                                         if (user._id === userInfo?.id) return null
 
                                         return (
@@ -79,7 +80,7 @@ export default function ChatSidebarContactList() {
                                                 key={user._id}
                                                 className="flex w-full items-center justify-between rounded-md p-2 hover:bg-gray-100 hover:text-primary dark:hover:bg-[#050b14] dark:hover:text-primary "
                                                 type="button"
-                                            // onClick={() => handleSelectUser(user)}
+                                                onClick={() => handleClick(user)}
                                             >
                                                 <div className="flex items-center gap-3">
                                                     <div className="relative flex-shrink-0">

@@ -5,6 +5,7 @@ import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import crypto from 'crypto';
 import sharp from 'sharp';
 import env from '../configs/env';
+import { HydratedDocument } from "mongoose";
 
 
 export const getChats = async (req: Request, res: Response) => {
@@ -67,7 +68,7 @@ export const createMessage = async (req: Request, res: Response) => {
 
     if (!content) throw new CustomError('Content is required.', 400, true);
 
-    let chat: (IChat & Document) | null;
+    let chat: HydratedDocument<IChat> | null;
 
     if (chatId && chatId !== "null") {
 
@@ -98,9 +99,18 @@ export const createMessage = async (req: Request, res: Response) => {
 
     if (!message) throw new CustomError('Message not created', 404, true);
 
-    chat = await Chat.findByIdAndUpdate(chat._id, { latest_message: message._id }, { new: true });
+    chat = await Chat.findByIdAndUpdate(chat._id, { latest_message: message._id }, { new: true }).populate([
+        { path: 'latest_message', select: '-chat -__v -sender -updatedAt' },
+        { path: 'users', select: 'first_name last_name full_name email phone_number profile_pic' }
+    ]);
 
     if (!chat) throw new CustomError('Chat not found after creating message', 404, true);
+
+    await Promise.all(chat.users.map(async (user: ChatUser) => {
+        if ((user._id.toString() !== req.user.id) && user.profile_pic) {
+            user.profile_pic = await getImageUrl(user.profile_pic);
+        }
+    }));
 
     res.status(200).send({
         success: true,
@@ -158,6 +168,10 @@ export const deleteChat = async (req: Request, res: Response) => {
 
     if (!chatId) throw new CustomError('Chat ID is required.', 400, true);
 
+    // Delete all messages for this chat
+    await Message.deleteMany({ chat: chatId });
+
+    // Delete the chat itself
     const result = await Chat.deleteOne({ _id: chatId });
 
     if (result.deletedCount > 0) {

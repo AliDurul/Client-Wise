@@ -7,10 +7,13 @@ import { authConfig } from "../shared/actionUtils";
 const BASE_URL = process.env.API_BASE_URL + '/'
 
 
-export const postMessage = async (url: string, { arg }: { arg: { chatId: string | undefined, content: string } }) => {
+interface postMessageProps{
+    chatId: string | null;
+    content: string;
+    receiverId: string | null;
+}
 
-    // const chatId = arg.chatId || null;
-    const content = arg.content || null;
+export const postMessage = async (url: string, { arg }: { arg: postMessageProps }) => {
 
     try {
         const headers = await authConfig();
@@ -18,7 +21,7 @@ export const postMessage = async (url: string, { arg }: { arg: { chatId: string 
         const response = await fetch(`${BASE_URL}${url}/messages`, {
             method: 'POST',
             headers,
-            body: JSON.stringify({ content }),
+            body: JSON.stringify(arg),
         });
 
         const data = await response.json();

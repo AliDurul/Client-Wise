@@ -23,12 +23,12 @@ const Tabs = [
 export default function ChatSidebar() {
 
     // hooks
-    const dispatch = useAppDispatch();
     const { userInfo } = useCurrentUser();
     const isShowChatMenu = useAppSelector(selectIsShowChatMenu);
     const isShowUserChat = useAppSelector(selectIsShowUserChat);
 
     const [selectedTab, setSelectedTab] = useState('All')
+    const selectedIndex = Tabs.findIndex(tab => tab.name === selectedTab);
     const [searchUser, setSearchUser] = useState('');
     const [filteredItems, setFilteredItems] = useState<Chat[]>([]);
 
@@ -70,12 +70,12 @@ export default function ChatSidebar() {
         }
     };
 
-    const selectUser = (chat: Chat) => {
-        dispatch(setSelectedChat(chat));
-        dispatch(setIsShowUserChat(true));
-        scrollToBottom();
-        dispatch(setIsShowChatMenu(false));
-    };
+    // const selectUser = (chat: Chat | PersonInfo) => {
+    //     dispatch(setSelectedChat(chat));
+    //     dispatch(setIsShowUserChat(true));
+    //     scrollToBottom();
+    //     dispatch(setIsShowChatMenu(false));
+    // };
 
     return (
         <aside className={`panel absolute z-10 hidden w-full max-w-xs flex-none space-y-4 overflow-hidden p-4 xl:relative xl:block xl:h-full ${isShowChatMenu ? '!block' : ''}`}>
@@ -134,7 +134,7 @@ export default function ChatSidebar() {
                 )
             }
 
-            <TabGroup>
+            <TabGroup selectedIndex={selectedIndex} onChange={i => setSelectedTab(Tabs[i].name)}>
                 <TabList className="flex items-center justify-between text-xs mb-4">
                     {Tabs.map((tab, i) => (
                         <Tab key={i}>
@@ -150,17 +150,17 @@ export default function ChatSidebar() {
                 <TabPanels>
                     <TabPanel>
                         {
-                            isLoading ? <ChatSidebarListSkeleton /> : <ChatSidebarList selectUser={selectUser} filteredItems={filteredItems} showGroupBtn={true} />
+                            isLoading ? <ChatSidebarListSkeleton /> : <ChatSidebarList filteredItems={filteredItems} showGroupBtn={true} />
                         }
                     </TabPanel>
                     <TabPanel>
-                        <ChatSidebarList selectUser={selectUser} filteredItems={filteredItems} />
+                        <ChatSidebarList filteredItems={filteredItems} />
                     </TabPanel>
                     <TabPanel>
-                        <ChatSidebarList selectUser={selectUser} filteredItems={filteredItems} showGroupBtn={true} />
+                        <ChatSidebarList filteredItems={filteredItems} showGroupBtn={true} />
                     </TabPanel>
                     <TabPanel>
-                        <ChatSidebarContactList />
+                        <ChatSidebarContactList chats={chats?.result} setTabAll={() => setSelectedTab('All')} />
                     </TabPanel>
                 </TabPanels>
             </TabGroup>

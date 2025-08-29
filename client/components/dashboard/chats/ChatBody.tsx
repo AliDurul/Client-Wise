@@ -5,7 +5,6 @@ import ChatBodyFooter from './ChatBodyFooter';
 import { selectSelectedChat } from '@/lib/features/chat/chatSlice';
 import useSWR, { mutate } from 'swr';
 import { getAllData } from '@/lib/features/shared/actionUtils';
-import { useChatDisplayInfo } from '@/hooks/useChatDisplayInfo';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { Message } from '@/types';
 import { useEffect, useState } from 'react';
@@ -13,6 +12,7 @@ import Image from 'next/image';
 import { formatDate } from '@/lib/utility/functions';
 import socket from '@/lib/sockets';
 import { ChatBoxSmileIcon } from '@/icons/chat';
+import { isChat } from '@/hooks/useChatDisplayInfo';
 
 
 export default function ChatBody() {
@@ -20,20 +20,21 @@ export default function ChatBody() {
     // hooks
     const selectedChat = useAppSelector(selectSelectedChat);
     const { userInfo } = useCurrentUser();
-    const { displayName, displayPic } = useChatDisplayInfo(selectedChat, userInfo?.id);
 
     const [typingUsers, setTypingUsers] = useState<{ id: string, profile_pic?: string, name?: string }[]>([]);
 
+    const isExistChat = isChat(selectedChat);
 
     // constants
-    const chatKey = `chats/${selectedChat?._id}`;
+    const chatKey = isExistChat ? `chats/${selectedChat?._id}` : null;
 
 
     // api
     const { data: messages, isLoading } = useSWR<{ result: Message[] }>(
         chatKey,
-        () => getAllData({ url: `${chatKey}/messages`, customQuery: { limit: 100 } }),
-        { errorRetryCount: 2 }
+        chatKey
+            ? () => getAllData({ url: `${chatKey}/messages`, customQuery: { limit: 100 } })
+            : null
     );
 
     // functions
@@ -52,21 +53,22 @@ export default function ChatBody() {
     }, [messages]);
 
 
-    // join chat room
     useEffect(() => {
-        if (selectedChat?._id) {
+        // join chat room
+        if (isExistChat && selectedChat?._id) {
             socket.emit('joinRoom', selectedChat._id);
+
+
+            return () => {
+                if (selectedChat?._id) {
+                    socket.emit('leaveRoom', selectedChat._id);
+                }
+            };
         }
+    }, [selectedChat]);
 
-        return () => {
-            if (selectedChat?._id) {
-                socket.emit('leaveRoom', selectedChat._id);
-            }
-        };
-    }, [selectedChat?._id]);
-
-    // recieve new message
     useEffect(() => {
+        // recieve new message
         const handleNewMessage = (newMessage: Message) => {
             console.log('new message received client:', newMessage.content);
 
@@ -130,7 +132,7 @@ export default function ChatBody() {
     return (
         <div className="relative h-full">
 
-            <ChatBodyHeader displayName={displayName} displayPic={displayPic} />
+            <ChatBodyHeader />
 
             <div className="h-px w-full border-b border-white-light dark:border-[#1b2e4b]" />
 
@@ -191,12 +193,13 @@ export default function ChatBody() {
                                                         )}
                                                     </div>
                                                     <div className="flex items-center gap-2">
-                                                        <div className={`relative rounded-md text-base bg-black/10 p-2 pr-11 dark:bg-gray-800 ${isCurrentUser
-                                                            ? '!bg-primary text-white ltr:rounded-br-none rtl:rounded-bl-none'
-                                                            : 'ltr:rounded-bl-none rtl:rounded-br-none'}`}
+                                                        <div className={`relative gap-x-2 rounded-md text-base max-w bg-black/10 p-2 dark:bg-gray-800 max-w-[25vw] 
+                                                        ${isCurrentUser
+                                                                ? '!bg-primary text-white ltr:rounded-br-none rtl:rounded-bl-none'
+                                                                : 'ltr:rounded-bl-none rtl:rounded-br-none'}`}
                                                         >
-                                                            {message.content}
-                                                            <div className={`absolute bottom-1 right-1  text-xs text-white-dark ${isCurrentUser ? 'ltr:text-right ltr:text-white-light rtl:text-left' : ''}`}>
+                                                            <p className={`break-all ${message.content.length > 50 ? '' : 'pr-10'}`}>{message.content}</p>
+                                                            <div className={`absolute bottom-0 right-1  text-xs text-white-dark ${isCurrentUser ? 'ltr:text-right ltr:text-white-light rtl:text-left' : ''}`}>
                                                                 {formatTime(message.createdAt.toString())}
                                                             </div>
                                                         </div>
@@ -226,7 +229,7 @@ export default function ChatBody() {
                 </div>
             </PerfectScrollbar>
 
-            <ChatBodyFooter selectedChatId={selectedChat?._id} scrollToBottom={scrollToBottom} />
+            <ChatBodyFooter isExistChat={isExistChat} selectedChatId={selectedChat?._id || ''} scrollToBottom={scrollToBottom} />
 
         </div>
     )

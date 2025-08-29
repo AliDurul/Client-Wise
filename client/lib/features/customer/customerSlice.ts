@@ -10,7 +10,6 @@ export interface CustomerSliceState {
     status: "idle" | "loading" | "failed";
     error: string | null;
     type: 'list' | 'grid';
-    activeUsers: any[];
 }
 
 const initialState: CustomerSliceState = {
@@ -19,7 +18,6 @@ const initialState: CustomerSliceState = {
     error: null,
     customer: null,
     type: 'list',
-    activeUsers: []
 };
 
 export const customerSlice = createAppSlice({
@@ -46,21 +44,7 @@ export const customerSlice = createAppSlice({
             state.status = 'idle';
             state.type = action.payload;
         }),
-        setActiveUsers: reducer((state, action: PayloadAction<any[]>) => {
-            state.activeUsers = action.payload;
-        }),
 
-        // // Async actions
-        // fetchAllCustomerAsync: asyncThunk(
-        //     async (params: { type?: string, page?: string, pageSize?: string, search?: string }) => {
-        //         return createApiThunk(
-        //             () => getAllCustomers(params.type, params.page, params.pageSize, params.search),
-        //             "Failed to fetch KYC data"
-        //         );
-        //     },
-        //     createAsyncThunkConfig('customers')
-
-        // ),
     }),
     selectors: {
         selectCustomers: (customer) => customer.customers,
@@ -69,7 +53,6 @@ export const customerSlice = createAppSlice({
         selectCustomerState: (customer) => customer,
         selectCustomerStatus: (customer) => customer.status,
         selectCustomerError: (customer) => customer.error,
-        selectActiveUsers: (customer) => customer.activeUsers
     }
 });
 
@@ -79,7 +62,6 @@ export const {
     setCustomer,
     clearCustomer,
     setType,
-    setActiveUsers
 } = customerSlice.actions;
 
 export const {
@@ -89,5 +71,4 @@ export const {
     selectCustomer,
     selectCustomerStatus,
     selectCustomerError,
-    selectActiveUsers
 } = customerSlice.selectors;

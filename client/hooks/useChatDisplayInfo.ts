@@ -1,17 +1,46 @@
+import { selectSelectedChat } from "@/lib/features/chat/chatSlice";
+import { useAppSelector } from "@/lib/hooks";
 import { Chat, PersonInfo } from "@/types";
+import { useCurrentUser } from "./useCurrentUser";
 
-export function useChatDisplayInfo(chat: Chat | null, currentUserId?: string) {
+export function isChat(obj: any): obj is Chat {
+    return obj && typeof obj.is_group === 'boolean';
+}
+
+
+export function useChatDisplayInfo(chatProp?: Chat) {
+    const { userInfo } = useCurrentUser();
+    const selectedChat = useAppSelector(selectSelectedChat);
+
+    const chat = chatProp || selectedChat;
+
+    if (!isChat(chat)) {
+        // Handle error or return defaults
+        return {
+            displayName: chat?.full_name || 'Unknown User',
+            displayPic: chat?.profile_pic || '/assets/images/profile-pic.png',
+            otherUser: undefined,
+            otherUserId: '',
+            isGroup: false
+        };
+    }
+
+    const isGroup = chat.is_group;
     let displayName = chat?.chat_name || 'Group Chat';
     let displayPic = chat?.chat_pic || '/assets/images/profile-pic.png';
     let otherUser: PersonInfo | undefined;
+    let otherUserId: string = '';
+    let chatId: string = '';
 
-    if (!chat?.is_group && chat?.users && currentUserId) {
-        otherUser = chat.users.find((member: PersonInfo) => member._id !== currentUserId);
+    if (!chat?.is_group && chat?.users && userInfo?.id) {
+        otherUser = chat.users.find((member: PersonInfo) => member._id !== userInfo.id);
         if (otherUser) {
             displayName = otherUser.full_name;
             displayPic = otherUser.profile_pic || '/assets/images/profile-pic.png';
+            otherUserId = otherUser._id;
+            chatId = chat?._id || '';
         }
     }
 
-    return { displayName, displayPic, otherUser };
+    return { displayName, displayPic, otherUser, otherUserId, isGroup, chatId };
 }
