@@ -9,15 +9,7 @@ import { cachedAuth } from "@/lib/utility/functions";
 const BASE_URL = process.env.API_BASE_URL + '/';
 
 
-const authConfigFormData = async () => {
-  const session = await cachedAuth();
-  const accessToken = session?.access;
 
-  return {
-    Authorization: `Bearer ${accessToken}`,
-  };
-}
-authConfig
 
 export const customerCrUpAction = async (_: unknown, payload: FormData) => {
 
@@ -72,7 +64,7 @@ export const customerCrUpAction = async (_: unknown, payload: FormData) => {
   const method = !!id ? "PUT" : "POST";
 
   try {
-    const headers = await authConfigFormData();
+    const headers = await authConfig(true);
 
     const response = await fetch(url, {
       method,

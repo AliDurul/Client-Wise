@@ -1,5 +1,5 @@
 import { useCurrentUser } from '@/hooks/useCurrentUser';
-import { selectActiveUsers, selectChat, selectSelectedChat } from '@/lib/features/chat/chatSlice';
+import { selectActiveUsers, selectChat, selectGroupModal, selectSelectedChat, setGroupCreate, setGroupModal, setIsShowChatMenu, setIsShowUserChat, setSelectedChat } from '@/lib/features/chat/chatSlice';
 import { getAllData } from '@/lib/features/shared/actionUtils';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { formatDate } from '@/lib/utility/functions';
@@ -21,12 +21,13 @@ export default function ChatSidebarList({ filteredItems, showGroupBtn }: ChatSid
     const dispatch = useAppDispatch();
     const activeUsers = useAppSelector(selectActiveUsers);
     const selectedChat = useAppSelector(selectSelectedChat);
+    const groupModal = useAppSelector(selectGroupModal);
     const { userInfo } = useCurrentUser();
-    const [groupModal, setGroupModal] = useState(false)
+    // const [groupModal, setGroupModal] = useState(false)
 
 
     return (
-        <div className="!mt-0">
+        <div className="!mt-0 h-full">
             <PerfectScrollbar options={{ suppressScrollX: true }} className="chat-users relative -mr-3.5 h-full min-h-[100px] space-y-0.5 pr-3.5 sm:h-[calc(100vh_-_357px)]">
                 {
                     filteredItems?.length === 0 ? (
@@ -84,11 +85,11 @@ export default function ChatSidebarList({ filteredItems, showGroupBtn }: ChatSid
                         })
                     )
                 }
-                {showGroupBtn && <button className='btn btn-primary btn-md absolute bottom-10 right-5'
-                    onClick={() => setGroupModal(!groupModal)}
+                {showGroupBtn && <button className='btn btn-primary btn-sm absolute bottom-0 right-5'
+                    onClick={() => dispatch(setGroupCreate())}
                 >+</button>}
                 {
-                    groupModal && <ChatGroupModal isOpen={groupModal} onClose={() => setGroupModal(false)} />
+                    groupModal && <ChatGroupModal isOpen={groupModal} onClose={() => dispatch(setGroupModal(false))} />
                 }
             </PerfectScrollbar>
 

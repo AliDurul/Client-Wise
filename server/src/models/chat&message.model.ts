@@ -21,7 +21,7 @@ export interface IChat {
     is_group?: boolean;
     users: ChatUser[];
     latest_message: Schema.Types.ObjectId | null;
-    group_admin: Schema.Types.ObjectId | null;
+    group_admin: ChatUser | null;
 }
 
 export interface ChatUser {

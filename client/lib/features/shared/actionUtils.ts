@@ -5,9 +5,10 @@ import qs from 'query-string'
 
 
 const BASE_URL = process.env.API_BASE_URL + '/';
+
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-export const authConfig = async () => {
+export const authConfig = async (isFormData = false) => {
 
     const session = await cachedAuth();
 
@@ -15,22 +16,26 @@ export const authConfig = async () => {
         throw new Error("You are not authenticated, Please login again!");
     }
 
-    return {
-        Authorization: `Bearer ${session?.access}`,
-        "Content-Type": "application/json",
+    const headers: Record<string, string> = {
+        Authorization: `Bearer ${session.access}`,
     };
+
+    if (!isFormData) {
+        headers["Content-Type"] = "application/json";
+    }
+
+    return headers;
 };
+
 
 export const getData = async (url: string) => {
 
     // await wait(5000);
 
     try {
-        // const headers = await authConfig();
+        const headers = await authConfig();
         const response = await fetch(BASE_URL + url, {
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers,
             next: { tags: [url] }
         });
 

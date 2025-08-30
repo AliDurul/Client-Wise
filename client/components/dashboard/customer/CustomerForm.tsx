@@ -46,7 +46,7 @@ export default function CustomerForm({ customer, isEdit, readOnly, error }: Cust
     const [initialValues, setInitialValues] = useState<any>(() => {
         return customer ? {
             _id: customer._id || '',
-            customer_id: customer.customer_id || '',
+            customer_id: customer._id || '',
             first_name: customer.first_name || '',
             last_name: customer.last_name || '',
             full_name: customer.full_name || '',

@@ -1,8 +1,10 @@
 import { Router } from "express";
-import { createGroup, createMessage, deleteChat, getChatMessages, getChats } from "../controllers/chat&message.controller";
+import { createGroup, createMessage, deleteChat, getChatMessages, getChats, getGroupInfo, updateGroup } from "../controllers/chat&message.controller";
+import { upload } from "../utils/common";
 
 const router = Router();
 
+// chats
 
 router.get("/", getChats);
 
@@ -13,10 +15,9 @@ router.route('/:chatId/messages')
     .get(getChatMessages)
     .post(createMessage);
 
-router.post("/group", createGroup)
-// router.route('/group/:groupId').put(updateGroup)
-
-
-
+router.post("/group", upload.single("chat_pic"), createGroup);
+router.route('/group/:groupId')
+    .get(getGroupInfo)
+    .put(upload.single("chat_pic"), updateGroup);
 
 export default router;

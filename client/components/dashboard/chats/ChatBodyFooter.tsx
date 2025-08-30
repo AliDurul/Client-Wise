@@ -75,7 +75,6 @@ export default function ChatBodyFooter({ selectedChatId, scrollToBottom, isExist
                 revalidate: false,
                 onSuccess: (res) => {
                     socket.emit('newMessage', { ...res.message, sender: { _id: userInfo?.id, profile_pic: userInfo?.profile_pic } });
-                    console.log(res.chat);
                     dispatch(setSelectedChat(res.chat));
                     setTextMessage('');
                     scrollToBottom();

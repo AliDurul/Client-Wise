@@ -9,8 +9,6 @@ export const getLeads = async (req: Request, res: Response): Promise<void> => {
 
     const result = await res.getModelList(Lead);
 
-    console.log('selam ', req.user);
-
     res.send({
         success: true,
         details: await res.getModelListDetails(Lead),

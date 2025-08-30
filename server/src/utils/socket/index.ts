@@ -36,10 +36,10 @@ function initSocket(server: any) {
             const userId = socket.data.userId
             if (userId) {
                 activeUsers.delete(userId);
-                console.log("Active users:", activeUsers);
+                // console.log("Active users:", activeUsers);
                 io.emit('activeUsers', Array.from(activeUsers));
             }
-            console.log("Client disconnected:", socket.id);
+            // console.log("Client disconnected:", socket.id);
         });
     });
 

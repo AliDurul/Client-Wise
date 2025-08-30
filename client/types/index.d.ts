@@ -389,12 +389,11 @@ export interface Task {
 export interface Chat {
   _id: string;
   is_group: boolean;
-  group_admin: null | string
+  group_admin: null | string | PersonInfo;
   chat_name: null | string;
   chat_pic: null | string;
   users: PersonInfo[];
   latest_message: LatestMessage;
-  groupAdmin: null | string;
   createdAt: Date;
   updatedAt: Date;
 }

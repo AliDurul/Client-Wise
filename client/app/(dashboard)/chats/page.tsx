@@ -39,13 +39,14 @@ export default function page() {
     }, [userInfo?.id, dispatch]);
 
     return (
-        <div className={`relative flex h-full gap-5 sm:h-[calc(100vh_-_120px)] sm:min-h-0 ${isShowChatMenu ? 'min-h-[999px]' : ''}`}>
+        // ${isShowChatMenu ? 'min-h-[999px]' : ''}
+        <div className={`relative flex gap-5 h-[calc(100vh_-_125px)] sm:min-h-0 `}>
 
             <ChatSidebar />
 
-            <div className={`absolute z-[5] hidden h-full w-full rounded-md bg-black/60 ${isShowChatMenu ? '!block xl:!hidden' : ''}`} onClick={() => setIsShowChatMenu(!isShowChatMenu)} />
+            <div className={`absolute z-[5] hidden h-[calc(100vh_-_125px)] w-full rounded-md bg-black/60 ${isShowChatMenu ? '!block xl:!hidden' : ''}`} onClick={() => dispatch(setIsShowChatMenu(false))} />
 
-            <div className="panel flex-1 p-0">
+            <div className="panel flex-1 p-0 h-[calc(100vh_-_120px)]">
 
                 {isShowUserChat ? <ChatBody /> : <ChatBodyPlaceHolder />}
 

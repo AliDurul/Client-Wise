@@ -1,6 +1,8 @@
 import { createAppSlice } from "@/lib/createAppSlice"
 import { PayloadAction } from "@reduxjs/toolkit";
 import { Chat, PersonInfo } from "@/types";
+import { set } from "zod";
+import { act } from "react";
 
 export interface ChatSliceState {
     chats: Chat[];
@@ -9,6 +11,7 @@ export interface ChatSliceState {
     selectedChat: null | Chat | PersonInfo;
     isShowChatMenu: boolean;
     isShowUserChat: boolean;
+    groupModal: boolean;
     activeUsers: string[];
 }
 
@@ -19,6 +22,7 @@ const initialState: ChatSliceState = {
     selectedChat: null,
     isShowChatMenu: false,
     isShowUserChat: false,
+    groupModal: false,
     activeUsers: []
 }
 
@@ -28,11 +32,10 @@ export const chatSlice = createAppSlice({
     initialState,
     reducers: ({ reducer, asyncThunk }) => ({
         // Entity management
-        setSelectedChat: reducer((state, action: PayloadAction<Chat | PersonInfo>) => {
+        setSelectedChat: reducer((state, action: PayloadAction<Chat | PersonInfo | null>) => {
             state.status = 'idle';
             state.selectedChat = action.payload;
         }),
-
         selectChat: reducer((state, action: PayloadAction<Chat | PersonInfo>) => {
             state.status = 'idle';
             state.selectedChat = action.payload;
@@ -40,7 +43,12 @@ export const chatSlice = createAppSlice({
             state.isShowChatMenu = false;
         }),
 
-
+        setGroupCreate: reducer((state) => {
+            state.groupModal = true;
+            state.selectedChat = null;
+            state.isShowUserChat = false;
+            state.isShowChatMenu = false;
+        }),
         setActiveUsers: reducer((state, action: PayloadAction<string[]>) => {
             state.activeUsers = action.payload;
         }),
@@ -55,6 +63,9 @@ export const chatSlice = createAppSlice({
         setIsShowUserChat: reducer((state, action: PayloadAction<boolean>) => {
             state.isShowUserChat = action.payload;
         }),
+        setGroupModal: reducer((state, action: PayloadAction<boolean>) => {
+            state.groupModal = action.payload;
+        })
 
     }),
     selectors: {
@@ -65,7 +76,8 @@ export const chatSlice = createAppSlice({
         selectIsShowChatMenu: (chat) => chat.isShowChatMenu,
         selectIsShowUserChat: (chat) => chat.isShowUserChat,
         selectActiveUsers: (chat) => chat.activeUsers,
-        selectChatStates: (chat) => chat
+        selectChatStates: (chat) => chat,
+        selectGroupModal: (chat) => chat.groupModal
     }
 })
 
@@ -75,7 +87,9 @@ export const {
     toggleChatMenu,
     setIsShowUserChat,
     setActiveUsers,
-    selectChat
+    selectChat,
+    setGroupModal,
+    setGroupCreate
 } = chatSlice.actions;
 
 export const {
@@ -86,5 +100,6 @@ export const {
     selectIsShowChatMenu,
     selectChatStates,
     selectIsShowUserChat,
-    selectActiveUsers
+    selectActiveUsers,
+    selectGroupModal
 } = chatSlice.selectors;

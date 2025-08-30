@@ -7,7 +7,7 @@ import { authConfig } from "../shared/actionUtils";
 const BASE_URL = process.env.API_BASE_URL + '/'
 
 
-interface postMessageProps{
+interface postMessageProps {
     chatId: string | null;
     content: string;
     receiverId: string | null;
@@ -38,26 +38,36 @@ export const postMessage = async (url: string, { arg }: { arg: postMessageProps 
 
 }
 
-export const postGroup = async (_: unknown, payload: any) => {
+export const groupCrUpAction = async (_: unknown, payload: FormData) => {
 
+
+    const id = payload.get("_id");
+    if (id) payload.delete("_id");
+
+
+    console.log(id, payload);
+
+    const url = !!id ? `${BASE_URL}chats/group/${id}/` : `${BASE_URL}chats/group`;
+    const method = !!id ? "PUT" : "POST";
 
     try {
-        const headers = await authConfig();
+        const headers = await authConfig(true);
 
-        const response = await fetch(`${BASE_URL}chats/group`, {
-            method: 'POST',
+        const response = await fetch(url, {
+            method,
             headers,
-            body: JSON.stringify(payload),
+            body: payload,
         });
 
         const data = await response.json();
-
+        
+        console.log('res',data);
         if (!response.ok) {
             throw new Error(data.message || "Something went wrong, Please try again!");
         }
 
         return {
-            message: "Group created successfully!",
+            message: !!id ? "Group updated successfully!" : "Group created successfully!",
             success: true
         };
 

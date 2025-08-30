@@ -136,7 +136,7 @@ export default function ChatBody() {
 
             <div className="h-px w-full border-b border-white-light dark:border-[#1b2e4b]" />
 
-            <PerfectScrollbar options={{ suppressScrollX: true }} className="chat-conversation-box relative h-full sm:h-[calc(100vh_-_300px)]">
+            <PerfectScrollbar options={{ suppressScrollX: true }} className="chat-conversation-box relative h-[calc(100vh_-_200px)] md:h-[calc(100vh_-_300px)]">
                 <div className="min-h-[400px] p-4 pb-[68px] sm:min-h-[300px] sm:pb-0">
                     {
                         isLoading ? (
@@ -154,8 +154,8 @@ export default function ChatBody() {
 
                                         const showAvatar =
                                             i === messages.result.length - 1 || // Always show for last message
-                                            i === 0 || // Always show for first message
                                             messages.result[i + 1]?.sender._id !== message.sender._id; // Show if next message is from different user
+                                        // i === 0 || // Always show for first message
 
                                         const isPrevSameUser = i > 0 && messages.result[i - 1]?.sender._id === message.sender._id;
 
@@ -219,7 +219,7 @@ export default function ChatBody() {
                             </div>
                         )
                     }
-
+                    
                     {typingUsers.length > 0 && (
                         <div className=" animate-pulse text-xs mt-5">
                             {typingUsers.map(u => u.name || 'Someone').join(', ')}
@@ -227,7 +227,10 @@ export default function ChatBody() {
                         </div>
                     )}
                 </div>
+
             </PerfectScrollbar>
+
+
 
             <ChatBodyFooter isExistChat={isExistChat} selectedChatId={selectedChat?._id || ''} scrollToBottom={scrollToBottom} />
 

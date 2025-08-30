@@ -8,7 +8,6 @@ const lead_model_1 = __importDefault(require("../models/lead.model"));
 const common_1 = require("../utils/common");
 const getLeads = async (req, res) => {
     const result = await res.getModelList(lead_model_1.default);
-    console.log('selam ', req.user);
     res.send({
         success: true,
         details: await res.getModelListDetails(lead_model_1.default),

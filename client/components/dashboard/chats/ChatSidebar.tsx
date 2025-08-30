@@ -78,7 +78,7 @@ export default function ChatSidebar() {
     // };
 
     return (
-        <aside className={`panel absolute z-10 hidden w-full max-w-xs flex-none space-y-4 overflow-hidden p-4 xl:relative xl:block xl:h-full ${isShowChatMenu ? '!block' : ''}`}>
+        <aside className={`panel rounded-l-none  absolute h-full z-10 hidden w-full max-w-xs flex-none space-y-4 overflow-hidden p-4 xl:relative xl:block xl:h-full ${isShowChatMenu ? '!block' : ''}`}>
             <div className="flex items-center justify-between">
                 <div className="flex items-center">
                     <div className="flex-none">
@@ -134,7 +134,8 @@ export default function ChatSidebar() {
                 )
             }
 
-            <TabGroup selectedIndex={selectedIndex} onChange={i => setSelectedTab(Tabs[i].name)}>
+
+            <TabGroup className="h-[calc(100vh_-_335px)]" selectedIndex={selectedIndex} onChange={i => setSelectedTab(Tabs[i].name)}>
                 <TabList className="flex items-center justify-between text-xs mb-4">
                     {Tabs.map((tab, i) => (
                         <Tab key={i}>
@@ -147,8 +148,10 @@ export default function ChatSidebar() {
                         </Tab>
                     ))}
                 </TabList>
-                <TabPanels>
-                    <TabPanel>
+                <div className="h-px w-full border-b border-white-light dark:border-[#1b2e4b]" />
+
+                <TabPanels className="flex-1 h-full">
+                    <TabPanel className="h-full flex-1">
                         {
                             isLoading ? <ChatSidebarListSkeleton /> : <ChatSidebarList filteredItems={filteredItems} showGroupBtn={true} />
                         }
@@ -165,7 +168,6 @@ export default function ChatSidebar() {
                 </TabPanels>
             </TabGroup>
 
-            <div className="h-px w-full border-b border-white-light dark:border-[#1b2e4b]" />
 
 
         </aside>
