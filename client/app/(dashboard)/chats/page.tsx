@@ -21,6 +21,7 @@ export default function page() {
 
     const handleActiveUsers = (activeUsers: string[]) => {
         dispatch(setActiveChatUsers(activeUsers));
+        console.log('this worked');
     };
 
     useEffect(() => {
@@ -32,11 +33,13 @@ export default function page() {
         socket.on('activeChatUsers', handleActiveUsers);
 
         return () => {
-            socket.off('activeChatUsers', handleActiveUsers);
             socket.emit('userChatInactive', userInfo.id);
+            setTimeout(() => {
+                socket.off('activeChatUsers', handleActiveUsers);
+            }, 300);
             hasConnected.current = false;
         };
-    }, [userInfo?.id, dispatch]);
+    }, [userInfo?.id, dispatch, socket]);
 
     return (
         // ${isShowChatMenu ? 'min-h-[999px]' : ''}

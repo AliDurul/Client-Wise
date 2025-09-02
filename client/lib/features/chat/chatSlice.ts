@@ -14,6 +14,7 @@ export interface ChatSliceState {
     groupModal: boolean;
     activeChatUsers: string[];
     onlineUsers: string[];
+    unreadChats: { [chatId: string]: number };
 }
 
 const initialState: ChatSliceState = {
@@ -25,7 +26,8 @@ const initialState: ChatSliceState = {
     isShowUserChat: false,
     groupModal: false,
     activeChatUsers: [],
-    onlineUsers: []
+    onlineUsers: [],
+    unreadChats: {}
 }
 
 
@@ -44,7 +46,6 @@ export const chatSlice = createAppSlice({
             state.isShowUserChat = true;
             state.isShowChatMenu = false;
         }),
-
         setGroupCreate: reducer((state) => {
             state.groupModal = true;
             state.selectedChat = null;
@@ -58,7 +59,14 @@ export const chatSlice = createAppSlice({
         setOnlineUsers: reducer((state, action: PayloadAction<string[]>) => {
             state.onlineUsers = action.payload;
         }),
-
+        setUnreadChats: reducer((state, action: PayloadAction<string>) => {
+            const chatId = action.payload;
+            state.unreadChats[chatId] = (state.unreadChats[chatId] || 0) + 1;
+        }),
+        resetUnreadChat: reducer((state, action: PayloadAction<string>) => {
+            const chatId = action.payload;
+            state.unreadChats[chatId] = 0;
+        }),
         // UI state management
         setIsShowChatMenu: reducer((state, action: PayloadAction<boolean>) => {
             state.isShowChatMenu = action.payload;
@@ -84,7 +92,8 @@ export const chatSlice = createAppSlice({
         selectActiveChatUsers: (chat) => chat.activeChatUsers,
         selectChatStates: (chat) => chat,
         selectGroupModal: (chat) => chat.groupModal,
-        selectOnlineUsers: (chat) => chat.onlineUsers
+        selectOnlineUsers: (chat) => chat.onlineUsers,
+        selectUnreadChats: (chat) => chat.unreadChats
     }
 })
 
@@ -97,7 +106,9 @@ export const {
     selectChat,
     setGroupModal,
     setGroupCreate,
-    setOnlineUsers
+    setOnlineUsers,
+    setUnreadChats,
+    resetUnreadChat,
 } = chatSlice.actions;
 
 export const {
@@ -110,5 +121,6 @@ export const {
     selectIsShowUserChat,
     selectActiveChatUsers,
     selectGroupModal,
-    selectOnlineUsers
+    selectOnlineUsers,
+    selectUnreadChats
 } = chatSlice.selectors;

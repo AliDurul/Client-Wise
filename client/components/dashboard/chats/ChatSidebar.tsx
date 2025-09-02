@@ -60,23 +60,6 @@ export default function ChatSidebar() {
         });
     }, [searchUser, chats, selectedTab]);
 
-    const scrollToBottom = () => {
-        if (isShowUserChat) {
-            setTimeout(() => {
-                const element: any = document.querySelector('.chat-conversation-box');
-                element.behavior = 'smooth';
-                element.scrollTop = element.scrollHeight;
-            });
-        }
-    };
-
-    // const selectUser = (chat: Chat | PersonInfo) => {
-    //     dispatch(setSelectedChat(chat));
-    //     dispatch(setIsShowUserChat(true));
-    //     scrollToBottom();
-    //     dispatch(setIsShowChatMenu(false));
-    // };
-
     return (
         <aside className={`panel rounded-l-none  absolute h-full z-10 hidden w-full max-w-xs flex-none space-y-4 overflow-hidden p-4 xl:relative xl:block xl:h-full ${isShowChatMenu ? '!block' : ''}`}>
             <div className="flex items-center justify-between">

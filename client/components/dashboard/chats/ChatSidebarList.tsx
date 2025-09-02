@@ -1,5 +1,5 @@
 import { useCurrentUser } from '@/hooks/useCurrentUser';
-import { selectActiveChatUsers, selectChat, selectGroupModal, selectSelectedChat, setGroupCreate, setGroupModal, setIsShowChatMenu, setIsShowUserChat, setSelectedChat } from '@/lib/features/chat/chatSlice';
+import { resetUnreadChat, selectActiveChatUsers, selectChat, selectGroupModal, selectSelectedChat, selectUnreadChats, setGroupCreate, setGroupModal, setIsShowChatMenu, setIsShowUserChat, setSelectedChat } from '@/lib/features/chat/chatSlice';
 import { getAllData } from '@/lib/features/shared/actionUtils';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { formatDate } from '@/lib/utility/functions';
@@ -8,7 +8,8 @@ import Image from 'next/image';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import useSWR from 'swr';
 import ChatGroupModal from './ChatGroupModal';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import socket from '@/lib/sockets';
 
 interface ChatSidebarListProps {
     filteredItems: Chat[];
@@ -23,7 +24,7 @@ export default function ChatSidebarList({ filteredItems, showGroupBtn }: ChatSid
     const selectedChat = useAppSelector(selectSelectedChat);
     const groupModal = useAppSelector(selectGroupModal);
     const { userInfo } = useCurrentUser();
-    // const [groupModal, setGroupModal] = useState(false)
+    const unreadChats = useAppSelector(selectUnreadChats);
 
 
     return (
@@ -56,7 +57,10 @@ export default function ChatSidebarList({ filteredItems, showGroupBtn }: ChatSid
                                     <button
                                         type="button"
                                         className={`flex w-full items-center justify-between rounded-md p-2 hover:bg-gray-100 hover:text-primary dark:hover:bg-[#050b14] dark:hover:text-primary ${selectedChat && selectedChat._id === chat._id ? 'bg-gray-100 text-primary dark:bg-[#050b14] dark:text-primary' : ''}`}
-                                        onClick={() => dispatch(selectChat(chat))}
+                                        onClick={() => {
+                                            dispatch(selectChat(chat));
+                                            dispatch(resetUnreadChat(chat._id));
+                                        }}
                                     >
                                         <div className="flex-1">
                                             <div className="flex items-center">
@@ -76,8 +80,13 @@ export default function ChatSidebarList({ filteredItems, showGroupBtn }: ChatSid
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="whitespace-nowrap text-xs font-semibold">
+                                        <div className="whitespace-nowrap text-xs font-semibold flex flex-col items-center gap-2">
                                             <p>{formatDate(chat.latest_message?.createdAt)}</p>
+                                            {unreadChats[chat._id] > 0 && (
+                                                <span className="badge bg-primary text-white text-xs  size-5 rounded-full">
+                                                    {unreadChats[chat._id]}
+                                                </span>
+                                            )}
                                         </div>
                                     </button>
                                 </div>
