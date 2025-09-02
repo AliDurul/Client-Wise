@@ -40,6 +40,18 @@ export function useDataTable<T extends { _id: string }>(config: UseDataTableConf
     const [expandedRecordIds, setExpandedRecordIds] = useState<unknown[]>([]);
     const [deletingId, setDeletingId] = useState<string | null>(null);
 
+    // Column chooser state
+    const [hiddenColumns, setHiddenColumns] = useState<string[]>(['company_name']);
+    console.log(hiddenColumns);
+    // Handler to show/hide columns
+    const toggleColumnVisibility = (accessor: string) => {
+        setHiddenColumns((prev) =>
+            prev.includes(accessor)
+                ? prev.filter((col) => col !== accessor)
+                : [...prev, accessor]
+        );
+    };
+
     // URL params
     const page = getParam('p', '1');
     const pageLimit = getParam('pl', '20');
@@ -193,5 +205,9 @@ export function useDataTable<T extends { _id: string }>(config: UseDataTableConf
         getTableProps,
         getRowExpansionProps,
         PAGE_SIZES,
+
+    // Column chooser
+    hiddenColumns,
+    toggleColumnVisibility,
     };
 }

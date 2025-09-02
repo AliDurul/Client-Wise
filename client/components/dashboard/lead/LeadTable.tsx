@@ -4,7 +4,7 @@ import { Customer, Lead, Pagination } from '@/types';
 import { LuMousePointerClick } from "react-icons/lu";
 import Image from 'next/image';
 import { DeleteIcon, EditIcon, PreviewIcon } from '@/icons';
-import { use, useState } from 'react';
+import { use, useState, useMemo } from 'react';
 import type { DataTableColumn, DataTableProps } from 'mantine-datatable';
 import { DataTable } from 'mantine-datatable';
 import SearchInput from '@/components/shared/SearchInput';
@@ -13,13 +13,13 @@ import { useDataTable } from '@/hooks/useDataTable';
 import { delData, delMultiData } from '@/lib/features/shared/actionUtils';
 import Dropdown from '@/components/layout/Dropdown';
 import { useUrlParams } from '@/hooks/useUrlParams';
+import ColumnChooser from '@/components/shared/ColumnChooser';
 
 interface CustomerMainProps {
-  leadPromise: Promise<Pagination<Lead>>;
+  leads: Pagination<Lead>
 }
 
-export default function LeadTable({ leadPromise }: CustomerMainProps) {
-  const leads = use(leadPromise);
+export default function LeadTable({ leads }: CustomerMainProps) {
   const { getParam, updateUrlParams } = useUrlParams()
 
   const {
@@ -34,6 +34,7 @@ export default function LeadTable({ leadPromise }: CustomerMainProps) {
     handleMultiDelete,
     getTableProps,
     getRowExpansionProps,
+    hiddenColumns,
   } = useDataTable<Lead>({
     deleteAction: delData,
     deleteMultiAction: delMultiData,
@@ -46,7 +47,7 @@ export default function LeadTable({ leadPromise }: CustomerMainProps) {
     <div className="mx-auto flex w-max items-center gap-4">
       <button
         className="flex hover:text-primary"
-        onClick={(e) => { handlePreview(`/customers/action/?s=r&id=${record._id}`, e); }}
+        onClick={(e) => { handlePreview(`/leads/action/?s=r&id=${record._id}`, e); }}
       >
         <PreviewIcon />
       </button>
@@ -55,7 +56,7 @@ export default function LeadTable({ leadPromise }: CustomerMainProps) {
           <>
             <button
               className="flex hover:text-info"
-              onClick={(e) => { handleEdit(`/customers/action/?s=e&id=${record._id}`, e); }}
+              onClick={(e) => { handleEdit(`/leads/action/?s=e&id=${record._id}`, e); }}
             >
               <EditIcon />
             </button>
@@ -63,7 +64,7 @@ export default function LeadTable({ leadPromise }: CustomerMainProps) {
               type="button"
               className="flex hover:text-danger"
               disabled={isPendingSingle}
-              onClick={(e) => { handleDelete({ url: 'customers', id: record._id }, e); }}>
+              onClick={(e) => { handleDelete({ url: 'leads', id: record._id }, e); }}>
               {
                 deletingId === record._id
                   ? <div className="animate-spin rounded-full size-5 border-b-2 border-red-500" />
@@ -94,8 +95,7 @@ export default function LeadTable({ leadPromise }: CustomerMainProps) {
   //   ),
   // };
 
-  const columns: DataTableProps<Lead>['columns'] = [
-
+  const allColumns: DataTableProps<Lead>['columns'] = [
     {
       accessor: 'company_name',
       title: 'Company Name',
@@ -190,8 +190,8 @@ export default function LeadTable({ leadPromise }: CustomerMainProps) {
       title: 'Probability',
       render: (record: Lead) => record.probability != null ? `${record.probability}%` : '-',
       sortable: true,
+      hidden: hiddenColumns.includes('probability')
     },
-
     {
       accessor: 'actions',
       title: (
@@ -204,46 +204,54 @@ export default function LeadTable({ leadPromise }: CustomerMainProps) {
     },
   ];
 
+  const columns = useMemo(() => allColumns.filter(col => !hiddenColumns.includes(col.accessor as string)),
+    [hiddenColumns]);
+
+  console.log(columns);
+  const columnChooserCols = allColumns
+    .filter(col => col.accessor !== 'actions')
+    .map(col => ({ accessor: col.accessor as string, title: typeof col.title === 'string' ? col.title : 'Actions' }));
+  console.log(columnChooserCols);
 
   return (
-
-    <div className="pl-1 datatables pagination-padding">
-      {/* Loading Overlay */}
-      {/* <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="panel mt-5  border-white-light dark:border-[#1b2e4b]">
+      <div className="pl-1 datatables pagination-padding">
+        {/* Loading Overlay */}
+        {/* <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 flex flex-col items-center gap-4 shadow-xl">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"/>
           <p className="text-gray-700 dark:text-gray-300 font-medium">Processing...</p>
         </div>
       </div> */}
 
 
-      <div className='flex justify-between items-center md:flex-row md:items-center mb-3'>
-        <div className="flex flex-wrap items-center justify-around gap-2 pl-3">
-          {
-            selectedRecords.length >= 1 &&
-            <button
-              type="button"
-              className="btn btn-danger gap-2"
-              onClick={() => handleMultiDelete('customers')} disabled={isPendingMulti}
-            >
-              <DeleteIcon />
-              Delete
-            </button>
-          }
-          {/* <TicketModal ticketModal={ticketModal} setTicketModal={setTicketModal} /> */}
+        <div className='flex justify-between items-center md:flex-row md:items-center mb-3'>
+          <div className="flex flex-wrap items-center justify-around gap-2 pl-3">
+            {
+              selectedRecords.length >= 1 &&
+              <button
+                type="button"
+                className="btn btn-danger gap-2"
+                onClick={() => handleMultiDelete('leads')} disabled={isPendingMulti}
+              >
+                <DeleteIcon />
+                Delete
+              </button>
+            }
+          </div>
+          <ColumnChooser cols={columnChooserCols} />
+
+          <SearchInput />
         </div>
-
-        <SearchInput />
-
+        <DataTable
+          {...getTableProps()}
+          // rowExpansion={rowExpansion}
+          records={leads?.result || []}
+          columns={columns}
+          totalRecords={leads?.details.totalRecords || 0}
+          idAccessor="_id"
+        />
       </div>
-      <DataTable
-        {...getTableProps()}
-        // rowExpansion={rowExpansion}
-        records={leads?.result || []}
-        columns={columns}
-        totalRecords={leads?.details.totalRecords || 0}
-        idAccessor="_id"
-      />
     </div>
   )
 }

@@ -35,13 +35,10 @@ const NavbarMessagesDrop = () => {
   const { userInfo } = useCurrentUser();
   const activeChatUsers = useAppSelector(selectActiveChatUsers);
   const [messages, setMessages] = useState<MessageNotification[]>([]);
-  console.log(activeChatUsers);
-  console.log(userInfo?.id);
 
   useEffect(() => {
     socket?.on('newMsgNotification', (msgNotification: MessageNotification) => {
       dispatch(setUnreadChats(msgNotification.chat));
-      console.log(activeChatUsers.includes(userInfo?.id || ''));
       if (activeChatUsers.includes(userInfo?.id || '')) return;
       setMessages(prevMessages => [msgNotification, ...prevMessages]);
     })

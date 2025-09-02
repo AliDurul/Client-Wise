@@ -19,7 +19,7 @@ export default async function page({ searchParams }: PageSearchParams) {
     const sortBy = params.sb || 'createdAt';
     const sort = params.s || 'desc';
 
-    const leadPromise = getAllData({
+    const leads = await getAllData({
         url: 'leads/',
         searchQueries: { 'first_name': query },
         customQuery: { page, limit },
@@ -30,16 +30,7 @@ export default async function page({ searchParams }: PageSearchParams) {
 
     return (
         <>
-
-            <div className="panel mt-5 border-white-light px-0 dark:border-[#1b2e4b]">
-
-                {/* <ClientErrorBoundary> */}
-                <Suspense fallback={<div className="flex h-full items-center justify-center">Loading...</div>}>
-                    <LeadTable leadPromise={leadPromise} />
-                </Suspense>
-                {/* </ClientErrorBoundary> */}
-            </div>
-
+            <LeadTable leads={leads} />
         </>
     )
 }

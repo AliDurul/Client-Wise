@@ -13,26 +13,7 @@ const NavbarNotificationDrop = () => {
   const isRtl = themeConfig.rtlClass;
 
 
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      profile: 'user-profile.jpeg',
-      message: '<strong class="text-sm mr-1">John Doe</strong>invite you to <strong>Prototyping</strong>',
-      time: '45 min ago',
-    },
-    {
-      id: 2,
-      profile: 'user-profile.jpeg',
-      message: '<strong class="text-sm mr-1">Adam Nolan</strong>mentioned you to <strong>UX Basics</strong>',
-      time: '9h Ago',
-    },
-    {
-      id: 3,
-      profile: 'user-profile.jpeg',
-      message: '<strong class="text-sm mr-1">Anna Morgan</strong>Upload a file',
-      time: '9h Ago',
-    },
-  ]);
+  const [notifications, setNotifications] = useState<any[]>([]);
 
 
   const removeNotification = (value: number) => {
@@ -51,7 +32,7 @@ const NavbarNotificationDrop = () => {
             {
               notifications.length > 0 && <span className="absolute top-0 flex h-3 w-3 ltr:right-0 rtl:left-0">
                 <span className="absolute -top-[3px] inline-flex h-full w-full animate-ping rounded-full bg-success/50 opacity-75 ltr:-left-[3px] rtl:-right-[3px]"></span>
-                <span className="relative inline-flex h-[6px] w-[6px] rounded-full bg-primary"></span>
+                <span className="relative inline-flex h-[6px] w-[6px] rounded-full bg-primary" />
               </span>
             }
           </span>
