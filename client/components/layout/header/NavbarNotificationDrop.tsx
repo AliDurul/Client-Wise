@@ -1,9 +1,10 @@
 import Dropdown from "../Dropdown";
 import { MessagesCloseIcon, NotificationIcon, NotificationNoDataAvaibleIcon } from "@/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useAppSelector } from "@/lib/hooks";
 import { selectThemeConfig } from "@/lib/features/theme/themeSlice";
+import socket from "@/lib/sockets";
 // import { selectThemeConfig } from "@/lib/features/themeConfig/themeConfigSlice";
 
 
@@ -32,6 +33,8 @@ const NavbarNotificationDrop = () => {
       time: '9h Ago',
     },
   ]);
+
+
   const removeNotification = (value: number) => {
     setNotifications(notifications?.filter((user) => user.id !== value));
   };

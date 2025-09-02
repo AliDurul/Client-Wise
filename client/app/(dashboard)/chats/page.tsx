@@ -3,7 +3,7 @@ import ChatBody from '@/components/dashboard/chats/ChatBody';
 import ChatBodyPlaceHolder from '@/components/dashboard/chats/ChatBodyPlaceHolder';
 import ChatSidebar from '@/components/dashboard/chats/ChatSidebar';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
-import { selectIsShowChatMenu, selectIsShowUserChat, setActiveUsers, setIsShowChatMenu } from '@/lib/features/chat/chatSlice';
+import { selectIsShowChatMenu, selectIsShowUserChat, setActiveChatUsers, setIsShowChatMenu } from '@/lib/features/chat/chatSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import socket from '@/lib/sockets';
 import { PersonInfo } from '@/types';
@@ -19,21 +19,21 @@ export default function page() {
     const isShowChatMenu = useAppSelector(selectIsShowChatMenu);
     const isShowUserChat = useAppSelector(selectIsShowUserChat);
 
+    const handleActiveUsers = (activeUsers: string[]) => {
+        dispatch(setActiveChatUsers(activeUsers));
+    };
+
     useEffect(() => {
         if (!userInfo?.id || hasConnected.current) return;
 
-        socket.emit('userConnected', userInfo.id);
+        socket.emit('userChatActive', userInfo.id);
         hasConnected.current = true;
 
-        const handleActiveUsers = (activeUsers: string[]) => {
-            dispatch(setActiveUsers(activeUsers));
-        };
-
-        socket.on('activeUsers', handleActiveUsers);
+        socket.on('activeChatUsers', handleActiveUsers);
 
         return () => {
-            socket.off('activeUsers', handleActiveUsers);
-            socket.emit('userDisconnected', userInfo.id);
+            socket.off('activeChatUsers', handleActiveUsers);
+            socket.emit('userChatInactive', userInfo.id);
             hasConnected.current = false;
         };
     }, [userInfo?.id, dispatch]);

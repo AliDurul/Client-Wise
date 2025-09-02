@@ -7,6 +7,7 @@ import { useCurrentUser } from '@/hooks/useCurrentUser';
 import socket from '@/lib/sockets';
 import { setSelectedChat } from '@/lib/features/chat/chatSlice';
 import { useAppDispatch } from '@/lib/hooks';
+import { PersonInfo } from '@/types';
 
 let typingTimeout: NodeJS.Timeout | null = null;
 
@@ -74,7 +75,20 @@ export default function ChatBodyFooter({ selectedChatId, scrollToBottom, isExist
                 },
                 revalidate: false,
                 onSuccess: (res) => {
-                    socket.emit('newMessage', { ...res.message, sender: { _id: userInfo?.id, profile_pic: userInfo?.profile_pic } });
+                    // console.log(res);
+                    const { users, latest_message, updatedAt, createdAt, _id, ...chatInfo } = res?.chat;
+                    const newMessageData = {
+                        ...res.message,
+                        ...chatInfo,
+                        users: res.chat.users.map((u: PersonInfo) => u._id),
+                        sender: {
+                            _id: userInfo?.id,
+                            profile_pic: userInfo?.profile_pic,
+                            full_name: userInfo?.first_name + ' ' + userInfo?.last_name
+                        }
+                    }
+
+                    socket.emit('newMessage', newMessageData);
                     dispatch(setSelectedChat(res.chat));
                     setTextMessage('');
                     scrollToBottom();

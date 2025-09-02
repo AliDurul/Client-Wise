@@ -12,7 +12,8 @@ export interface ChatSliceState {
     isShowChatMenu: boolean;
     isShowUserChat: boolean;
     groupModal: boolean;
-    activeUsers: string[];
+    activeChatUsers: string[];
+    onlineUsers: string[];
 }
 
 const initialState: ChatSliceState = {
@@ -23,7 +24,8 @@ const initialState: ChatSliceState = {
     isShowChatMenu: false,
     isShowUserChat: false,
     groupModal: false,
-    activeUsers: []
+    activeChatUsers: [],
+    onlineUsers: []
 }
 
 
@@ -49,8 +51,12 @@ export const chatSlice = createAppSlice({
             state.isShowUserChat = false;
             state.isShowChatMenu = false;
         }),
-        setActiveUsers: reducer((state, action: PayloadAction<string[]>) => {
-            state.activeUsers = action.payload;
+        setActiveChatUsers: reducer((state, action: PayloadAction<string[]>) => {
+            state.activeChatUsers = action.payload;
+        }),
+
+        setOnlineUsers: reducer((state, action: PayloadAction<string[]>) => {
+            state.onlineUsers = action.payload;
         }),
 
         // UI state management
@@ -75,9 +81,10 @@ export const chatSlice = createAppSlice({
         selectChatError: (chat) => chat.error,
         selectIsShowChatMenu: (chat) => chat.isShowChatMenu,
         selectIsShowUserChat: (chat) => chat.isShowUserChat,
-        selectActiveUsers: (chat) => chat.activeUsers,
+        selectActiveChatUsers: (chat) => chat.activeChatUsers,
         selectChatStates: (chat) => chat,
-        selectGroupModal: (chat) => chat.groupModal
+        selectGroupModal: (chat) => chat.groupModal,
+        selectOnlineUsers: (chat) => chat.onlineUsers
     }
 })
 
@@ -86,10 +93,11 @@ export const {
     setIsShowChatMenu,
     toggleChatMenu,
     setIsShowUserChat,
-    setActiveUsers,
+    setActiveChatUsers,
     selectChat,
     setGroupModal,
-    setGroupCreate
+    setGroupCreate,
+    setOnlineUsers
 } = chatSlice.actions;
 
 export const {
@@ -100,6 +108,7 @@ export const {
     selectIsShowChatMenu,
     selectChatStates,
     selectIsShowUserChat,
-    selectActiveUsers,
-    selectGroupModal
+    selectActiveChatUsers,
+    selectGroupModal,
+    selectOnlineUsers
 } = chatSlice.selectors;

@@ -13,10 +13,11 @@ import NavbarNotificationDrop from './NavbarNotificationDrop';
 import NavbarProfileDrop from './NavbarProfileDrop';
 import { useAppSelector } from '@/lib/hooks';
 import { selectThemeConfig } from '@/lib/features/theme/themeSlice';
+import socket from '@/lib/sockets';
 
 
 const Header = () => {
-	const pathname = usePathname()
+	const pathname = usePathname();
 
 	useEffect(() => {
 		const selector = document.querySelector('ul.horizontal-menu a[href="' + window.location.pathname + '"]');
@@ -56,7 +57,7 @@ const Header = () => {
 					<NavbarIconsLinks />
 					<div className="flex items-center space-x-1.5 ltr:ml-auto rtl:mr-auto rtl:space-x-reverse dark:text-[#d0d2d6] sm:flex-1 ltr:sm:ml-0 sm:rtl:mr-0 lg:space-x-2">
 						<NavbarSearchForm />
-						<div className="sm:ltr:mr-auto sm:rtl:ml-auto"/>
+						<div className="sm:ltr:mr-auto sm:rtl:ml-auto" />
 						<NavbarThemeToggle />
 						<NavbarMessagesDrop />
 						<NavbarNotificationDrop />

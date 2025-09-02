@@ -2,7 +2,8 @@ import { Socket, Server } from "socket.io";
 import { handleChatEvents } from "./chatEvents";
 import { handleNotiEvents } from "./notiEvents";
 
-const activeUsers = new Set<string>();
+export const activeChatUsers = new Set<string>();
+export const onlineUsers = new Set<string>();
 
 function initSocket(server: any) {
     const io = new Server(server, {
@@ -16,16 +17,20 @@ function initSocket(server: any) {
     io.on("connection", (socket: Socket) => {
         // console.log("New user connected:", socket.id);
 
-        socket.on('userConnected', (userId: string) => {
-            activeUsers.add(userId);
+        socket.on('userOnline', (userId: string) => {
+            onlineUsers.add(userId);
             socket.data.userId = userId;
-            // console.log("Active users:", activeUsers);
-            io.emit('activeUsers', Array.from(activeUsers));
+            io.emit('onlineUsers', Array.from(onlineUsers));
         });
 
-        socket.on('userDisconnected', (userId: string) => {
-            activeUsers.delete(userId);
-            io.emit('activeUsers', Array.from(activeUsers));
+        socket.on('userChatActive', (userId: string) => {
+            activeChatUsers.add(userId);
+            io.emit('activeChatUsers', Array.from(activeChatUsers));
+        });
+
+        socket.on('userChatInactive', (userId: string) => {
+            activeChatUsers.delete(userId);
+            io.emit('activeChatUsers', Array.from(activeChatUsers));
         });
 
 
@@ -35,9 +40,10 @@ function initSocket(server: any) {
         socket.on("disconnect", () => {
             const userId = socket.data.userId
             if (userId) {
-                activeUsers.delete(userId);
-                // console.log("Active users:", activeUsers);
-                io.emit('activeUsers', Array.from(activeUsers));
+                onlineUsers.delete(userId);
+                activeChatUsers.delete(userId);
+                io.emit('onlineUsers', Array.from(onlineUsers));
+                io.emit('activeChatUsers', Array.from(activeChatUsers));
             }
             // console.log("Client disconnected:", socket.id);
         });

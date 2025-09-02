@@ -556,7 +556,7 @@
     }
     .dropdown ul li > a,
     .dropdown ul li > button {
-        @apply flex items-center px-4 py-2 hover:bg-[#ECECEC] hover:text-[#D41709];
+        @apply flex items-center px-4 py-2 hover:bg-[#ECECEC] hover:text-primary;
     }
     .dropdown ul li > button {
         @apply w-full;

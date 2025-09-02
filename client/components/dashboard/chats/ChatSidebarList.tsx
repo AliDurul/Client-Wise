@@ -1,5 +1,5 @@
 import { useCurrentUser } from '@/hooks/useCurrentUser';
-import { selectActiveUsers, selectChat, selectGroupModal, selectSelectedChat, setGroupCreate, setGroupModal, setIsShowChatMenu, setIsShowUserChat, setSelectedChat } from '@/lib/features/chat/chatSlice';
+import { selectActiveChatUsers, selectChat, selectGroupModal, selectSelectedChat, setGroupCreate, setGroupModal, setIsShowChatMenu, setIsShowUserChat, setSelectedChat } from '@/lib/features/chat/chatSlice';
 import { getAllData } from '@/lib/features/shared/actionUtils';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { formatDate } from '@/lib/utility/functions';
@@ -19,7 +19,7 @@ export default function ChatSidebarList({ filteredItems, showGroupBtn }: ChatSid
 
     // hooks 
     const dispatch = useAppDispatch();
-    const activeUsers = useAppSelector(selectActiveUsers);
+    const activeChatUsers = useAppSelector(selectActiveChatUsers);
     const selectedChat = useAppSelector(selectSelectedChat);
     const groupModal = useAppSelector(selectGroupModal);
     const { userInfo } = useCurrentUser();
@@ -63,7 +63,7 @@ export default function ChatSidebarList({ filteredItems, showGroupBtn }: ChatSid
                                                 <div className="relative flex-shrink-0">
                                                     <Image src={displayPic} width={48} height={48} className="h-12 w-12 rounded-full object-cover" alt={displayName} />
                                                     {
-                                                        (!chat?.is_group && activeUsers.includes(otherUserId)) && (
+                                                        (!chat?.is_group && activeChatUsers.includes(otherUserId)) && (
                                                             <div className="absolute bottom-0 ltr:right-0 rtl:left-0">
                                                                 <div className="size-3 rounded-full bg-success" />
                                                             </div>

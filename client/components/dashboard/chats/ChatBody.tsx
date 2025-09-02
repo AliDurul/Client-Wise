@@ -70,7 +70,7 @@ export default function ChatBody() {
     useEffect(() => {
         // recieve new message
         const handleNewMessage = (newMessage: Message) => {
-            console.log('new message received client:', newMessage.content);
+            // console.log('new message received client:', newMessage.content);
 
             mutate(
                 chatKey,

@@ -1,6 +1,6 @@
 import Dropdown from '@/components/layout/Dropdown'
 import { useChatDisplayInfo } from '@/hooks/useChatDisplayInfo';
-import { selectActiveUsers, setGroupModal, setIsShowUserChat, setSelectedChat, toggleChatMenu } from '@/lib/features/chat/chatSlice';
+import { selectActiveChatUsers, setGroupModal, setIsShowUserChat, setSelectedChat, toggleChatMenu } from '@/lib/features/chat/chatSlice';
 import { delData } from '@/lib/features/shared/actionUtils';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import Image from 'next/image';
@@ -12,7 +12,7 @@ export default function ChatBodyHeader() {
     // hooks
     const dispatch = useAppDispatch();
     const { displayName, displayPic, otherUserId, isGroup, chatId } = useChatDisplayInfo();
-    const activeUsers = useAppSelector(selectActiveUsers);
+    const activeUsers = useAppSelector(selectActiveChatUsers);
 
     const handleDelete = async () => {
         if (chatId) {
