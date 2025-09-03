@@ -14,6 +14,8 @@ const product_route_1 = __importDefault(require("./product.route"));
 const ticket_route_1 = __importDefault(require("./ticket.route"));
 const lead_route_1 = __importDefault(require("./lead.route"));
 const chat_message_route_1 = __importDefault(require("./chat&message.route"));
+const wp_route_1 = __importDefault(require("./wp.route"));
+const webhook_route_1 = __importDefault(require("./webhook.route"));
 const router = (0, express_1.Router)();
 // authRoutes
 router.use('/auth', auth_route_1.default);
@@ -35,5 +37,9 @@ router.use("/tickets", ticket_route_1.default);
 router.use("/leads", lead_route_1.default);
 // Chats&Messages
 router.use("/chats", chat_message_route_1.default);
+// WhatsApp
+router.use("/wp", wp_route_1.default);
+// Webhook
+router.use("/webhook", webhook_route_1.default);
 exports.default = router;
 //# sourceMappingURL=index.route.js.map

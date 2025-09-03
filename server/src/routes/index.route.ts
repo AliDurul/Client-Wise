@@ -9,6 +9,8 @@ import productRoutes from "./product.route";
 import ticketRoutes from "./ticket.route";
 import leadRoutes from "./lead.route";
 import chatRoutes from './chat&message.route';
+import wpRoutes from './wp.route';
+import webhookRoutes from './webhook.route';
 
 const router = Router();
 
@@ -41,5 +43,11 @@ router.use("/leads", leadRoutes);
 
 // Chats&Messages
 router.use("/chats", chatRoutes);
+
+// WhatsApp
+router.use("/wp", wpRoutes);
+
+// Webhook
+router.use("/webhook", webhookRoutes)
 
 export default router;

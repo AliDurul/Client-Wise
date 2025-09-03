@@ -30,6 +30,8 @@ const envSchema = zod_1.z.object({
     AWS_BUCKET_NAME: zod_1.z.string().min(1),
     AWS_ACCESS_KEY_ID: zod_1.z.string().min(1),
     AWS_SECRET_ACCESS_KEY: zod_1.z.string().min(1),
+    // wp
+    WP_ACCESS_TOKEN: zod_1.z.string().min(1),
 });
 const env = envSchema.parse(process.env);
 exports.default = env;
