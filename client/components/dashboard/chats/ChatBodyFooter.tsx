@@ -75,7 +75,6 @@ export default function ChatBodyFooter({ selectedChatId, scrollToBottom, isExist
                 },
                 revalidate: false,
                 onSuccess: (res) => {
-                    console.log(res);
                     const { users, latest_message, updatedAt, createdAt, _id, ...chatInfo } = res?.chat;
                     const newMessageData = {
                         ...res.message,

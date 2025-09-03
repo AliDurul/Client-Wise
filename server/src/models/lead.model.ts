@@ -111,7 +111,6 @@ LeadSchema.virtual("probability").get(function (this: ILead) {
 //             { upsert: true, new: true }
 //         );
 
-//         console.log(`✅ Customer created/updated for lead: ${doc.company_name}`);
 //     }
 
 //     // Example: Notify assigned agent if exists

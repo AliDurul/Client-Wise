@@ -8,7 +8,6 @@ import React from 'react'
 
 // export async function generateStaticParams() {
 //     const tickets = await getAllData({ url: 'tickets', customQuery: { limit: 1000, select: '_id' } });
-//     console.log(tickets);
 //     return tickets?.result?.map((ticket: Ticket) => ({
 //         ticketId: ticket._id
 //     }));

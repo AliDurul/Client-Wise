@@ -8,7 +8,7 @@ let isConnected: boolean = false;
 
 export async function connectDB(): Promise<void> {
   if (isConnected) {
-    console.log("⚠️ Already connected to MongoDB.");
+    console.log("Already connected to MongoDB.");
     return;
   }
 
@@ -32,8 +32,8 @@ export async function disconnectDB(): Promise<void> {
   try {
     await mongoose.disconnect();
     isConnected = false;
-    console.log("🛑 Disconnected from MongoDB");
+    console.log("Disconnected from MongoDB");
   } catch (err) {
-    console.error("❌ Error during MongoDB disconnection:", err);
+    console.error("Error during MongoDB disconnection:", err);
   }
 };

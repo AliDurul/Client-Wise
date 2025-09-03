@@ -41,7 +41,6 @@ export const authCredentials = async (_: unknown, payload: FormData) => {
     } catch (error) {
         let errorMsg = '';
         let success = false;
-        // console.log('login error', error);
         if (error instanceof Error && error.message === 'NEXT_REDIRECT') {
             // user is already logged in and redirected
             success = true;
@@ -77,7 +76,6 @@ export const fetchWithErrorHandling = async (url: string, body: object) => {
             cache: 'no-store',
         });
         const data = await res.json();
-        // console.log('backend res', data);
         if (!res.ok || !data.success) throw new CustomError(data.message || 'Custom Message: Authentication failed');
         return data;
     } catch (error) {
@@ -88,7 +86,6 @@ export const fetchWithErrorHandling = async (url: string, body: object) => {
 export const refreshAccessToken = async (token: JWT) => {
     try {
         const newTokens = await fetchWithErrorHandling(`${API_BASE_URL}/auth/refresh`, { refresh: token.refresh });
-        console.log("Token refreshed successfully");
         return {
             ...token,
             access: newTokens.access,
@@ -96,7 +93,6 @@ export const refreshAccessToken = async (token: JWT) => {
             refresh: newTokens.refresh || token.refresh,
         };
     } catch (error: unknown) {
-        console.error("refreshing access token:", (error as Error).message);
         return { ...token, error: "RefreshTokenError" };
     }
 };

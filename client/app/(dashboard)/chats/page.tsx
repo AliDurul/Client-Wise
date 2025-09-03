@@ -21,7 +21,6 @@ export default function page() {
 
     const handleActiveUsers = (activeUsers: string[]) => {
         dispatch(setActiveChatUsers(activeUsers));
-        console.log('this worked');
     };
 
     useEffect(() => {

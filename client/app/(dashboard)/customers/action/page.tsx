@@ -26,7 +26,6 @@ export default async function page({ searchParams }: PageSearchParams) {
                 error = data.message;
             }
         } catch (error) {
-            console.error('Error fetching KYC:', error);
             error = 'Failed to fetch KYC details';
         }
     }

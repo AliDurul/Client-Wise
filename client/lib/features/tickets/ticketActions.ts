@@ -84,7 +84,6 @@ export const ticketCommentCrUpAction = async (_: unknown, payload: FormData) => 
         const data = await response.json();
 
         if (!response.ok) {
-            // console.log('error', data);
             throw new Error(data.message || "Something went wrong, Please try again!");
         }
 

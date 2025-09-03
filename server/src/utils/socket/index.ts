@@ -15,7 +15,6 @@ function initSocket(server: any) {
     });
 
     io.on("connection", (socket: Socket) => {
-        // console.log("New user connected:", socket.id);
 
         socket.on('userOnline', (userId: string) => {
             onlineUsers.add(userId);
@@ -45,7 +44,6 @@ function initSocket(server: any) {
                 io.emit('onlineUsers', Array.from(onlineUsers));
                 io.emit('activeChatUsers', Array.from(activeChatUsers));
             }
-            // console.log("Client disconnected:", socket.id);
         });
     });
 

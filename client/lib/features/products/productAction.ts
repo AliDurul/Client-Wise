@@ -20,7 +20,6 @@ export const productCrUpAction = async (_: unknown, payload: FormData) => {
         // category: payload.get('category') || "",
         // stock_quantity: Number(payload.get('stock_quantity')) || 0,
     };
-    console.log('rowData:', rowData);
     const result = productSchema.safeParse(rowData);
 
     if (!result.success) {

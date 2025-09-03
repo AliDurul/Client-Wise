@@ -61,8 +61,6 @@ export async function errorHandler(err: any, req: Request, res: Response, next: 
         // process.exit(1);
     }
 
-    // console.log('Error Handler: ', error);
-
     res.status(error.statusCode).send({
         success: false,
         message: error.message,
@@ -103,7 +101,6 @@ export function logger(): RequestHandler {
     const logsDir = path.join(process.cwd(), "logs");
 
     if (!fs.existsSync(logsDir)) {
-        console.log("Logs folder has been created at root directory");
         fs.mkdirSync(logsDir, { recursive: true });
     }
 
@@ -240,8 +237,6 @@ export const queryHandler: RequestHandler = (req, res, next) => {
             ...(typeof search === "object" && search),
             ...(typeof customFilter === "object" && customFilter),
         } as RootFilterQuery<T>;
-
-        // console.log('select', select);
 
         return await Model.find(query).sort(sort).skip(skip).limit(limit).select(select).populate(populate).lean();
     };

@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { Product } from '@/types';
 import { useRouter } from 'next/navigation';
 import React from 'react'
+import toast from 'react-hot-toast';
 
 export default function ProductGridBtn({ product }: { product: Product }) {
     const router = useRouter()
@@ -22,7 +23,7 @@ export default function ProductGridBtn({ product }: { product: Product }) {
         try {
             await delData(null, { url: 'products', id });
         } catch (error) {
-            console.error("Error deleting product:", error);
+            toast.error("Error deleting product");
         }
     }
 

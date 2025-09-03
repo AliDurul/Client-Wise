@@ -82,7 +82,6 @@ export default function ChatGroupModal({ isOpen, onClose }: ChatGroupModalProps)
         const formData = new FormData();
         formData.append('_id', initialValues._id || '');
         formData.append('chat_name', initialValues.chat_name || '');
-        console.log(initialValues.users);
 
         initialValues.users.forEach((userId) => {
             formData.append('users[]', userId);
@@ -227,7 +226,6 @@ export default function ChatGroupModal({ isOpen, onClose }: ChatGroupModalProps)
                                             required
                                             components={animatedComponents}
                                             formatOptionLabel={(user: any) => {
-                                                console.log(user);
                                                 return <div className="flex items-center">
                                                     <img
                                                         src={user.picture}
@@ -241,7 +239,6 @@ export default function ChatGroupModal({ isOpen, onClose }: ChatGroupModalProps)
                                             }}
                                             onChange={(selectedOptions) => {
                                                 const selectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
-                                                console.log(selectedValues);
                                                 setInitialValues(() => ({ ...initialValues, users: selectedValues }))
                                             }}
                                         />)

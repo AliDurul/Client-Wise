@@ -42,7 +42,6 @@ export function useDataTable<T extends { _id: string }>(config: UseDataTableConf
 
     // Column chooser state
     const [hiddenColumns, setHiddenColumns] = useState<string[]>(['company_name']);
-    console.log(hiddenColumns);
     // Handler to show/hide columns
     const toggleColumnVisibility = (accessor: string) => {
         setHiddenColumns((prev) =>

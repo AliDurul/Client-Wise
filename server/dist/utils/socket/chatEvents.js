@@ -17,7 +17,7 @@ function handleChatEvents(socket, io) {
             const isOnline = index_1.onlineUsers.has(userId);
             const isActive = index_1.activeChatUsers.has(userId);
             const isInRoom = Array.from(roomSockets).some(socketId => io.sockets.sockets.get(socketId)?.data.userId === userId);
-            console.log(`User ${userId} - Online: ${isOnline}, Active: ${isActive}, InRoom: ${isInRoom}`);
+            // console.log(`User ${userId} - Online: ${isOnline}, Active: ${isActive}, InRoom: ${isInRoom}`);
             // Only notify if user is online and (not active or not in room)
             if (isOnline && (!isActive || !isInRoom)) {
                 for (const [socketId, sock] of io.sockets.sockets) {

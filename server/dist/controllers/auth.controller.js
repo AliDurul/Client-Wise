@@ -44,7 +44,6 @@ const login = async (req, res) => {
 };
 exports.login = login;
 const refresh = async (req, res) => {
-    console.log('refresh calisit');
     const refreshToken = req.body?.refresh;
     if (!refreshToken)
         throw new common_1.CustomError('Please enter token.refresh', 401, true);

@@ -207,11 +207,9 @@ export default function LeadTable({ leads }: CustomerMainProps) {
   const columns = useMemo(() => allColumns.filter(col => !hiddenColumns.includes(col.accessor as string)),
     [hiddenColumns]);
 
-  console.log(columns);
   const columnChooserCols = allColumns
     .filter(col => col.accessor !== 'actions')
     .map(col => ({ accessor: col.accessor as string, title: typeof col.title === 'string' ? col.title : 'Actions' }));
-  console.log(columnChooserCols);
 
   return (
     <div className="panel mt-5  border-white-light dark:border-[#1b2e4b]">

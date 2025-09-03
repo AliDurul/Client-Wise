@@ -150,9 +150,7 @@ export const sendMail = async ({
 
     try {
         const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent:', info.response);
     } catch (error: any) {
-        console.error('Error sending email:', error);
         throw new CustomError(`Error sending email. Error ${error.message}`, 500, true);
     }
 };

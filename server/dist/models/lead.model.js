@@ -139,7 +139,6 @@ LeadSchema.virtual("probability").get(function () {
 //             },
 //             { upsert: true, new: true }
 //         );
-//         console.log(`✅ Customer created/updated for lead: ${doc.company_name}`);
 //     }
 //     // Example: Notify assigned agent if exists
 //     if (doc.assigned_agent) {

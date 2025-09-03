@@ -31,7 +31,6 @@ export const formatDate = (date: Date | string | number | null | undefined, show
 
         return formattedDate;
     } catch (error) {
-        console.error('Error formatting date:', error);
         return '';
     }
 };

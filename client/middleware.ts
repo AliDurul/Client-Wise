@@ -6,7 +6,6 @@ export default auth((req) => {
     const isSessionExpired = req.auth?.error === "RefreshTokenError";
     const isLoggedIn = !!req.auth && !isSessionExpired;
     const userInfo = req.auth?.user;
-    // console.log(isLoggedIn);
 
     const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
     const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
@@ -16,7 +15,6 @@ export default auth((req) => {
 
     if (isSessionExpired) {
         if (nextUrl.pathname !== "/login") {
-            console.log('session expired, redirecting to login');
             const loginUrl = new URL("/login", nextUrl);
             loginUrl.searchParams.set("session_expired", "true");
             return Response.redirect(loginUrl);

@@ -57,7 +57,6 @@ async function errorHandler(err, req, res, next) {
         // await sendMail({ to: 'alidrl26@gmail.com', subject: 'Error Occurred', tempFn: errorEmailTemp, data: error });
         // process.exit(1);
     }
-    // console.log('Error Handler: ', error);
     res.status(error.statusCode).send({
         success: false,
         message: error.message,
@@ -91,7 +90,6 @@ exports.isValidated = isValidated;
 function logger() {
     const logsDir = node_path_1.default.join(process.cwd(), "logs");
     if (!node_fs_1.default.existsSync(logsDir)) {
-        console.log("Logs folder has been created at root directory");
         node_fs_1.default.mkdirSync(logsDir, { recursive: true });
     }
     const customFormat = 'TIME=":date[iso]" - URL=":url" - Method=":method" - IP=":remote-addr" - Ref=":referrer" - Status=":status" - Sign=":user-agent" (:response-time[digits] ms)';
@@ -158,7 +156,6 @@ const queryHandler = (req, res, next) => {
             ...(typeof search === "object" && search),
             ...(typeof customFilter === "object" && customFilter),
         };
-        // console.log('select', select);
         return await Model.find(query).sort(sort).skip(skip).limit(limit).select(select).populate(populate).lean();
     };
     // Details:

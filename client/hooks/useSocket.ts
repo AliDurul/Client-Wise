@@ -17,7 +17,6 @@ export const useSocket = () => {
     useEffect(() => {
         if (!hasConnected.current) {
             if (!socket.connected) {
-                console.log('Socket not connected, connecting...');
                 socket.connect();
             }
             hasConnected.current = true;

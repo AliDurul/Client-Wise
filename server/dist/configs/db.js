@@ -12,7 +12,7 @@ mongoose_1.default.Promise = global.Promise; // Use ES6 promises
 let isConnected = false;
 async function connectDB() {
     if (isConnected) {
-        console.log("⚠️ Already connected to MongoDB.");
+        console.log("Already connected to MongoDB.");
         return;
     }
     try {
@@ -36,10 +36,10 @@ async function disconnectDB() {
     try {
         await mongoose_1.default.disconnect();
         isConnected = false;
-        console.log("🛑 Disconnected from MongoDB");
+        console.log("Disconnected from MongoDB");
     }
     catch (err) {
-        console.error("❌ Error during MongoDB disconnection:", err);
+        console.error("Error during MongoDB disconnection:", err);
     }
 }
 ;

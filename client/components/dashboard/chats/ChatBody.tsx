@@ -70,7 +70,6 @@ export default function ChatBody() {
     useEffect(() => {
         // recieve new message
         const handleNewMessage = (newMessage: Message) => {
-            // console.log('new message received client:', newMessage.content);
 
             mutate(
                 chatKey,
@@ -85,7 +84,6 @@ export default function ChatBody() {
         socket.on('newMessage', handleNewMessage);
 
         const handleTyping = ({ user }: { user: any }) => {
-            // console.log('user is typing:', user.id);
 
             setTypingUsers(prev => {
                 if (prev.find(u => u.id === user.id)) return prev;
@@ -94,7 +92,6 @@ export default function ChatBody() {
         };
 
         const handleStopTyping = ({ user }: { user: any }) => {
-            // console.log('user stopped typing:', user.id);
             setTypingUsers(prev => prev.filter(u => u.id !== user.id));
         };
 

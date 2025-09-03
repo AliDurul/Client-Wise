@@ -45,8 +45,7 @@ export const groupCrUpAction = async (_: unknown, payload: FormData) => {
     if (id) payload.delete("_id");
 
 
-    console.log(id, payload);
-
+    
     const url = !!id ? `${BASE_URL}chats/group/${id}/` : `${BASE_URL}chats/group`;
     const method = !!id ? "PUT" : "POST";
 
@@ -61,7 +60,6 @@ export const groupCrUpAction = async (_: unknown, payload: FormData) => {
 
         const data = await response.json();
         
-        console.log('res',data);
         if (!response.ok) {
             throw new Error(data.message || "Something went wrong, Please try again!");
         }

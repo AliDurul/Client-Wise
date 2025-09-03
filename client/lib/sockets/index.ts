@@ -1,9 +1,9 @@
 import { io } from "socket.io-client";
 
-const URL = "http://localhost:8000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
-const socket = io(URL, {
-    autoConnect: false, // we control connection manually
+const socket = io(API_BASE_URL, {
+    autoConnect: false,
 });
 
 export default socket;

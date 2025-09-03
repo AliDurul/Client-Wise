@@ -63,10 +63,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       const res = await refreshAccessToken(token);
 
-      // if (res.error === "RefreshTokenError") {
-      //   return null;
-      // }
-      // console.log(res);
       return res;
     },
 
@@ -80,7 +76,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.refresh = refresh;
         session.error = error;
       }
-      // console.log('session', session.error);
       return session as Session;
     },
   }
