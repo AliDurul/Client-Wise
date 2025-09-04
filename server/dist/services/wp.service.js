@@ -12,7 +12,7 @@ exports.sendReplyMessage = sendReplyMessage;
 exports.sendImgMessage = sendImgMessage;
 const axios_1 = __importDefault(require("axios"));
 const env_1 = __importDefault(require("../configs/env"));
-const BASE_URL = 'https://graph.facebook.com/v22.0/706039062602459/messages';
+const BASE_URL = 'https://graph.facebook.com/v23.0/706039062602459/messages';
 async function sendTemplateMessage(to, templateName, languageCode = 'en_US') {
     return axios_1.default.post(BASE_URL, {
         messaging_product: "whatsapp",
@@ -96,7 +96,7 @@ async function sendIntroButtons(to) {
             type: "button",
             header: {
                 type: "text",
-                text: "Welcome to Client-Link!"
+                text: "Welcome Client-Link!"
             },
             body: {
                 text: "Are you already our customer or want to find out about our products?"

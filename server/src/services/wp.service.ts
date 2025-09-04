@@ -1,7 +1,7 @@
 import axios from 'axios';
 import env from '../configs/env';
 
-const BASE_URL = 'https://graph.facebook.com/v22.0/706039062602459/messages';
+const BASE_URL = 'https://graph.facebook.com/v23.0/706039062602459/messages';
 
 export async function sendTemplateMessage(to: string, templateName: string, languageCode: string = 'en_US') {
     return axios.post(BASE_URL, {
@@ -89,7 +89,7 @@ export async function sendIntroButtons(to: string) {
             type: "button",
             header: {
                 type: "text",
-                text: "Welcome to Client-Link!"
+                text: "Welcome Client-Link!"
             },
             body: {
                 text: "Are you already our customer or want to find out about our products?"

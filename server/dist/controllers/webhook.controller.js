@@ -80,7 +80,12 @@ const handlePostRequest = async (req, res) => {
             return;
         }
         // Default: send intro buttons
-        await (0, wp_service_1.sendIntroButtons)(from);
+        try {
+            await (0, wp_service_1.sendIntroButtons)(from);
+        }
+        catch (err) {
+            console.error('WhatsApp API error:', err.response?.data || err.message);
+        }
         res.status(200).end();
     }
 };

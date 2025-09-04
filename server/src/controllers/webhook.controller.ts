@@ -86,7 +86,11 @@ export const handlePostRequest = async (req: Request, res: Response) => {
         }
 
         // Default: send intro buttons
-        await sendIntroButtons(from);
+        try {
+            await sendIntroButtons(from);
+        } catch (err: any) {
+            console.error('WhatsApp API error:', err.response?.data || err.message);
+        }
         res.status(200).end();
     }
 
