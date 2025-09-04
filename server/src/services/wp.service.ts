@@ -80,36 +80,11 @@ export async function sendListMessage(to: string) {
     });
 }
 
-export async function sendIntroButtons(to: string) {
-    return axios.post(BASE_URL, {
-        messaging_product: "whatsapp",
-        to,
-        type: "interactive",
-        interactive: {
-            type: "button",
-            header: {
-                type: "text",
-                text: "Client-Link"
-            },
-            body: {
-                text: "Welcome to Client-Link! Are you already our customer or want to find out about our products?"
-            },
-            action: {
-                buttons: [
-                    { type: "reply", reply: { id: "already_customer", title: "Already a Customer" } },
-                    { type: "reply", reply: { id: "interested_products", title: "Looking 4 Products" } }
-                ]
-            }
-        }
-    }, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${env.WP_ACCESS_TOKEN}`
-        }
-    });
-}
-
-export async function sendReplyButton(to: string, buttons: { id: string, title: string }[], text: string) {
+export async function sendReplyButtons(
+    to: string,
+    buttons: { type: string, reply: { id: string, title: string } }[],
+    text: string
+) {
     return axios.post(BASE_URL, {
         messaging_product: "whatsapp",
         to,
@@ -121,7 +96,9 @@ export async function sendReplyButton(to: string, buttons: { id: string, title: 
                 text: "Client-Link"
             },
             body: { text },
-            action: { buttons }
+            action: {
+                buttons
+            }
         }
     }, {
         headers: {

@@ -6,8 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendTemplateMessage = sendTemplateMessage;
 exports.sendTextMessage = sendTextMessage;
 exports.sendListMessage = sendListMessage;
-exports.sendIntroButtons = sendIntroButtons;
-exports.sendReplyButton = sendReplyButton;
+exports.sendReplyButtons = sendReplyButtons;
 exports.sendReplyMessage = sendReplyMessage;
 exports.sendImgMessage = sendImgMessage;
 const axios_1 = __importDefault(require("axios"));
@@ -87,35 +86,7 @@ async function sendListMessage(to) {
         }
     });
 }
-async function sendIntroButtons(to) {
-    return axios_1.default.post(BASE_URL, {
-        messaging_product: "whatsapp",
-        to,
-        type: "interactive",
-        interactive: {
-            type: "button",
-            header: {
-                type: "text",
-                text: "Client-Link"
-            },
-            body: {
-                text: "Welcome to Client-Link! Are you already our customer or want to find out about our products?"
-            },
-            action: {
-                buttons: [
-                    { type: "reply", reply: { id: "already_customer", title: "Already a Customer" } },
-                    { type: "reply", reply: { id: "interested_products", title: "Looking 4 Products" } }
-                ]
-            }
-        }
-    }, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${env_1.default.WP_ACCESS_TOKEN}`
-        }
-    });
-}
-async function sendReplyButton(to, buttons, text) {
+async function sendReplyButtons(to, buttons, text) {
     return axios_1.default.post(BASE_URL, {
         messaging_product: "whatsapp",
         to,
@@ -127,7 +98,9 @@ async function sendReplyButton(to, buttons, text) {
                 text: "Client-Link"
             },
             body: { text },
-            action: { buttons }
+            action: {
+                buttons
+            }
         }
     }, {
         headers: {

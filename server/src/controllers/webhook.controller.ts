@@ -1,12 +1,10 @@
 import { CustomError } from "../utils/common";
 import env from "../configs/env";
 import { Request, Response } from "express";
-import { sendIntroButtons, sendListMessage, sendReplyButton, sendReplyMessage, sendTextMessage } from "../services/wp.service";
+import { sendReplyButtons, sendReplyMessage, sendTextMessage } from "../services/wp.service";
 
 export const handleGetRequest = (req: Request, res: Response) => {
     const { 'hub.mode': mode, 'hub.challenge': challenge, 'hub.verify_token': token } = req.query;
-
-    console.log('web hook api');
 
     if (mode === 'subscribe' && token === env.WEB_HOOK_VERIFY_TOKEN) {
         console.log('WEBHOOK VERIFIED');
@@ -29,48 +27,53 @@ export const handlePostRequest = async (req: Request, res: Response) => {
     const messages = changes[0].value.messages ? changes[0].value.messages[0] : null;
     const from = messages ? messages.from : null;
 
-    // handle received message
     if (messages) {
-        // Handle button replies
+        // Handle button replies with switch
         if (messages.type === 'interactive' && messages.interactive.type === 'button_reply') {
             const selectedId = messages.interactive.button_reply.id;
 
-            if (selectedId === 'already_customer') {
-                // Ask what the customer wants
-                await sendReplyButton(from, [
-                    { id: "get_support", title: "Get Support" },
-                    { id: "buy_product", title: "Buy Product" }
-                ], "Welcome back! What would you like to do?");
-                userState[from] = 'customer_options';
-                res.status(200).end();
-                return;
-            }
+            switch (selectedId) {
+                case 'already_customer':
+                    await sendReplyButtons(
+                        from,
+                        [
+                            { type: "reply", reply: { id: "get_support", title: "Get Support" } },
+                            { type: "reply", reply: { id: "buy_product", title: "Buy Product" } }
+                        ],
+                        "Welcome back! What would you like to do?"
+                    );
+                    userState[from] = 'customer_options';
+                    break;
 
-            if (selectedId === 'interested_products') {
-                await sendReplyMessage(from, "Which product are you interested in?", messages.id);
-                userState[from] = 'awaiting_lead';
-                res.status(200).end();
-                return;
-            }
+                case 'not_yet_customer':
+                    await sendReplyMessage(from, "Which product are you interested in?", messages.id);
+                    userState[from] = 'awaiting_lead';
+                    break;
 
-            if (selectedId === 'get_support') {
-                await sendReplyMessage(from, "Please describe your issue. We'll create a support ticket for you.", messages.id);
-                userState[from] = 'awaiting_ticket';
-                res.status(200).end();
-                return;
-            }
+                case 'get_support':
+                    await sendReplyMessage(from, "Please describe your issue. We'll create a support ticket for you.", messages.id);
+                    userState[from] = 'awaiting_ticket';
+                    break;
 
-            if (selectedId === 'buy_product') {
-                await sendReplyMessage(from, "Which product are you interested in?", messages.id);
-                userState[from] = 'awaiting_lead';
-                res.status(200).end();
-                return;
+                case 'buy_product':
+                    await sendReplyMessage(from, "Which product are you interested in?", messages.id);
+                    userState[from] = 'awaiting_lead';
+                    break;
+
+                default:
+                    await sendReplyMessage(from, "Sorry, I didn't understand your selection.", messages.id);
+                    break;
             }
+            res.status(200).end();
+            return;
         }
+
+        console.info('userState', userState);
 
         // Handle text replies
         if (userState[from] === 'awaiting_ticket' && messages.type === 'text') {
             // createTicket(...)
+            console.log('awaiting ticket body',messages.text.body);
             await sendReplyMessage(from, "Thank you! Your ticket has been created.", messages.id);
             userState[from] = '';
             res.status(200).end();
@@ -79,19 +82,25 @@ export const handlePostRequest = async (req: Request, res: Response) => {
 
         if (userState[from] === 'awaiting_lead' && messages.type === 'text') {
             // createLead(...)
+            console.log('awaiting lead body', messages.text.body);
             await sendReplyMessage(from, "Thank you! Our team will contact you soon.", messages.id);
             userState[from] = '';
             res.status(200).end();
             return;
         }
 
-        // Default: send intro buttons
         try {
-            await sendIntroButtons(from);
+            await sendReplyButtons(
+                from,
+                [
+                    { type: "reply", reply: { id: "already_customer", title: "Already a Customer" } },
+                    { type: "reply", reply: { id: "not_yet_customer", title: "Not Yet a Customer" } }
+                ],
+                "Hi! To help you better, please let us know if you're an existing customer or interested in our products."
+            );
         } catch (err: any) {
             console.error('WhatsApp API error:', err.response?.data || err.message);
         }
         res.status(200).end();
     }
-
 }
