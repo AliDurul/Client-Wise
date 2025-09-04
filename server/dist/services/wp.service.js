@@ -104,7 +104,7 @@ async function sendIntroButtons(to) {
             action: {
                 buttons: [
                     { type: "reply", reply: { id: "already_customer", title: "Already a Customer" } },
-                    { type: "reply", reply: { id: "interested_products", title: "Interested in Products" } }
+                    { type: "reply", reply: { id: "interested_products", title: "Looking 4 Products" } }
                 ]
             }
         }
