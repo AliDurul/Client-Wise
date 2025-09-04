@@ -96,7 +96,7 @@ async function sendIntroButtons(to) {
             type: "button",
             header: {
                 type: "text",
-                text: "Welcome Client-Link!"
+                text: "Welcome Client-Link"
             },
             body: {
                 text: "Are you already our customer or want to find out about our products?"
