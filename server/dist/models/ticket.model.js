@@ -93,12 +93,16 @@ const ticketSchema = new mongoose_1.Schema({
         type: String,
         enum: ['pending', 'active', 'resolved', 'cancelled', 'escalated'],
         default: 'pending',
-        required: true,
     },
     email_id: {
         type: String,
         default: null,
         trim: true,
+    },
+    source: {
+        type: String,
+        enum: ['email', 'phone', 'whatsapp', 'other'],
+        default: 'other',
     },
     priority: {
         type: String,
@@ -107,8 +111,8 @@ const ticketSchema = new mongoose_1.Schema({
     },
     flag: {
         type: String,
-        default: 'moderate',
         enum: ['important', 'moderate', 'least important', 'prank'],
+        default: 'moderate'
     },
     escalation: {
         type: escalationSchema,

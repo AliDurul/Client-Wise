@@ -7,6 +7,8 @@ exports.handlePostRequest = exports.handleGetRequest = void 0;
 const common_1 = require("../utils/common");
 const env_1 = __importDefault(require("../configs/env"));
 const wp_service_1 = require("../services/wp.service");
+const ticket_model_1 = __importDefault(require("../models/ticket.model"));
+const customer_model_1 = __importDefault(require("../models/customer.model"));
 const handleGetRequest = (req, res) => {
     const { 'hub.mode': mode, 'hub.challenge': challenge, 'hub.verify_token': token } = req.query;
     if (mode === 'subscribe' && token === env_1.default.WEB_HOOK_VERIFY_TOKEN) {
@@ -63,8 +65,21 @@ const handlePostRequest = async (req, res) => {
         console.info('userState', userState);
         // Handle text replies
         if (userState[from] === 'awaiting_ticket' && messages.type === 'text') {
-            // createTicket(...)
-            console.log('awaiting ticket body', messages.text.body);
+            const customer = await customer_model_1.default.findOne({ phone_number: '+19876543214' }).select('_id').lean();
+            if (!customer) {
+                await (0, wp_service_1.sendReplyMessage)(from, "Sorry, we couldn't find your customer record. Please contact support.", messages.id);
+                userState[from] = '';
+                res.status(200).end();
+                return;
+            }
+            await ticket_model_1.default.create({
+                title: messages.text.body.substring(0, 50),
+                description: messages.text.body,
+                source: 'whatsapp',
+                assigned_agent: "68a9cb641a2a533a19e1b7b9",
+                customer: customer._id,
+                category: "68a9cb651a2a533a19e1b7e5",
+            });
             await (0, wp_service_1.sendReplyMessage)(from, "Thank you! Your ticket has been created.", messages.id);
             userState[from] = '';
             res.status(200).end();

@@ -3,6 +3,8 @@ import { createTicCat, createTicCom, createTicket, deleteTicCat, deleteTicket, g
 
 const router = Router();
 
+// -> /api/tickets
+
 // Ticket Categories
 router.route('/categories').get(getTicCats).post(createTicCat);
 router.route('/categories/:id').get(getTicCatById).put(updateTicCat).delete(deleteTicCat);

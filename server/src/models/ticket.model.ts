@@ -70,13 +70,18 @@ const ticketSchema: Schema<ITicket> = new Schema({
         type: String,
         enum: ['pending', 'active', 'resolved', 'cancelled', 'escalated'],
         default: 'pending',
-        required: true,
     },
 
     email_id: {
         type: String,
         default: null,
         trim: true,
+    },
+
+    source: {
+        type: String,
+        enum: ['email', 'phone', 'whatsapp', 'other'],
+        default: 'other',
     },
 
     priority: {
@@ -87,8 +92,8 @@ const ticketSchema: Schema<ITicket> = new Schema({
 
     flag: {
         type: String,
-        default: 'moderate',
         enum: ['important', 'moderate', 'least important', 'prank'],
+        default: 'moderate'
     },
 
     escalation: {
@@ -150,6 +155,7 @@ export interface ITicket extends Document {
     description: string;
     status: 'pending' | 'active' | 'resolved' | 'cancelled' | 'escalated';
     email_id: string | null;
+    source: 'email' | 'phone' | 'whatsapp' | 'other';
     priority: 'high' | 'medium' | 'low' | 'critical';
     flag: string;
     category: mongoose.Schema.Types.ObjectId;

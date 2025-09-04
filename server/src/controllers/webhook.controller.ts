@@ -2,6 +2,8 @@ import { CustomError } from "../utils/common";
 import env from "../configs/env";
 import { Request, Response } from "express";
 import { sendReplyButtons, sendReplyMessage, sendTextMessage } from "../services/wp.service";
+import Ticket from "../models/ticket.model";
+import Customer from "../models/customer.model";
 
 export const handleGetRequest = (req: Request, res: Response) => {
     const { 'hub.mode': mode, 'hub.challenge': challenge, 'hub.verify_token': token } = req.query;
@@ -72,8 +74,25 @@ export const handlePostRequest = async (req: Request, res: Response) => {
 
         // Handle text replies
         if (userState[from] === 'awaiting_ticket' && messages.type === 'text') {
-            // createTicket(...)
-            console.log('awaiting ticket body',messages.text.body);
+
+            const customer = await Customer.findOne({ phone_number: '+19876543214' }).select('_id').lean();
+
+            if (!customer) {
+                await sendReplyMessage(from, "Sorry, we couldn't find your customer record. Please contact support.", messages.id);
+                userState[from] = '';
+                res.status(200).end();
+                return;
+            }
+
+            await Ticket.create({
+                title: messages.text.body.substring(0, 50),
+                description: messages.text.body,
+                source: 'whatsapp',
+                assigned_agent: "68a9cb641a2a533a19e1b7b9",
+                customer: customer._id,
+                category: "68a9cb651a2a533a19e1b7e5",
+            })
+
             await sendReplyMessage(from, "Thank you! Your ticket has been created.", messages.id);
             userState[from] = '';
             res.status(200).end();
