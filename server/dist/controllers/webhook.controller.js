@@ -19,7 +19,8 @@ const handleGetRequest = (req, res) => {
     }
 };
 exports.handleGetRequest = handleGetRequest;
-const handlePostRequest = (req, res) => {
+let userState = {};
+const handlePostRequest = async (req, res) => {
     const { entry } = req.body;
     if (!entry || !Array.isArray(entry) || entry.length === 0)
         throw new common_1.CustomError('Invalid webhook data', 400, true);
@@ -28,34 +29,58 @@ const handlePostRequest = (req, res) => {
         throw new common_1.CustomError('Invalid webhook data', 400, true);
     const statuses = changes[0].value.statuses ? changes[0].value.statuses[0] : null;
     const messages = changes[0].value.messages ? changes[0].value.messages[0] : null;
-    // handle status message
-    if (statuses) {
-    }
+    const from = messages ? messages.from : null;
     // handle received message
     if (messages) {
-        if (messages.type === 'text') {
-            if (messages.text.body.toLowerCase() === 'hello') {
-                // sendTextMessage(messages.from, 'Hello! How can I assist you today?');
-                (0, wp_service_1.sendReplyMessage)(messages.from, 'Hello! How can I assist you today?', messages.id);
+        // Handle button replies
+        if (messages.type === 'interactive' && messages.interactive.type === 'button_reply') {
+            const selectedId = messages.interactive.button_reply.id;
+            if (selectedId === 'already_customer') {
+                // Ask what the customer wants
+                await (0, wp_service_1.sendReplyButton)(from, [
+                    { id: "get_support", title: "Get Support" },
+                    { id: "buy_product", title: "Buy Product" }
+                ], "Welcome back! What would you like to do?");
+                userState[from] = 'customer_options';
+                res.status(200).end();
+                return;
             }
-            if (messages.text.body.toLowerCase() === 'list') {
-                (0, wp_service_1.sendListMessage)(messages.from);
+            if (selectedId === 'interested_products') {
+                await (0, wp_service_1.sendReplyMessage)(from, "Which product are you interested in?", messages.id);
+                userState[from] = 'awaiting_lead';
+                res.status(200).end();
+                return;
             }
-            if (messages.text.body.toLowerCase() === 'buttons') {
-                (0, wp_service_1.sendReplyButton)(messages.from);
+            if (selectedId === 'get_support') {
+                await (0, wp_service_1.sendReplyMessage)(from, "Please describe your issue. We'll create a support ticket for you.", messages.id);
+                userState[from] = 'awaiting_ticket';
+                res.status(200).end();
+                return;
+            }
+            if (selectedId === 'buy_product') {
+                await (0, wp_service_1.sendReplyMessage)(from, "Which product are you interested in?", messages.id);
+                userState[from] = 'awaiting_lead';
+                res.status(200).end();
+                return;
             }
         }
-        if (messages.type === 'interactive') {
-            if (messages.interactive.type === 'list_reply') {
-                const selectedId = messages.interactive.list_reply.id;
-                (0, wp_service_1.sendReplyMessage)(messages.from, `You selected item with id: ${selectedId}`, messages.id);
-            }
-            if (messages.interactive.type === 'button_reply') {
-                const selectedId = messages.interactive.button_reply.id;
-                (0, wp_service_1.sendReplyMessage)(messages.from, `You selected button with id: ${selectedId}`, messages.id);
-            }
+        // Handle text replies
+        if (userState[from] === 'awaiting_ticket' && messages.type === 'text') {
+            // createTicket(...)
+            await (0, wp_service_1.sendReplyMessage)(from, "Thank you! Your ticket has been created.", messages.id);
+            userState[from] = '';
+            res.status(200).end();
+            return;
         }
-        console.log(JSON.stringify(req.body, null, 2));
+        if (userState[from] === 'awaiting_lead' && messages.type === 'text') {
+            // createLead(...)
+            await (0, wp_service_1.sendReplyMessage)(from, "Thank you! Our team will contact you soon.", messages.id);
+            userState[from] = '';
+            res.status(200).end();
+            return;
+        }
+        // Default: send intro buttons
+        await (0, wp_service_1.sendIntroButtons)(from);
         res.status(200).end();
     }
 };

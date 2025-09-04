@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendTemplateMessage = sendTemplateMessage;
 exports.sendTextMessage = sendTextMessage;
 exports.sendListMessage = sendListMessage;
+exports.sendIntroButtons = sendIntroButtons;
 exports.sendReplyButton = sendReplyButton;
 exports.sendReplyMessage = sendReplyMessage;
 exports.sendImgMessage = sendImgMessage;
@@ -86,7 +87,7 @@ async function sendListMessage(to) {
         }
     });
 }
-async function sendReplyButton(to) {
+async function sendIntroButtons(to) {
     return axios_1.default.post(BASE_URL, {
         messaging_product: "whatsapp",
         to,
@@ -95,21 +96,38 @@ async function sendReplyButton(to) {
             type: "button",
             header: {
                 type: "text",
-                text: "message Header"
-            },
-            footer: {
-                text: " footer text"
+                text: "Welcome to Client-Link!"
             },
             body: {
-                text: 'this is interective reply button'
+                text: "Are you already our customer or want to find out about our products?"
             },
             action: {
                 buttons: [
-                    { type: "reply", reply: { id: "btn1", title: "Button 1" } },
-                    { type: "reply", reply: { id: "btn2", title: "Button 2" } },
-                    { type: "reply", reply: { id: "btn3", title: "Button 3" } }
+                    { type: "reply", reply: { id: "already_customer", title: "Already a Customer" } },
+                    { type: "reply", reply: { id: "interested_products", title: "Interested in Products" } }
                 ]
             }
+        }
+    }, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${env_1.default.WP_ACCESS_TOKEN}`
+        }
+    });
+}
+async function sendReplyButton(to, buttons, text) {
+    return axios_1.default.post(BASE_URL, {
+        messaging_product: "whatsapp",
+        to,
+        type: "interactive",
+        interactive: {
+            type: "button",
+            header: {
+                type: "text",
+                text: "Client-Link"
+            },
+            body: { text },
+            action: { buttons }
         }
     }, {
         headers: {

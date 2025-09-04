@@ -42,7 +42,7 @@ export async function sendListMessage(to: string) {
         interactive: {
             type: "list",
             header: {
-                type: "text", 
+                type: "text",
                 text: "message Header"
             },
             footer: {
@@ -80,7 +80,7 @@ export async function sendListMessage(to: string) {
     });
 }
 
-export async function sendReplyButton(to: string) {
+export async function sendIntroButtons(to: string) {
     return axios.post(BASE_URL, {
         messaging_product: "whatsapp",
         to,
@@ -88,22 +88,40 @@ export async function sendReplyButton(to: string) {
         interactive: {
             type: "button",
             header: {
-                type: "text", 
-                text: "message Header"
-            },
-            footer: {
-                text: " footer text"
+                type: "text",
+                text: "Welcome to Client-Link!"
             },
             body: {
-                text: 'this is interective reply button'
+                text: "Are you already our customer or want to find out about our products?"
             },
             action: {
                 buttons: [
-                    { type: "reply", reply: { id: "btn1", title: "Button 1" } },
-                    { type: "reply", reply: { id: "btn2", title: "Button 2" } },
-                    { type: "reply", reply: { id: "btn3", title: "Button 3" } }
+                    { type: "reply", reply: { id: "already_customer", title: "Already a Customer" } },
+                    { type: "reply", reply: { id: "interested_products", title: "Interested in Products" } }
                 ]
             }
+        }
+    }, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${env.WP_ACCESS_TOKEN}`
+        }
+    });
+}
+
+export async function sendReplyButton(to: string, buttons: { id: string, title: string }[], text: string) {
+    return axios.post(BASE_URL, {
+        messaging_product: "whatsapp",
+        to,
+        type: "interactive",
+        interactive: {
+            type: "button",
+            header: {
+                type: "text",
+                text: "Client-Link"
+            },
+            body: { text },
+            action: { buttons }
         }
     }, {
         headers: {
@@ -119,7 +137,7 @@ export async function sendReplyMessage(to: string, body: string, message_id: str
         to,
         type: "text",
         text: { body },
-        context: { message_id}
+        context: { message_id }
     }, {
         headers: {
             'Content-Type': 'application/json',
