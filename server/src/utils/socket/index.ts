@@ -4,6 +4,7 @@ import { handleNotiEvents } from "./notiEvents";
 
 export const activeChatUsers = new Set<string>();
 export const onlineUsers = new Set<string>();
+let ioInstance: Server | null = null;
 
 function initSocket(server: any) {
     const io = new Server(server, {
@@ -13,6 +14,7 @@ function initSocket(server: any) {
             methods: ["GET", "POST"]
         }
     });
+    ioInstance = io;
 
     io.on("connection", (socket: Socket) => {
 
@@ -48,6 +50,11 @@ function initSocket(server: any) {
     });
 
     return io;
-}
+};
+
+export function getSocketInstance() {
+    if (!ioInstance) throw new Error('Socket.IO not initialized');
+    return ioInstance;
+};
 
 export default initSocket;

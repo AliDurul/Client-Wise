@@ -1,11 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.onlineUsers = exports.activeChatUsers = void 0;
+exports.getSocketInstance = getSocketInstance;
 const socket_io_1 = require("socket.io");
 const chatEvents_1 = require("./chatEvents");
 const notiEvents_1 = require("./notiEvents");
 exports.activeChatUsers = new Set();
 exports.onlineUsers = new Set();
+let ioInstance = null;
 function initSocket(server) {
     const io = new socket_io_1.Server(server, {
         pingTimeout: 60000,
@@ -14,6 +16,7 @@ function initSocket(server) {
             methods: ["GET", "POST"]
         }
     });
+    ioInstance = io;
     io.on("connection", (socket) => {
         socket.on('userOnline', (userId) => {
             exports.onlineUsers.add(userId);
@@ -42,5 +45,12 @@ function initSocket(server) {
     });
     return io;
 }
+;
+function getSocketInstance() {
+    if (!ioInstance)
+        throw new Error('Socket.IO not initialized');
+    return ioInstance;
+}
+;
 exports.default = initSocket;
 //# sourceMappingURL=index.js.map

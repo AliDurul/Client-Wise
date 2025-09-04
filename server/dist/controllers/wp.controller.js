@@ -1,77 +1,31 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendImgMessage = exports.sendTextMessage = exports.sendTemplateMessage = void 0;
-const axios_1 = __importDefault(require("axios"));
-const env_1 = __importDefault(require("../configs/env"));
-const sendTemplateMessage = async (req, res) => {
-    // Send the message to the WordPress API
-    const response = await axios_1.default.post('https://graph.facebook.com/v22.0/706039062602459/messages', {
-        messaging_product: "whatsapp",
-        to: "260970732144",
-        type: "template",
-        template: {
-            name: 'hello_world',
-            language: {
-                code: 'en_US'
-            }
-        }
-    }, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${env_1.default.WP_ACCESS_TOKEN}`
-        }
-    });
+exports.imgMessage = exports.textMessage = exports.templateMessage = void 0;
+const wp_service_1 = require("../services/wp.service");
+const templateMessage = async (req, res) => {
+    const response = await (0, wp_service_1.sendTemplateMessage)("260970732144", "hello_world", "en_US");
     res.status(200).send({
         error: false,
         result: response.data
     });
 };
-exports.sendTemplateMessage = sendTemplateMessage;
-const sendTextMessage = async (req, res) => {
-    // Send the message to the WordPress API
-    const response = await axios_1.default.post('https://graph.facebook.com/v22.0/706039062602459/messages', {
-        messaging_product: "whatsapp",
-        to: "260970732144",
-        type: "text",
-        text: {
-            body: "Hello, this is a text message"
-        }
-    }, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${env_1.default.WP_ACCESS_TOKEN}`
-        }
-    });
+exports.templateMessage = templateMessage;
+const textMessage = async (req, res) => {
+    const { body } = req.body;
+    const { to } = req.params;
+    const response = await (0, wp_service_1.sendTextMessage)(to, body);
     res.status(200).send({
         error: false,
         result: response.data
     });
 };
-exports.sendTextMessage = sendTextMessage;
-const sendImgMessage = async (req, res) => {
-    // Send the message to the WordPress API
-    const response = await axios_1.default.post('https://graph.facebook.com/v22.0/706039062602459/messages', {
-        messaging_product: "whatsapp",
-        to: "260970732144",
-        type: "image",
-        image: {
-            link: "https://dummyimage.com/600x400/000/fff.png&text=lee",
-            caption: "This is an image message"
-        }
-    }, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${env_1.default.WP_ACCESS_TOKEN}`
-        }
-    });
-    console.log('sent');
+exports.textMessage = textMessage;
+const imgMessage = async (req, res) => {
+    const response = await (0, wp_service_1.sendImgMessage)("260970732144", "https://www.w3schools.com/w3css/img_lights.jpg", "Sample Image");
     res.status(200).send({
         error: false,
         result: response.data
     });
 };
-exports.sendImgMessage = sendImgMessage;
+exports.imgMessage = imgMessage;
 //# sourceMappingURL=wp.controller.js.map

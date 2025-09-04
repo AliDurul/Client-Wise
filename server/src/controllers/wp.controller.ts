@@ -1,29 +1,11 @@
 import axios from 'axios';
 import env from '../configs/env';
+import { Request, Response } from 'express';
+import { sendImgMessage, sendTemplateMessage, sendTextMessage } from '../services/wp.service';
 
-export const sendTemplateMessage = async (req, res) => {
+export const templateMessage = async (req: Request, res: Response) => {
 
-    // Send the message to the WordPress API
-    const response = await axios.post('https://graph.facebook.com/v22.0/706039062602459/messages',
-        {
-            messaging_product: "whatsapp",
-            to: "260970732144",
-            type: "template",
-            template: {
-                name: 'hello_world',
-                language: {
-                    code: 'en_US'
-                }
-            }
-        },
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${env.WP_ACCESS_TOKEN}`
-            }
-        }
-    );
-
+    const response = await sendTemplateMessage("260970732144", "hello_world", "en_US");
 
     res.status(200).send({
         error: false,
@@ -32,25 +14,12 @@ export const sendTemplateMessage = async (req, res) => {
 
 };
 
-export const sendTextMessage = async (req, res) => {
+export const textMessage = async (req: Request, res: Response) => {
 
-    // Send the message to the WordPress API
-    const response = await axios.post('https://graph.facebook.com/v22.0/706039062602459/messages',
-        {
-            messaging_product: "whatsapp",
-            to: "260970732144",
-            type: "text",
-            text: {
-                body: "Hello, this is a text message"
-            }
-        },
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${env.WP_ACCESS_TOKEN}`
-            }
-        }
-    );
+    const { body } = req.body;
+    const { to } = req.params;
+
+    const response = await sendTextMessage(to, body);
 
     res.status(200).send({
         error: false,
@@ -59,27 +28,9 @@ export const sendTextMessage = async (req, res) => {
 
 };
 
-export const sendImgMessage = async (req, res) => {
+export const imgMessage = async (req: Request, res: Response) => {
 
-    // Send the message to the WordPress API
-    const response = await axios.post('https://graph.facebook.com/v22.0/706039062602459/messages',
-        {
-            messaging_product: "whatsapp",
-            to: "260970732144",
-            type: "image",
-            image: {
-                link: "https://dummyimage.com/600x400/000/fff.png&text=lee",
-                caption: "This is an image message"
-            }
-        },
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${env.WP_ACCESS_TOKEN}`
-            }
-        }
-    );
-    console.log('sent');
+    const response = await sendImgMessage("260970732144", "https://www.w3schools.com/w3css/img_lights.jpg", "Sample Image");
 
     res.status(200).send({
         error: false,
