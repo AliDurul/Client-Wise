@@ -1,17 +1,20 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handlePostRequest = exports.handleGetRequest = void 0;
-const verifyToken = process.env.VERIFY_TOKEN;
+const env_1 = __importDefault(require("../configs/env"));
 const handleGetRequest = (req, res) => {
     const { 'hub.mode': mode, 'hub.challenge': challenge, 'hub.verify_token': token } = req.query;
     console.log('web hook api');
-    res.status(200).send('web hook works');
-    // if (mode === 'subscribe' && token === verifyToken) {
-    //     console.log('WEBHOOK VERIFIED');
-    //     res.status(200).send(challenge);
-    // } else {
-    //     res.status(403).end();
-    // }
+    if (mode === 'subscribe' && token === env_1.default.WEB_HOOK_VERIFY_TOKEN) {
+        console.log('WEBHOOK VERIFIED');
+        res.status(200).send(challenge);
+    }
+    else {
+        res.sendStatus(403);
+    }
 };
 exports.handleGetRequest = handleGetRequest;
 const handlePostRequest = (req, res) => {

@@ -32,6 +32,7 @@ const envSchema = zod_1.z.object({
     AWS_SECRET_ACCESS_KEY: zod_1.z.string().min(1),
     // wp
     WP_ACCESS_TOKEN: zod_1.z.string().min(1),
+    WEB_HOOK_VERIFY_TOKEN: zod_1.z.string().min(1),
 });
 const env = envSchema.parse(process.env);
 exports.default = env;
