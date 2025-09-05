@@ -32,6 +32,6 @@ async function startServer() {
 }
 ;
 startServer();
-// //! seeding
-// // initializeData();
+//! seeding
+// initializeData();
 //# sourceMappingURL=index.js.map

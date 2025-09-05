@@ -38,7 +38,7 @@ const customerSchema = new mongoose_1.Schema({
     customer_type: {
         type: String,
         enum: ['individual', 'corporate'],
-        required: true
+        default: 'individual',
     },
     first_name: {
         type: String,

@@ -15,32 +15,20 @@ async function connectDB() {
         console.log("Already connected to MongoDB.");
         return;
     }
-    try {
-        await mongoose_1.default.connect(env_1.default.MONGODB_URI, {
-            maxPoolSize: 10,
-            serverSelectionTimeoutMS: 5000,
-        });
-        isConnected = true;
-        console.log("✅ Connected to MongoDB");
-    }
-    catch (err) {
-        if (err instanceof Error)
-            console.error(err.message);
-        throw new Error("MongoDB connection failed.");
-    }
+    await mongoose_1.default.connect(env_1.default.MONGODB_URI, {
+        maxPoolSize: 10,
+        serverSelectionTimeoutMS: 5000,
+    });
+    isConnected = true;
+    console.log("Connected to MongoDB");
 }
 ;
 async function disconnectDB() {
     if (!isConnected)
         return;
-    try {
-        await mongoose_1.default.disconnect();
-        isConnected = false;
-        console.log("Disconnected from MongoDB");
-    }
-    catch (err) {
-        console.error("Error during MongoDB disconnection:", err);
-    }
+    await mongoose_1.default.disconnect();
+    isConnected = false;
+    console.log("Disconnected from MongoDB");
 }
 ;
 //# sourceMappingURL=db.js.map

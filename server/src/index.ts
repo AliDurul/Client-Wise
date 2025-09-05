@@ -3,6 +3,7 @@ import { connectDB, disconnectDB } from "./configs/db";
 import env from "./configs/env";
 import app from './utils/express';
 import initSocket from './utils/socket';
+import { initializeData } from "./utils/seeds";
 
 // server
 const server = createServer(app);
@@ -33,5 +34,5 @@ async function startServer() {
 
 startServer();
 
-// //! seeding
-// // initializeData();
+//! seeding
+// initializeData();

@@ -6,7 +6,7 @@ const customerSchema: Schema<ICustomer> = new Schema({
     customer_type: {
         type: String,
         enum: ['individual', 'corporate'],
-        required: true
+        default: 'individual',
     },
     first_name: {
         type: String,
