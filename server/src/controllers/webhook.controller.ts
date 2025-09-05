@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import { sendReplyButtons, sendReplyMessage, sendTextMessage } from "../services/wp.service";
 import Ticket from "../models/ticket.model";
 import Customer from "../models/customer.model";
+import WpUserState from "../models/wpUserState.model";
 
 export const handleGetRequest = (req: Request, res: Response) => {
     const { 'hub.mode': mode, 'hub.challenge': challenge, 'hub.verify_token': token } = req.query;
@@ -16,7 +17,6 @@ export const handleGetRequest = (req: Request, res: Response) => {
     }
 };
 
-let userState: Record<string, string> = {};
 export const handlePostRequest = async (req: Request, res: Response) => {
 
     const { entry } = req.body;
@@ -44,22 +44,22 @@ export const handlePostRequest = async (req: Request, res: Response) => {
                         ],
                         "Welcome back! What would you like to do?"
                     );
-                    userState[from] = 'customer_options';
+                    await WpUserState.findOneAndUpdate({ waId: from }, { state: 'customer_options' }, { upsert: true });
                     break;
 
                 case 'not_yet_customer':
                     await sendReplyMessage(from, "Which product are you interested in?", messages.id);
-                    userState[from] = 'awaiting_lead';
+                    await WpUserState.findOneAndUpdate({ waId: from }, { state: 'awaiting_lead' }, { upsert: true });
                     break;
 
                 case 'get_support':
                     await sendReplyMessage(from, "Please describe your issue. We'll create a support ticket for you.", messages.id);
-                    userState[from] = 'awaiting_ticket';
+                    await WpUserState.findOneAndUpdate({ waId: from }, { state: 'awaiting_ticket' }, { upsert: true });
                     break;
 
                 case 'buy_product':
                     await sendReplyMessage(from, "Which product are you interested in?", messages.id);
-                    userState[from] = 'awaiting_lead';
+                    await WpUserState.findOneAndUpdate({ waId: from }, { state: 'awaiting_lead' }, { upsert: true });
                     break;
 
                 default:
@@ -70,56 +70,63 @@ export const handlePostRequest = async (req: Request, res: Response) => {
             return;
         }
 
+        const userState = await WpUserState.findOne({ waId: from });
+
         console.info('userState', userState);
 
         // Handle text replies
-        if (userState[from] === 'awaiting_ticket' && messages.type === 'text') {
+        if (userState?.state === 'awaiting_ticket' && messages.type === 'text') {
 
             const customer = await Customer.findOne({ phone_number: from }).select('_id').lean();
 
             if (!customer) {
                 await sendReplyMessage(from, "Sorry, we couldn't find your customer record. Please contact support.", messages.id);
-                userState[from] = '';
+                await WpUserState.findOneAndUpdate({ waId: from }, { state: 'in_agent_chat' });
                 res.status(200).end();
                 return;
             }
 
             const ticket = await Ticket.create({
-                title: messages.text.body.substring(0, 50),
+                title: messages.text.body.substring(0, 30),
                 description: messages.text.body,
                 source: 'whatsapp',
                 assigned_agent: "68baa5a729e7a4f116048fd9",
                 customer: customer._id,
-                category: "68baa5a829e7a4f116049003", 
+                category: "68baa5a829e7a4f116049003",
             });
 
             await sendReplyMessage(from, `Thank you! Your ticket has been created. Ticket ID: ${ticket._id.toString().slice(-6)}`, messages.id);
-            userState[from] = '';
+            await WpUserState.findOneAndUpdate({ waId: from }, { state: 'in_agent_chat' });
             res.status(200).end();
             return;
         }
 
-        if (userState[from] === 'awaiting_lead' && messages.type === 'text') {
+        if (userState?.state === 'awaiting_lead' && messages.type === 'text') {
             // createLead(...)
             console.log('awaiting lead body', messages.text.body);
             await sendReplyMessage(from, "Thank you! Our team will contact you soon.", messages.id);
-            userState[from] = '';
+            await WpUserState.findOneAndUpdate({ waId: from }, { state: 'in_agent_chat' });
             res.status(200).end();
             return;
         }
 
-        try {
-            await sendReplyButtons(
-                from,
-                [
-                    { type: "reply", reply: { id: "already_customer", title: "Already a Customer" } },
-                    { type: "reply", reply: { id: "not_yet_customer", title: "Not Yet a Customer" } }
-                ],
-                "Hi! To help you better, please let us know if you're an existing customer or interested in our products."
-            );
-        } catch (err: any) {
-            console.error('WhatsApp API error:', err.response?.data || err.message);
+        if (userState?.state === 'in_agent_chat') {
+
+            await sendReplyMessage(from, `this is from agent message bro:`, messages.id);
+
+            res.sendStatus(200);
+            return;
         }
+
+        await sendReplyButtons(
+            from,
+            [
+                { type: "reply", reply: { id: "already_customer", title: "Already a Customer" } },
+                { type: "reply", reply: { id: "not_yet_customer", title: "Not Yet a Customer" } }
+            ],
+            "Hi! To help you better, please let us know if you're an existing customer or interested in our products."
+        );
+
         res.status(200).end();
     }
 }
