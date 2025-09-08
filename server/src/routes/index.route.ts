@@ -8,7 +8,7 @@ import invoiceRoutes from "./invoice.route";
 import productRoutes from "./product.route";
 import ticketRoutes from "./ticket.route";
 import leadRoutes from "./lead.route";
-import chatRoutes from './chat&message.route';
+import chatRoutes from './chatMessage.route';
 import wpRoutes from './wp.route';
 import webhookRoutes from './webhook.route';
 

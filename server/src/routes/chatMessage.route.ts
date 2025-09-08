@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createGroup, createMessage, deleteChat, getChatMessages, getChats, getGroupInfo, updateGroup } from "../controllers/chat&message.controller";
+import { createGroup, createMessage, deleteChat, getChatMessages, getChats, getGroupInfo, updateGroup } from "../controllers/chatMessage.controller";
 import { upload } from "../utils/common";
 
 const router = Router();

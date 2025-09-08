@@ -9,6 +9,8 @@ const chatSchema = new mongoose_1.Schema({
     users: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'User' }],
     latest_message: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Message', default: null },
     group_admin: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', default: null },
+    source: { type: String, enum: ['internal', 'whatsapp'], default: 'internal' },
+    wpId: { type: String, default: null },
 }, { collection: 'chats', timestamps: true });
 exports.Chat = (0, mongoose_1.model)('Chat', chatSchema);
 // ----------------------------------------
@@ -18,4 +20,4 @@ const messageSchema = new mongoose_1.Schema({
     chat: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Chat' },
 }, { collection: 'messages', timestamps: true });
 exports.Message = (0, mongoose_1.model)('Message', messageSchema);
-//# sourceMappingURL=chat&message.model.js.map
+//# sourceMappingURL=chatMessage.model.js.map

@@ -1,6 +1,7 @@
 import { Socket, Server } from "socket.io";
 import { handleChatEvents } from "./chatEvents";
 import { handleNotiEvents } from "./notiEvents";
+import { CustomError } from "../../utils/common";
 
 export const activeChatUsers = new Set<string>();
 export const onlineUsers = new Set<string>();
@@ -14,7 +15,7 @@ function initSocket(server: any) {
             methods: ["GET", "POST"]
         }
     });
-    ioInstance = io;
+    ioInstance = io; // for socket instance
 
     io.on("connection", (socket: Socket) => {
 
@@ -53,7 +54,7 @@ function initSocket(server: any) {
 };
 
 export function getSocketInstance() {
-    if (!ioInstance) throw new Error('Socket.IO not initialized');
+    if (!ioInstance) throw new CustomError('Socket.IO not initialized', 500, true);
     return ioInstance;
 };
 

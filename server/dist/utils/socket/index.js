@@ -5,6 +5,7 @@ exports.getSocketInstance = getSocketInstance;
 const socket_io_1 = require("socket.io");
 const chatEvents_1 = require("./chatEvents");
 const notiEvents_1 = require("./notiEvents");
+const common_1 = require("../../utils/common");
 exports.activeChatUsers = new Set();
 exports.onlineUsers = new Set();
 let ioInstance = null;
@@ -16,7 +17,7 @@ function initSocket(server) {
             methods: ["GET", "POST"]
         }
     });
-    ioInstance = io;
+    ioInstance = io; // for socket instance
     io.on("connection", (socket) => {
         socket.on('userOnline', (userId) => {
             exports.onlineUsers.add(userId);
@@ -48,7 +49,7 @@ function initSocket(server) {
 ;
 function getSocketInstance() {
     if (!ioInstance)
-        throw new Error('Socket.IO not initialized');
+        throw new common_1.CustomError('Socket.IO not initialized', 500, true);
     return ioInstance;
 }
 ;

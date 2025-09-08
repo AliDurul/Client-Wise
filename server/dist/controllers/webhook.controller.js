@@ -10,6 +10,7 @@ const wp_service_1 = require("../services/wp.service");
 const ticket_model_1 = __importDefault(require("../models/ticket.model"));
 const customer_model_1 = __importDefault(require("../models/customer.model"));
 const wpUserState_model_1 = __importDefault(require("../models/wpUserState.model"));
+const chatMessage_service_1 = require("../services/chatMessage.service");
 const handleGetRequest = (req, res) => {
     const { 'hub.mode': mode, 'hub.challenge': challenge, 'hub.verify_token': token } = req.query;
     if (mode === 'subscribe' && token === env_1.default.WEB_HOOK_VERIFY_TOKEN) {
@@ -21,6 +22,11 @@ const handleGetRequest = (req, res) => {
     }
 };
 exports.handleGetRequest = handleGetRequest;
+const defaultValues = {
+    assigned_agent: "68baa5a729e7a4f116048fd9",
+    category: "68baa5a829e7a4f116049003",
+    source: 'whatsapp'
+};
 const handlePostRequest = async (req, res) => {
     const { entry } = req.body;
     if (!entry || !Array.isArray(entry) || entry.length === 0)
@@ -31,7 +37,20 @@ const handlePostRequest = async (req, res) => {
     const statuses = changes[0].value.statuses ? changes[0].value.statuses[0] : null;
     const messages = changes[0].value.messages ? changes[0].value.messages[0] : null;
     const from = messages ? messages.from : null;
+    console.log('Received webhook:', req.body);
     if (messages) {
+        if (messages.type === 'text' && messages.text.body) {
+            // save message to model
+            await (0, chatMessage_service_1.createMessageService)({
+                senderId: from,
+                receiverId: defaultValues.assigned_agent,
+                content: messages.text.body,
+                chatId: null,
+                source: defaultValues.source
+            });
+            // emit event with socket
+            // const io = getSocketInstance();
+        }
         // Handle button replies with switch
         if (messages.type === 'interactive' && messages.interactive.type === 'button_reply') {
             const selectedId = messages.interactive.button_reply.id;
@@ -41,69 +60,68 @@ const handlePostRequest = async (req, res) => {
                         { type: "reply", reply: { id: "get_support", title: "Get Support" } },
                         { type: "reply", reply: { id: "buy_product", title: "Buy Product" } }
                     ], "Welcome back! What would you like to do?");
-                    await wpUserState_model_1.default.findOneAndUpdate({ waId: from }, { state: 'customer_options' }, { upsert: true });
+                    await wpUserState_model_1.default.findOneAndUpdate({ wpId: from }, { state: 'customer_options' }, { upsert: true });
                     break;
                 case 'not_yet_customer':
                     await (0, wp_service_1.sendReplyMessage)(from, "Which product are you interested in?", messages.id);
-                    await wpUserState_model_1.default.findOneAndUpdate({ waId: from }, { state: 'awaiting_lead' }, { upsert: true });
+                    await wpUserState_model_1.default.findOneAndUpdate({ wpId: from }, { state: 'awaiting_lead' }, { upsert: true });
                     break;
                 case 'get_support':
                     await (0, wp_service_1.sendReplyMessage)(from, "Please describe your issue. We'll create a support ticket for you.", messages.id);
-                    await wpUserState_model_1.default.findOneAndUpdate({ waId: from }, { state: 'awaiting_ticket' }, { upsert: true });
+                    await wpUserState_model_1.default.findOneAndUpdate({ wpId: from }, { state: 'awaiting_ticket' }, { upsert: true });
                     break;
                 case 'buy_product':
                     await (0, wp_service_1.sendReplyMessage)(from, "Which product are you interested in?", messages.id);
-                    await wpUserState_model_1.default.findOneAndUpdate({ waId: from }, { state: 'awaiting_lead' }, { upsert: true });
+                    await wpUserState_model_1.default.findOneAndUpdate({ wpId: from }, { state: 'awaiting_lead' }, { upsert: true });
                     break;
                 default:
                     await (0, wp_service_1.sendReplyMessage)(from, "Sorry, I didn't understand your selection.", messages.id);
                     break;
             }
-            res.status(200).end();
+            res.sendStatus(200);
             return;
         }
-        const userState = await wpUserState_model_1.default.findOne({ waId: from });
+        const userState = await wpUserState_model_1.default.findOne({ wpId: from });
         console.info('userState', userState);
         // Handle text replies
         if (userState?.state === 'awaiting_ticket' && messages.type === 'text') {
             const customer = await customer_model_1.default.findOne({ phone_number: from }).select('_id').lean();
             if (!customer) {
                 await (0, wp_service_1.sendReplyMessage)(from, "Sorry, we couldn't find your customer record. Please contact support.", messages.id);
-                await wpUserState_model_1.default.findOneAndUpdate({ waId: from }, { state: 'in_agent_chat' });
-                res.status(200).end();
+                await wpUserState_model_1.default.findOneAndUpdate({ wpId: from }, { state: 'in_agent_chat' });
+                res.sendStatus(200);
                 return;
             }
             const ticket = await ticket_model_1.default.create({
                 title: messages.text.body.substring(0, 30),
                 description: messages.text.body,
-                source: 'whatsapp',
-                assigned_agent: "68baa5a729e7a4f116048fd9",
+                source: defaultValues.source,
+                assigned_agent: defaultValues.assigned_agent,
                 customer: customer._id,
-                category: "68baa5a829e7a4f116049003",
+                category: defaultValues.category,
             });
             await (0, wp_service_1.sendReplyMessage)(from, `Thank you! Your ticket has been created. Ticket ID: ${ticket._id.toString().slice(-6)}`, messages.id);
-            await wpUserState_model_1.default.findOneAndUpdate({ waId: from }, { state: 'in_agent_chat' });
-            res.status(200).end();
+            await wpUserState_model_1.default.findOneAndUpdate({ wpId: from }, { state: 'in_agent_chat' });
+            res.sendStatus(200);
             return;
         }
         if (userState?.state === 'awaiting_lead' && messages.type === 'text') {
             // createLead(...)
             console.log('awaiting lead body', messages.text.body);
             await (0, wp_service_1.sendReplyMessage)(from, "Thank you! Our team will contact you soon.", messages.id);
-            await wpUserState_model_1.default.findOneAndUpdate({ waId: from }, { state: 'in_agent_chat' });
-            res.status(200).end();
-            return;
-        }
-        if (userState?.state === 'in_agent_chat') {
-            await (0, wp_service_1.sendReplyMessage)(from, `this is from agent message bro:`, messages.id);
+            await wpUserState_model_1.default.findOneAndUpdate({ wpId: from }, { state: 'in_agent_chat' });
             res.sendStatus(200);
             return;
         }
+        // if (userState?.state === 'in_agent_chat') {
+        //     res.sendStatus(200);
+        //     return;
+        // }
         await (0, wp_service_1.sendReplyButtons)(from, [
             { type: "reply", reply: { id: "already_customer", title: "Already a Customer" } },
             { type: "reply", reply: { id: "not_yet_customer", title: "Not Yet a Customer" } }
         ], "Hi! To help you better, please let us know if you're an existing customer or interested in our products.");
-        res.status(200).end();
+        res.sendStatus(200);
     }
 };
 exports.handlePostRequest = handlePostRequest;

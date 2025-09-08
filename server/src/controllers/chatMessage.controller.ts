@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { Chat, ChatUser, IChat, IMessage, Message } from "../models/chat&message.model";
+import { Chat, ChatUser, IChat, IMessage, Message } from "../models/chatMessage.model";
 import { CustomError, getImageUrl, s3 } from "../utils/common";
 import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import crypto from 'crypto';
 import sharp from 'sharp';
 import env from '../configs/env';
-import { HydratedDocument } from "mongoose";
+import { createMessageService } from "../services/chatMessage.service";
 
 
 export const getChats = async (req: Request, res: Response) => {
@@ -109,55 +109,12 @@ export const createMessage = async (req: Request, res: Response) => {
     const { chatId } = req.params;
     const senderId = req.user.id;
 
-    if (!content) throw new CustomError('Content is required.', 400, true);
-
-    let chat: HydratedDocument<IChat> | null;
-
-    if (chatId && chatId !== "null") {
-
-        chat = await Chat.findById(chatId);
-        if (!chat) throw new CustomError(`Chat not Found with ID: ${chatId}`, 404, true);
-
-    } else {
-        if (!receiverId) throw new CustomError('Receiver is required.', 401, true);
-
-        chat = await Chat.findOneAndUpdate(
-            {
-                is_group: false,
-                $or: [
-                    { users: [senderId, receiverId] },
-                    { users: [receiverId, senderId] }
-                ]
-            },
-            { $setOnInsert: { is_group: false, users: [senderId, receiverId] } },
-            { new: true, upsert: true }
-        );
-    }
-
-    const message = await Message.create({
-        chat: chat._id,
-        sender: senderId,
-        content
+    const { message, chat } = await createMessageService({
+        senderId,
+        receiverId,
+        content,
+        chatId
     });
-
-    if (!message) throw new CustomError('Message not created', 404, true);
-
-    chat = await Chat.findByIdAndUpdate(chat._id, { latest_message: message._id }, { new: true }).populate([
-        { path: 'latest_message', select: '-chat -__v -sender -updatedAt' },
-        { path: 'users', select: 'first_name last_name full_name email phone_number profile_pic' }
-    ]);
-
-    if (!chat) throw new CustomError('Chat not found after creating message', 404, true);
-
-    await Promise.all(chat.users.map(async (user: ChatUser) => {
-        if ((user._id.toString() !== req.user.id) && user.profile_pic) {
-            user.profile_pic = await getImageUrl(user.profile_pic);
-        }
-    }));
-
-    if (chat.is_group && chat.chat_pic) {
-        chat.chat_pic = await getImageUrl(chat.chat_pic);
-    }
 
     res.status(200).send({
         success: true,
@@ -204,26 +161,6 @@ export const createGroup = async (req: Request, res: Response) => {
     });
 
     if (!chat) throw new CustomError('Group chat not created', 404, true);
-
-    if (req.file && req.file.size > 0 && req.file.buffer) {
-        const randomSuffix = crypto.randomBytes(8).toString('hex');
-        const fileName = `group_pics/${randomSuffix}_${req.file.originalname}`;
-
-        const buffer = await sharp(req.file.buffer).resize({ height: 90, width: 90, fit: 'contain' }).toBuffer();
-
-        const params = {
-            Bucket: env.AWS_BUCKET_NAME,
-            Key: fileName,
-            Body: buffer,
-            ContentType: req.file.mimetype
-        };
-        const command = new PutObjectCommand(params)
-
-        await s3.send(command);
-
-        chat.chat_pic = fileName
-        await chat.save();
-    }
 
     res.status(201).send({
         success: true,
