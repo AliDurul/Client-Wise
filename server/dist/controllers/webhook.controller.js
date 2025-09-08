@@ -37,7 +37,7 @@ const handlePostRequest = async (req, res) => {
     const statuses = changes[0].value.statuses ? changes[0].value.statuses[0] : null;
     const messages = changes[0].value.messages ? changes[0].value.messages[0] : null;
     const from = messages ? messages.from : null;
-    console.log('Received webhook:', req.body);
+    console.log('Received webhook:', JSON.stringify(req.body, null, 2));
     if (messages) {
         if (messages.type === 'text' && messages.text.body) {
             // save message to model

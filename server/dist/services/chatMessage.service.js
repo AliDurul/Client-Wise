@@ -28,26 +28,36 @@ async function createMessageService({ senderId, receiverId, content, chatId, sou
     if (!content)
         throw new common_1.CustomError('Content is required.', 400, true);
     const chat = await createOrFindChat(senderId, receiverId, chatId, source);
+    console.log('chat:', chat);
     const message = await chatMessage_model_1.Message.create({
         chat: chat._id,
         sender: senderId,
         content
     });
+    console.log('message:', message);
     if (!message)
         throw new common_1.CustomError('Message not created', 404, true);
-    const updatedChat = await chatMessage_model_1.Chat.findByIdAndUpdate(chat._id, { latest_message: message._id }, { new: true }).populate([
-        { path: 'latest_message', select: '-chat -__v -sender -updatedAt' },
-        { path: 'users', select: 'first_name last_name full_name email phone_number profile_pic' }
-    ]);
-    if (!updatedChat)
-        throw new common_1.CustomError('Chat not found after creating message', 404, true);
-    await Promise.all(updatedChat.users.map(async (user) => {
-        if ((user._id.toString() !== senderId) && user.profile_pic) {
-            user.profile_pic = await (0, common_1.getImageUrl)(user.profile_pic);
+    let updatedChat;
+    if (source === 'whatsapp') {
+        updatedChat = await chatMessage_model_1.Chat.findByIdAndUpdate(chat._id, { latest_message: message._id }, { new: true }).populate([
+            { path: 'latest_message', select: '-chat -__v -sender -updatedAt' }
+        ]);
+    }
+    else {
+        updatedChat = await chatMessage_model_1.Chat.findByIdAndUpdate(chat._id, { latest_message: message._id }, { new: true }).populate([
+            { path: 'latest_message', select: '-chat -__v -sender -updatedAt' },
+            { path: 'users', select: 'first_name last_name full_name email phone_number profile_pic' }
+        ]);
+        if (!updatedChat)
+            throw new common_1.CustomError('Chat not found after creating message', 404, true);
+        await Promise.all(updatedChat.users.map(async (user) => {
+            if ((user._id.toString() !== senderId) && user.profile_pic) {
+                user.profile_pic = await (0, common_1.getImageUrl)(user.profile_pic);
+            }
+        }));
+        if (updatedChat.is_group && updatedChat.chat_pic) {
+            updatedChat.chat_pic = await (0, common_1.getImageUrl)(updatedChat.chat_pic);
         }
-    }));
-    if (updatedChat.is_group && updatedChat.chat_pic) {
-        updatedChat.chat_pic = await (0, common_1.getImageUrl)(updatedChat.chat_pic);
     }
     return { message, chat: updatedChat };
 }

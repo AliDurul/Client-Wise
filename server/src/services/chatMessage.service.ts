@@ -43,31 +43,43 @@ export async function createMessageService({
     if (!content) throw new CustomError('Content is required.', 400, true);
 
     const chat = await createOrFindChat(senderId, receiverId!, chatId, source);
-
+    console.log('chat:', chat);
     const message = await Message.create({
         chat: chat._id,
         sender: senderId,
         content
     });
+    console.log('message:', message);
 
     if (!message) throw new CustomError('Message not created', 404, true);
 
-    const updatedChat = await Chat.findByIdAndUpdate(chat._id, { latest_message: message._id }, { new: true }).populate([
-        { path: 'latest_message', select: '-chat -__v -sender -updatedAt' },
-        { path: 'users', select: 'first_name last_name full_name email phone_number profile_pic' }
-    ]);
+    let updatedChat: HydratedDocument<IChat> | null;
+    if (source === 'whatsapp') {
 
-    if (!updatedChat) throw new CustomError('Chat not found after creating message', 404, true);
+        updatedChat = await Chat.findByIdAndUpdate(chat._id, { latest_message: message._id }, { new: true }).populate([
+            { path: 'latest_message', select: '-chat -__v -sender -updatedAt' }
+        ]);
+        
+    } else {
 
-    await Promise.all(updatedChat.users.map(async (user: ChatUser) => {
-        if ((user._id.toString() !== senderId) && user.profile_pic) {
-            user.profile_pic = await getImageUrl(user.profile_pic);
+        updatedChat = await Chat.findByIdAndUpdate(chat._id, { latest_message: message._id }, { new: true }).populate([
+            { path: 'latest_message', select: '-chat -__v -sender -updatedAt' },
+            { path: 'users', select: 'first_name last_name full_name email phone_number profile_pic' }
+        ]);
+
+        if (!updatedChat) throw new CustomError('Chat not found after creating message', 404, true);
+
+        await Promise.all(updatedChat.users.map(async (user: ChatUser) => {
+            if ((user._id.toString() !== senderId) && user.profile_pic) {
+                user.profile_pic = await getImageUrl(user.profile_pic);
+            }
+        }));
+
+        if (updatedChat.is_group && updatedChat.chat_pic) {
+            updatedChat.chat_pic = await getImageUrl(updatedChat.chat_pic);
         }
-    }));
-
-    if (updatedChat.is_group && updatedChat.chat_pic) {
-        updatedChat.chat_pic = await getImageUrl(updatedChat.chat_pic);
     }
+
 
     return { message, chat: updatedChat };
 }
