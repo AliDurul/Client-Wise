@@ -8,8 +8,15 @@ export async function createOrFindChat(senderId: string, receiverId: string, cha
     if (chatId && chatId !== "null") {
         chat = await Chat.findById(chatId);
         if (!chat) throw new CustomError(`Chat not Found with ID: ${chatId}`, 404, true);
+
     } else {
         if (!receiverId) throw new CustomError('Receiver is required.', 401, true);
+
+        let onInsert = { source, is_group: false, users: [senderId, receiverId], customer: null };
+
+        if (source === 'whatsapp') {
+            onInsert = { ...onInsert, customer: senderId };
+        }
 
         chat = await Chat.findOneAndUpdate(
             {
@@ -19,7 +26,7 @@ export async function createOrFindChat(senderId: string, receiverId: string, cha
                     { users: [receiverId, senderId] }
                 ]
             },
-            { $setOnInsert: { source, is_group: false, users: [senderId, receiverId] } },
+            { $setOnInsert: onInsert },
             { new: true, upsert: true }
         );
     }
@@ -44,6 +51,7 @@ export async function createMessageService({
 
     const chat = await createOrFindChat(senderId, receiverId!, chatId, source);
     console.log('chat:', chat);
+    
     const message = await Message.create({
         chat: chat._id,
         sender: senderId,
@@ -59,7 +67,7 @@ export async function createMessageService({
         updatedChat = await Chat.findByIdAndUpdate(chat._id, { latest_message: message._id }, { new: true }).populate([
             { path: 'latest_message', select: '-chat -__v -sender -updatedAt' }
         ]);
-        
+
     } else {
 
         updatedChat = await Chat.findByIdAndUpdate(chat._id, { latest_message: message._id }, { new: true }).populate([

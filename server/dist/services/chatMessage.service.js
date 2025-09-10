@@ -14,13 +14,17 @@ async function createOrFindChat(senderId, receiverId, chatId, source = 'internal
     else {
         if (!receiverId)
             throw new common_1.CustomError('Receiver is required.', 401, true);
+        let onInsert = { source, is_group: false, users: [senderId, receiverId], customer: null };
+        if (source === 'whatsapp') {
+            onInsert = { ...onInsert, customer: senderId };
+        }
         chat = await chatMessage_model_1.Chat.findOneAndUpdate({
             is_group: false,
             $or: [
                 { users: [senderId, receiverId] },
                 { users: [receiverId, senderId] }
             ]
-        }, { $setOnInsert: { source, is_group: false, users: [senderId, receiverId] } }, { new: true, upsert: true });
+        }, { $setOnInsert: onInsert }, { new: true, upsert: true });
     }
     return chat;
 }

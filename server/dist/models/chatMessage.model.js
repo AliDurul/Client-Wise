@@ -10,7 +10,7 @@ const chatSchema = new mongoose_1.Schema({
     latest_message: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Message', default: null },
     group_admin: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', default: null },
     source: { type: String, enum: ['internal', 'whatsapp'], default: 'internal' },
-    wpId: { type: String, default: null },
+    customer: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Customer', default: null },
 }, { collection: 'chats', timestamps: true });
 exports.Chat = (0, mongoose_1.model)('Chat', chatSchema);
 // ----------------------------------------

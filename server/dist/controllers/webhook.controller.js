@@ -36,6 +36,7 @@ const handlePostRequest = async (req, res) => {
         throw new common_1.CustomError('Invalid webhook data', 400, true);
     const statuses = changes[0].value.statuses ? changes[0].value.statuses[0] : null;
     const messages = changes[0].value.messages ? changes[0].value.messages[0] : null;
+    const contactname = changes[0].value.contacts ? changes[0].value.contacts[0].profile.name : null;
     const from = messages ? messages.from : null;
     console.log('Received webhook:', JSON.stringify(req.body, null, 2));
     if (messages) {
@@ -49,7 +50,8 @@ const handlePostRequest = async (req, res) => {
                 customer = await customer_model_1.default.create({
                     ...queryObj,
                     status: 'prospect',
-                    assigned_agent: defaultValues.assigned_agent
+                    assigned_agent: defaultValues.assigned_agent,
+                    first_name: contactname || 'WhatsApp User'
                 });
             }
             // save message to model

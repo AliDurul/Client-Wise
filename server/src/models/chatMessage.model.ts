@@ -9,7 +9,7 @@ const chatSchema = new Schema<IChat>({
     latest_message: { type: Schema.Types.ObjectId, ref: 'Message', default: null },
     group_admin: { type: Schema.Types.ObjectId, ref: 'User', default: null },
     source: { type: String, enum: ['internal', 'whatsapp'], default: 'internal' },
-    wpId: { type: String, default: null },
+    customer: { type: Schema.Types.ObjectId, ref: 'Customer', default: null },
 
 }, { collection: 'chats', timestamps: true });
 
@@ -25,7 +25,7 @@ export interface IChat {
     latest_message: Schema.Types.ObjectId | null;
     group_admin: ChatUser | null;
     source: 'internal' | 'whatsapp';
-    wpId: string | null;
+    customer: ChatUser | null;
 }
 
 export interface ChatUser {
