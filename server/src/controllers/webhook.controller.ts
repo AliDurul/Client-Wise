@@ -42,15 +42,20 @@ export const handlePostRequest = async (req: Request, res: Response) => {
 
         if (messages.type === 'text' && messages.text.body) {
 
+            let customer = await Customer.findOne({ phone_number: from, source: defaultValues.source }).select('_id').lean();
+            if (!customer) {
+                customer = await Customer.create({ phone_number: from, source: defaultValues.source });
+            }
+
             // save message to model
             await createMessageService({
-                senderId: from,
+                senderId: customer._id.toString(),
                 receiverId: defaultValues.assigned_agent,
                 content: messages.text.body,
                 chatId: null,
                 source: defaultValues.source
             });
-           
+
             // emit event with socket
             // const io = getSocketInstance();
         }

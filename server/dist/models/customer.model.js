@@ -40,6 +40,11 @@ const customerSchema = new mongoose_1.Schema({
         enum: ['individual', 'corporate'],
         default: 'individual',
     },
+    source: {
+        type: String,
+        enum: ['phone_call', 'whatsapp', 'email', 'in_person', 'referral', 'website', 'social_media', 'other'],
+        default: 'phone_call',
+    },
     first_name: {
         type: String,
         trim: true,
@@ -142,10 +147,6 @@ const customerSchema = new mongoose_1.Schema({
         type: String,
         trim: true,
     },
-    // medication: {//
-    //     type: Boolean,
-    //     default: false,
-    // },
     medication_type: {
         type: String,
         trim: true,
