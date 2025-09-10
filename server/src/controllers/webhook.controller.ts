@@ -72,7 +72,13 @@ export const handlePostRequest = async (req: Request, res: Response) => {
             // const io = getSocketInstance();
         }
 
+        const userState = await WpUserState.findOne({ wpId: from });
 
+        if (userState?.state === 'in_agent_chat') {
+
+            res.sendStatus(200);
+            return;
+        }
 
         // Handle button replies with switch
         if (messages.type === 'interactive' && messages.interactive.type === 'button_reply') {
@@ -114,7 +120,6 @@ export const handlePostRequest = async (req: Request, res: Response) => {
             return;
         }
 
-        const userState = await WpUserState.findOne({ wpId: from });
 
         console.info('userState', userState);
 
@@ -154,12 +159,7 @@ export const handlePostRequest = async (req: Request, res: Response) => {
             return;
         }
 
-        // if (userState?.state === 'in_agent_chat') {
 
-
-        //     res.sendStatus(200);
-        //     return;
-        // }
 
         await sendReplyButtons(
             from,

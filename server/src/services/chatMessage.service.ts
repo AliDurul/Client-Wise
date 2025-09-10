@@ -12,23 +12,47 @@ export async function createOrFindChat(senderId: string, receiverId: string, cha
     } else {
         if (!receiverId) throw new CustomError('Receiver is required.', 401, true);
 
-        let onInsert = { source, is_group: false, users: [senderId, receiverId], customer: null };
-
         if (source === 'whatsapp') {
-            onInsert = { ...onInsert, customer: senderId };
+            // For WhatsApp, senderId is customer, receiverId is agent
+            chat = await Chat.findOneAndUpdate(
+                {
+                    is_group: false,
+                    source: 'whatsapp',
+                    customer: senderId,
+                    users: [receiverId]
+                },
+                {
+                    $setOnInsert: {
+                        source: 'whatsapp',
+                        is_group: false,
+                        users: [receiverId],
+                        customer: senderId
+                    }
+                },
+                { new: true, upsert: true }
+            );
+        } else {
+            // For internal chat, both are users
+            chat = await Chat.findOneAndUpdate(
+                {
+                    is_group: false,
+                    source: 'internal',
+                    $or: [
+                        { users: [senderId, receiverId] },
+                        { users: [receiverId, senderId] }
+                    ]
+                },
+                {
+                    $setOnInsert: {
+                        source: 'internal',
+                        is_group: false,
+                        users: [senderId, receiverId],
+                        customer: null
+                    }
+                },
+                { new: true, upsert: true }
+            );
         }
-
-        chat = await Chat.findOneAndUpdate(
-            {
-                is_group: false,
-                $or: [
-                    { users: [senderId, receiverId] },
-                    { users: [receiverId, senderId] }
-                ]
-            },
-            { $setOnInsert: onInsert },
-            { new: true, upsert: true }
-        );
     }
     return chat;
 }
@@ -51,7 +75,7 @@ export async function createMessageService({
 
     const chat = await createOrFindChat(senderId, receiverId!, chatId, source);
     console.log('chat:', chat);
-    
+
     const message = await Message.create({
         chat: chat._id,
         sender: senderId,

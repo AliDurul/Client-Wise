@@ -65,6 +65,11 @@ const handlePostRequest = async (req, res) => {
             // emit event with socket
             // const io = getSocketInstance();
         }
+        const userState = await wpUserState_model_1.default.findOne({ wpId: from });
+        if (userState?.state === 'in_agent_chat') {
+            res.sendStatus(200);
+            return;
+        }
         // Handle button replies with switch
         if (messages.type === 'interactive' && messages.interactive.type === 'button_reply') {
             const selectedId = messages.interactive.button_reply.id;
@@ -95,7 +100,6 @@ const handlePostRequest = async (req, res) => {
             res.sendStatus(200);
             return;
         }
-        const userState = await wpUserState_model_1.default.findOne({ wpId: from });
         console.info('userState', userState);
         // Handle text replies
         if (userState?.state === 'awaiting_ticket' && messages.type === 'text') {
@@ -127,10 +131,6 @@ const handlePostRequest = async (req, res) => {
             res.sendStatus(200);
             return;
         }
-        // if (userState?.state === 'in_agent_chat') {
-        //     res.sendStatus(200);
-        //     return;
-        // }
         await (0, wp_service_1.sendReplyButtons)(from, [
             { type: "reply", reply: { id: "already_customer", title: "Already a Customer" } },
             { type: "reply", reply: { id: "not_yet_customer", title: "Not Yet a Customer" } }
