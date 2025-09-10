@@ -148,8 +148,8 @@ const customerSchema: Schema<ICustomer> = new Schema({
     },
     status: {
         type: String,
-        enum: ['active', 'inactive', 'blacklisted'],
-        default: 'active',
+        enum: ['prospect', 'lead', 'customer', 'inactive', 'blacklisted'],
+        default: 'prospect',
     },
     notes: {
         type: String,
@@ -227,7 +227,7 @@ export interface ICustomer extends Document {
     finincial_institution?: string;
     documents?: string[];
     profile_pic?: string;
-    status: 'active' | 'inactive' | 'blacklisted';
+    status: 'active' | 'inactive' | 'blacklisted' | 'prospect' | 'lead' | 'customer';
     notes?: string;
     assigned_agent?: mongoose.Types.ObjectId;
     createdAt?: Date;

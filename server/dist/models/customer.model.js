@@ -180,8 +180,8 @@ const customerSchema = new mongoose_1.Schema({
     },
     status: {
         type: String,
-        enum: ['active', 'inactive', 'blacklisted'],
-        default: 'active',
+        enum: ['prospect', 'lead', 'customer', 'inactive', 'blacklisted'],
+        default: 'prospect',
     },
     notes: {
         type: String,

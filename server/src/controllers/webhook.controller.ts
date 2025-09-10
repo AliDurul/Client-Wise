@@ -42,9 +42,18 @@ export const handlePostRequest = async (req: Request, res: Response) => {
 
         if (messages.type === 'text' && messages.text.body) {
 
-            let customer = await Customer.findOne({ phone_number: from, source: defaultValues.source }).select('_id').lean();
+            const queryObj = {
+                phone_number: from,
+                source: defaultValues.source,
+            };
+
+            let customer = await Customer.findOne(queryObj).select('_id').lean();
             if (!customer) {
-                customer = await Customer.create({ phone_number: from, source: defaultValues.source });
+                customer = await Customer.create({
+                    ...queryObj,
+                    status: 'prospect',
+                    assigned_agent: defaultValues.assigned_agent
+                });
             }
 
             // save message to model

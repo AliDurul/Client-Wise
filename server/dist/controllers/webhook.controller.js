@@ -40,9 +40,17 @@ const handlePostRequest = async (req, res) => {
     console.log('Received webhook:', JSON.stringify(req.body, null, 2));
     if (messages) {
         if (messages.type === 'text' && messages.text.body) {
-            let customer = await customer_model_1.default.findOne({ phone_number: from, source: defaultValues.source }).select('_id').lean();
+            const queryObj = {
+                phone_number: from,
+                source: defaultValues.source,
+            };
+            let customer = await customer_model_1.default.findOne(queryObj).select('_id').lean();
             if (!customer) {
-                customer = await customer_model_1.default.create({ phone_number: from, source: defaultValues.source });
+                customer = await customer_model_1.default.create({
+                    ...queryObj,
+                    status: 'prospect',
+                    assigned_agent: defaultValues.assigned_agent
+                });
             }
             // save message to model
             await (0, chatMessage_service_1.createMessageService)({
