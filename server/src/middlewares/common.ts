@@ -238,7 +238,7 @@ export const queryHandler: RequestHandler = (req, res, next) => {
             ...(typeof customFilter === "object" && customFilter),
         } as RootFilterQuery<T>;
 
-        return await Model.find(query).sort(sort).skip(skip).limit(limit).select(select).populate(populate).lean();
+        return await Model.find(query).sort(sort).skip(skip).limit(limit).select(select).populate(populate).lean({virtuals: true});
     };
 
     // Details:

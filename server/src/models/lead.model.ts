@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema, Model, Types } from "mongoose";
+import mongooseLeanVirtuals from "mongoose-lean-virtuals";
 
 
 const LeadSchema = new Schema<ILead>({
@@ -54,11 +55,11 @@ const LeadSchema = new Schema<ILead>({
     },
     follow_up_date: {
         type: Date,
-        default: null
+        default: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
     },
     close_date: {
         type: Date,
-        default: null
+        default: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
     },
     location: {
         province: String,
@@ -67,7 +68,9 @@ const LeadSchema = new Schema<ILead>({
     },
     converted_to_invoice: { type: Boolean, default: false },
 
-}, { timestamps: true, collection: 'leads' });
+}, { timestamps: true, collection: 'leads', toJSON: { virtuals: true }, toObject: { virtuals: true } });
+
+LeadSchema.plugin(mongooseLeanVirtuals);
 
 LeadSchema.virtual("status").get(function (this: ILead) {
     if (this.pipeline_stage === "Qualification") return "Open";
@@ -118,14 +121,6 @@ LeadSchema.virtual("probability").get(function (this: ILead) {
 //         // sendNotification(doc.assigned_agent, `Lead "${doc.company_name}" updated to ${doc.pipeline_stage}`);
 //     }
 // });
-
-LeadSchema.pre("save", function (next) {
-    if (!this.follow_up_date) {
-        // Default follow-up = 2 days after creation
-        this.follow_up_date = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
-    }
-    next();
-});
 
 const Lead = mongoose.model<ILead>("Lead", LeadSchema);
 export default Lead;

@@ -17,7 +17,7 @@ import { FaWhatsapp } from "react-icons/fa";
 const Tabs = [
     { name: 'All', icon: <AllChatsIcon /> },
     { name: 'Chats', icon: <SingleChatIcon /> },
-    { name: 'WhatsApp', icon: <FaWhatsapp className='size-6 mx-auto mb-1' /> },
+    { name: 'WhatsApp', icon: <FaWhatsapp className='size-5 mx-auto mb-1' /> },
     { name: 'Groups', icon: <GroupChatIcon /> },
     { name: 'Contacts', icon: <ContactIcon /> },
 ]

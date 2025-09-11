@@ -37,9 +37,7 @@ export default function ChatBody() {
             : null
     );
 
-    console.log('messages', messages);
     // functions
-
     const scrollToBottom = () => {
         setTimeout(() => {
             const element: any = document.querySelector('.chat-conversation-box');
@@ -69,7 +67,6 @@ export default function ChatBody() {
     }, [selectedChat]);
 
     const handleNewMessage = (newMessage: Message) => {
-        console.log('newMessage', newMessage);
         mutate(
             chatKey,
             (currentData: { result: Message[] } | undefined) => {

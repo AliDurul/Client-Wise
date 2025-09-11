@@ -14,6 +14,8 @@ import { delData, delMultiData } from '@/lib/features/shared/actionUtils';
 import Dropdown from '@/components/layout/Dropdown';
 import { useUrlParams } from '@/hooks/useUrlParams';
 import ColumnChooser from '@/components/shared/ColumnChooser';
+import { format } from 'path';
+import { spawn } from 'child_process';
 
 interface CustomerMainProps {
   leads: Pagination<Lead>
@@ -99,96 +101,131 @@ export default function LeadTable({ leads }: CustomerMainProps) {
     {
       accessor: 'company_name',
       title: 'Company Name',
-      render: (record: Lead) => record.company_name ?? '-',
+      render: ({ company_name }: Lead) => company_name ?? '-',
       sortable: true,
     },
     {
       accessor: 'person_name',
       title: 'Person Name',
-      render: (record: Lead) => record.person_name ?? '-',
+      render: ({ person_name }: Lead) => person_name ?? '-',
       sortable: true,
     },
     {
       accessor: 'email',
       title: 'Email',
-      render: (record: Lead) => record.email ?? '-',
+      render: ({ email }: Lead) => email ?? '-',
       sortable: true,
     },
     {
       accessor: 'mobile_number',
       title: 'Mobile',
-      render: (record: Lead) => record.mobile_number ?? '-',
+      render: ({ mobile_number }: Lead) => mobile_number ?? '-',
       sortable: true,
     },
     {
       accessor: 'lead_source',
       title: 'Source',
-      render: (record: Lead) => record.lead_source ?? '-',
+      render: ({ lead_source }: Lead) => lead_source ?? '-',
       sortable: true,
     },
+    // {
+    //   accessor: 'product',
+    //   title: 'Product',
+    //   render: ({ product }: Lead) => product ?? '-',
+    //   sortable: true,
+    // },
     {
-      accessor: 'product',
-      title: 'Product',
-      render: (record: Lead) => record.product ?? '-',
+      accessor: 'status',
+      title: 'Status',
+      render: ({ status }: Lead) => {
+        let colorClass = 'badge-outline-info';
+        if (status === 'Closed-Won') colorClass = 'badge-outline-success';
+        else if (status === 'Closed-Lost') colorClass = 'badge-outline-danger';
+        else if (status === 'In Progress') colorClass = 'badge-outline-warning';
+        else if (status === 'Open') colorClass = 'badge-outline-info';
+
+        return (
+          <span className={`badge ${colorClass} cursor-pointer`}>{status}</span>
+        );
+      },
       sortable: true,
     },
-    {
-      accessor: 'pipeline_stage',
-      title: 'Stage',
-      render: (record: Lead) => record.pipeline_stage ?? '-',
-      sortable: true,
-    },
+
     {
       accessor: 'deal_value',
       title: 'Deal Value',
-      render: (record: Lead) => record.deal_value?.toLocaleString() ?? '-',
+      render: ({ deal_value }: Lead) => deal_value?.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) ?? '-',
       sortable: true,
     },
     {
       accessor: 'expected_revenue',
       title: 'Expected Revenue',
-      render: (record: Lead) => record.expected_revenue?.toLocaleString() ?? '-',
+      render: ({ expected_revenue }: Lead) => expected_revenue?.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) ?? '-',
+      sortable: true,
+    },
+    {
+      accessor: 'pipeline_stage',
+      title: 'Stage',
+      render: ({ pipeline_stage }: Lead) => {
+        let colorClass = 'bg-primary';
+        if (pipeline_stage === 'Proposal|Quotation') colorClass = 'bg-info';
+        else if (pipeline_stage === 'Negotiation' || pipeline_stage === 'Pending Approval') colorClass = 'bg-warning';
+        else if (pipeline_stage === 'Closed-Won') colorClass = 'bg-success';
+        else if (pipeline_stage === 'Closed-Lost') colorClass = 'bg-danger';
+
+        return (
+          <span className={`badge ${colorClass}`}>{pipeline_stage}</span>
+        );
+      },
       sortable: true,
     },
     {
       accessor: 'follow_up_date',
       title: 'Follow Up',
-      render: (record: Lead) =>
-        record.follow_up_date ? new Date(record.follow_up_date).toLocaleDateString() : '-',
+      render: ({ follow_up_date }: Lead) => follow_up_date ? formatDate(follow_up_date) : '-',
       sortable: true,
     },
     {
       accessor: 'close_date',
       title: 'Close Date',
-      render: (record: Lead) =>
-        record.close_date ? new Date(record.close_date).toLocaleDateString() : '-',
+      render: ({ close_date }: Lead) =>
+        close_date ? formatDate(close_date) : '-',
       sortable: true,
     },
     {
       accessor: 'location',
       title: 'Location',
-      render: (record: Lead) =>
-        record.location
-          ? `${record.location.province ?? ''} ${record.location.town ?? ''} ${record.location.address ?? ''}`.trim()
+      render: ({ location }: Lead) =>
+        location
+          ? `${location.province ?? ''} ${location.town ?? ''} ${location.address ?? ''}`.trim()
           : '-',
       sortable: false,
     },
     {
       accessor: 'converted_to_invoice',
       title: 'Converted',
-      render: (record: Lead) => (record.converted_to_invoice ? 'Yes' : 'No'),
+      render: ({ converted_to_invoice }: Lead) => (<span className={`${converted_to_invoice ? 'text-success' : 'text-danger'}`}>{converted_to_invoice ? 'Yes' : 'No'}</span>),
       sortable: true,
     },
-    {
-      accessor: 'status',
-      title: 'Status',
-      render: (record: Lead) => record.status ?? '-',
-      sortable: true,
-    },
+
     {
       accessor: 'probability',
       title: 'Probability',
-      render: (record: Lead) => record.probability != null ? `${record.probability}%` : '-',
+      render: ({ probability }: Lead) => {
+        const value = probability ?? 0;
+        let bgColor = 'bg-danger';
+        if (value > 75) bgColor = 'bg-success';
+        else if (value > 50) bgColor = 'bg-primary';
+        else if (value > 25) bgColor = 'bg-warning';
+
+        return (
+          <div className='w-48'>
+            <div className="w-full h-4 bg-[#ebedf2] dark:bg-dark/40 rounded-full flex">
+              <div className={`${bgColor} h-4 rounded-full min-w-6 w-[${value}%] flex items-center justify-center text-[${value > 20 ? '11' : '10'}px] overflow-hidden text-white `}>{value}%</div>
+            </div>
+          </div>
+        );
+      },
       sortable: true,
       hidden: hiddenColumns.includes('probability')
     },

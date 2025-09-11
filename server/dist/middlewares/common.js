@@ -156,7 +156,7 @@ const queryHandler = (req, res, next) => {
             ...(typeof search === "object" && search),
             ...(typeof customFilter === "object" && customFilter),
         };
-        return await Model.find(query).sort(sort).skip(skip).limit(limit).select(select).populate(populate).lean();
+        return await Model.find(query).sort(sort).skip(skip).limit(limit).select(select).populate(populate).lean({ virtuals: true });
     };
     // Details:
     res.getModelListDetails = async (Model, customFilter = {}) => {

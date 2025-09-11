@@ -3,9 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.multiDeleteLeads = exports.deleteLead = exports.updateLead = exports.getLeadById = exports.createLead = exports.getLeads = void 0;
+exports.createLeads = exports.multiDeleteLeads = exports.deleteLead = exports.updateLead = exports.getLeadById = exports.createLead = exports.getLeads = void 0;
 const lead_model_1 = __importDefault(require("../models/lead.model"));
 const common_1 = require("../utils/common");
+const dumyData_1 = require("../utils/dumyData");
+const product_model_1 = __importDefault(require("../models/product.model"));
 const getLeads = async (req, res) => {
     const result = await res.getModelList(lead_model_1.default);
     res.send({
@@ -79,4 +81,19 @@ const multiDeleteLeads = async (req, res) => {
     }
 };
 exports.multiDeleteLeads = multiDeleteLeads;
+const createLeads = async (req, res, next) => {
+    const product = await product_model_1.default.findOne().lean();
+    const leadsToInsert = dumyData_1.dummyLeads.map(lead => ({
+        ...lead,
+        assigned_agent: req.user.id,
+        product: product ? product._id : null
+    }));
+    const result = await lead_model_1.default.insertMany(leadsToInsert);
+    res.status(201).send({
+        success: true,
+        insertedCount: result.length,
+        result,
+    });
+};
+exports.createLeads = createLeads;
 //# sourceMappingURL=lead.controller.js.map

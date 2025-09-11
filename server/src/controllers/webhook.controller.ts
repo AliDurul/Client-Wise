@@ -75,13 +75,10 @@ export const handlePostRequest = async (req: Request, res: Response) => {
                 chatId: null,
                 source: defaultValues.source
             });
-            console.log('message created', message);
-            console.log('chat created', chat);
 
             // emit event with socket
             const io = getSocketInstance();
             if (io) {
-                console.log('io instance found, emitting newMessage event');
                 io.to(chat._id.toString()).emit('newMessage', { ...message.toObject(), sender: null, chat });
             }
 

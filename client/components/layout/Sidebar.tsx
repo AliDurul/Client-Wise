@@ -64,7 +64,6 @@ const Sidebar = () => {
             <nav className={`sidebar fixed top-0 bottom-0 z-50 h-full min-h-screen w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300 ${semidark ? 'text-white-dark' : ''}`}>
                 <div className="h-full bg-white dark:bg-black">
 
-
                     <div className="flex items-center justify-between px-2 py-3 overflow-hidden">
                         <Link href="/" className="flex shrink-0 items-center">
                             <Image className="flex-none" src="/assets/images/logo.png" alt="logo" width={60} height={80} />
@@ -132,7 +131,7 @@ const Sidebar = () => {
 
                             <li className="nav-item">
                                 <Link href="/customers" className="group">
-                                    <div className="flex items-center">
+                                    <div className="flex items-center" onClick={() => toggleMenu('')}>
                                         <ContactIcon />
                                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light">Customers</span>
                                     </div>
@@ -141,7 +140,7 @@ const Sidebar = () => {
 
                             <li className="nav-item">
                                 <Link href="/invoices" className="group">
-                                    <div className="flex items-center">
+                                    <div className="flex items-center" onClick={() => toggleMenu('')}>
                                         <InvoiceIcon />
                                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light">Invoices</span>
                                     </div>
@@ -168,7 +167,7 @@ const Sidebar = () => {
                                             <Link href="/leads">Leads</Link>
                                         </li>
                                         <li>
-                                            <Link href="/leads/dashboard">Leads Dashboard</Link>
+                                            <Link href="#">Leads Dashboard</Link>
                                         </li>
                                         <li>
                                             <Link href="#">Create Lead</Link>
@@ -179,7 +178,7 @@ const Sidebar = () => {
 
                             <li className="nav-item">
                                 <Link href="/tickets" className="group">
-                                    <div className="flex items-center">
+                                    <div className="flex items-center" onClick={() => toggleMenu('')}>
                                         <TicketIcon />
                                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light">Tickets</span>
                                     </div>
@@ -188,7 +187,7 @@ const Sidebar = () => {
 
                             <li className="nav-item">
                                 <Link href="/products" className="group">
-                                    <div className="flex items-center">
+                                    <div className="flex items-center" onClick={() => toggleMenu('')}>
                                         <ProductIcon />
                                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light">Products</span>
                                     </div>
@@ -217,13 +216,6 @@ const Sidebar = () => {
                                         <li>
                                             <Link href="/chats">Chats</Link>
                                         </li>
-                                        <li>
-                                            <Link href="/facebook">Facebook</Link>
-                                        </li>
-                                        <li>
-                                            <Link href="/instagram">Instagram</Link>
-                                        </li>
-
                                     </ul>
                                 </AnimateHeight>
                             </li>
@@ -246,7 +238,7 @@ const Sidebar = () => {
 
                             <li className="nav-item">
                                 <Link href="/tasks" className="group">
-                                    <div className="flex items-center">
+                                    <div className="flex items-center" onClick={() => toggleMenu('')}>
                                         <TodoIcon />
                                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light">Task List</span>
                                     </div>
@@ -254,8 +246,8 @@ const Sidebar = () => {
                             </li>
 
                             <li className="nav-item">
-                                <Link href="/notes" className="group">
-                                    <div className="flex items-center">
+                                <Link href="/notes" className="group" >
+                                    <div className="flex items-center" onClick={() => toggleMenu('')}>
                                         <NotesIcon />
                                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light">Notes</span>
                                     </div>
@@ -263,8 +255,8 @@ const Sidebar = () => {
                             </li>
 
                             <li className="nav-item">
-                                <Link href="/faqs" className="group">
-                                    <div className="flex items-center">
+                                <Link href="/faqs" className="group" >
+                                    <div className="flex items-center" onClick={() => toggleMenu('')}>
                                         <FaqIcon />
                                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-white dark:group-hover:text-primary-light">FAQ</span>
                                     </div>

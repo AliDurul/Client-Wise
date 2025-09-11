@@ -224,7 +224,7 @@ export interface Lead {
   createdAt?: Date;
   updatedAt?: Date;
   status?: string;
-  probability?: number;
+  probability: number;
 }
 
 

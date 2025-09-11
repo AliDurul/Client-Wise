@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import Lead from '../models/lead.model';
 import { CustomError } from '../utils/common';
+import { dummyLeads } from '../utils/dumyData';
+import Product from '../models/product.model';
 
 
 
@@ -17,7 +19,7 @@ export const getLeads = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const createLead = async (req: Request, res: Response): Promise<void> => {
-    
+
     req.body.assigned_agent = req.user.id;
 
     const result = await Lead.create(req.body);
@@ -93,4 +95,24 @@ export const multiDeleteLeads = async (req: Request, res: Response): Promise<voi
     } else {
         throw new CustomError("No leads were deleted", 404, true);
     }
+};
+
+export const createLeads = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+
+    const product = await Product.findOne().lean();
+
+    const leadsToInsert = dummyLeads.map(lead => ({
+        ...lead,
+        assigned_agent: req.user.id,
+        product: product ? product._id : null
+    }));
+
+    const result = await Lead.insertMany(leadsToInsert);
+
+    res.status(201).send({
+        success: true,
+        insertedCount: result.length,
+        result,
+    });
+
 };

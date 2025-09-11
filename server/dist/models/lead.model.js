@@ -32,8 +32,12 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
+const mongoose_lean_virtuals_1 = __importDefault(require("mongoose-lean-virtuals"));
 const LeadSchema = new mongoose_1.Schema({
     assigned_agent: {
         type: mongoose_1.Schema.Types.ObjectId,
@@ -87,11 +91,11 @@ const LeadSchema = new mongoose_1.Schema({
     },
     follow_up_date: {
         type: Date,
-        default: null
+        default: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
     },
     close_date: {
         type: Date,
-        default: null
+        default: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
     },
     location: {
         province: String,
@@ -99,7 +103,8 @@ const LeadSchema = new mongoose_1.Schema({
         address: String,
     },
     converted_to_invoice: { type: Boolean, default: false },
-}, { timestamps: true, collection: 'leads' });
+}, { timestamps: true, collection: 'leads', toJSON: { virtuals: true }, toObject: { virtuals: true } });
+LeadSchema.plugin(mongoose_lean_virtuals_1.default);
 LeadSchema.virtual("status").get(function () {
     if (this.pipeline_stage === "Qualification")
         return "Open";
@@ -145,13 +150,6 @@ LeadSchema.virtual("probability").get(function () {
 //         // sendNotification(doc.assigned_agent, `Lead "${doc.company_name}" updated to ${doc.pipeline_stage}`);
 //     }
 // });
-LeadSchema.pre("save", function (next) {
-    if (!this.follow_up_date) {
-        // Default follow-up = 2 days after creation
-        this.follow_up_date = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
-    }
-    next();
-});
 const Lead = mongoose_1.default.model("Lead", LeadSchema);
 exports.default = Lead;
 //# sourceMappingURL=lead.model.js.map
