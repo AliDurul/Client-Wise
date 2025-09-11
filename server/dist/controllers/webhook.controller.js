@@ -73,7 +73,7 @@ const handlePostRequest = async (req, res) => {
             const io = (0, index_1.getSocketInstance)();
             if (io) {
                 console.log('io instance found, emitting newMessage event');
-                io.to(chat._id.toString()).emit('newMessage', { ...message, chat });
+                io.to(chat._id.toString()).emit('newMessage', { ...message.toObject(), chat });
             }
         }
         // ------------------------------------
