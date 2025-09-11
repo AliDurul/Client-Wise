@@ -2,6 +2,7 @@ import axios from 'axios';
 import env from '../configs/env';
 import { Request, Response } from 'express';
 import { sendImgMessage, sendTemplateMessage, sendTextMessage } from '../services/wp.service';
+import { createMessageService } from '../services/chatMessage.service';
 
 export const templateMessage = async (req: Request, res: Response) => {
 
@@ -16,10 +17,20 @@ export const templateMessage = async (req: Request, res: Response) => {
 
 export const textMessage = async (req: Request, res: Response) => {
 
-    const { body } = req.body;
+    const { content } = req.body;
     const { to } = req.params;
+    const senderId = req.user.id;
 
-    const response = await sendTextMessage(to, body);
+
+    const response = await sendTextMessage(to, content);
+
+    await createMessageService({
+        senderId,
+        receiverId: to,
+        content,
+        chatId: null,
+        source: 'whatsapp'
+    });
 
     res.status(200).send({
         error: false,

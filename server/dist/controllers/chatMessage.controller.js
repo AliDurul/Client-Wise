@@ -11,11 +11,14 @@ const crypto_1 = __importDefault(require("crypto"));
 const sharp_1 = __importDefault(require("sharp"));
 const env_1 = __importDefault(require("../configs/env"));
 const chatMessage_service_1 = require("../services/chatMessage.service");
+const wp_service_1 = require("../services/wp.service");
+const customer_model_1 = __importDefault(require("../models/customer.model"));
 const getChats = async (req, res) => {
     const currenUser = req.user.id;
     const result = await chatMessage_model_1.Chat.find({ users: { $in: [currenUser] } }).populate([
         { path: 'latest_message', select: '-chat -__v -sender -updatedAt' },
-        { path: 'users', select: 'full_name email phone_number profile_pic' }
+        { path: 'users', select: 'full_name email phone_number profile_pic' },
+        { path: 'customer', select: 'full_name email phone_number profile_pic' },
     ]).sort({ updatedAt: -1 }).lean();
     await Promise.all(result.map(async (chat) => {
         if (!chat.is_group) {
@@ -64,18 +67,31 @@ const getGroupInfo = async (req, res) => {
 exports.getGroupInfo = getGroupInfo;
 const getChatMessages = async (req, res) => {
     const { chatId } = req.params;
-    const currenUser = req.user.id;
+    const currentUser = req.user.id;
     if (!chatId)
         throw new common_1.CustomError('Chat ID is required.', 400, true);
     const result = await chatMessage_model_1.Message.find({ chat: chatId }).populate([
+        { path: 'chat', select: '-__v', populate: { path: 'users', select: 'profile_pic full_name' } },
         { path: 'sender', select: 'profile_pic full_name' },
-        { path: 'chat', select: '-__v', populate: { path: 'users', select: 'profile_pic full_name' } }
     ]).lean();
-    await Promise.all(result.map(async (chat) => {
-        if ((chat.sender._id.toString() !== currenUser) && chat.sender.profile_pic) {
-            chat.sender.profile_pic = await (0, common_1.getImageUrl)(chat.sender.profile_pic);
+    if (!result)
+        throw new common_1.CustomError('No messages found for this chat.', 404, true);
+    await Promise.all(result.map(async (message) => {
+        if (message.chat.source === 'whatsapp')
+            return;
+        if ((message.sender._id.toString() !== currentUser) && message.sender.profile_pic) {
+            message.sender.profile_pic = await (0, common_1.getImageUrl)(message.sender.profile_pic);
         }
     }));
+    // const result = await Message.find({ chat: chatId }).populate([
+    //     { path: 'sender', select: 'profile_pic full_name' },
+    //     { path: 'chat', select: '-__v', populate: { path: 'users', select: 'profile_pic full_name' } }
+    // ]).lean();
+    // await Promise.all(result.map(async (chat: IMessage) => {
+    //     if ((chat.sender._id.toString() !== currentUser) && chat.sender.profile_pic) {
+    //         chat.sender.profile_pic = await getImageUrl(chat.sender.profile_pic);
+    //     }
+    // }));
     res.status(200).send({
         success: true,
         result
@@ -92,6 +108,11 @@ const createMessage = async (req, res) => {
         content,
         chatId
     });
+    if (chat.source === 'whatsapp') {
+        const customerinfo = await customer_model_1.default.findOne({ _id: chat.customer }).select('phone_number').lean();
+        await (0, wp_service_1.sendTextMessage)(customerinfo.phone_number, content);
+    }
+    ;
     res.status(200).send({
         success: true,
         message,

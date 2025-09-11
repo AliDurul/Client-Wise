@@ -10,6 +10,7 @@ const wp_service_1 = require("../services/wp.service");
 const ticket_model_1 = __importDefault(require("../models/ticket.model"));
 const customer_model_1 = __importDefault(require("../models/customer.model"));
 const wpUserState_model_1 = __importDefault(require("../models/wpUserState.model"));
+const index_1 = require("../utils/socket/index");
 const chatMessage_service_1 = require("../services/chatMessage.service");
 const handleGetRequest = (req, res) => {
     const { 'hub.mode': mode, 'hub.challenge': challenge, 'hub.verify_token': token } = req.query;
@@ -40,39 +41,58 @@ const handlePostRequest = async (req, res) => {
     const from = messages ? messages.from : null;
     console.log('Received webhook:', JSON.stringify(req.body, null, 2));
     if (messages) {
+        const queryObj = {
+            phone_number: from,
+            source: defaultValues.source,
+        };
+        let customer = await customer_model_1.default.findOne(queryObj).select('_id').lean();
+        const userState = await wpUserState_model_1.default.findOne({ wpId: from });
+        if (!customer) {
+            await (0, wp_service_1.sendReplyMessage)(from, "Customer does not exist with this number. Creating ...", messages.id);
+            customer = await customer_model_1.default.create({
+                ...queryObj,
+                status: 'prospect',
+                assigned_agent: defaultValues.assigned_agent,
+                first_name: contactname || 'WhatsApp User',
+                last_name: '',
+            });
+        }
+        // ------------------------------------
         if (messages.type === 'text' && messages.text.body) {
-            const queryObj = {
-                phone_number: from,
-                source: defaultValues.source,
-            };
-            let customer = await customer_model_1.default.findOne(queryObj).select('_id').lean();
-            if (!customer) {
-                customer = await customer_model_1.default.create({
-                    ...queryObj,
-                    status: 'prospect',
-                    assigned_agent: defaultValues.assigned_agent,
-                    first_name: contactname || 'WhatsApp User'
-                });
-            }
             // save message to model
-            await (0, chatMessage_service_1.createMessageService)({
+            const { message, chat } = await (0, chatMessage_service_1.createMessageService)({
                 senderId: customer._id.toString(),
                 receiverId: defaultValues.assigned_agent,
                 content: messages.text.body,
                 chatId: null,
                 source: defaultValues.source
             });
+            console.log('message created', message);
+            console.log('chat created', chat);
             // emit event with socket
-            // const io = getSocketInstance();
+            const io = (0, index_1.getSocketInstance)();
+            if (io) {
+                console.log('io instance found, emitting newMessage event');
+                io.to(chat._id.toString()).emit('newMessage', { ...message, chat });
+            }
         }
-        const userState = await wpUserState_model_1.default.findOne({ wpId: from });
+        // ------------------------------------
         if (userState?.state === 'in_agent_chat') {
             res.sendStatus(200);
             return;
         }
+        // ------------------------------------
         // Handle button replies with switch
         if (messages.type === 'interactive' && messages.interactive.type === 'button_reply') {
             const selectedId = messages.interactive.button_reply.id;
+            // save message to model
+            await (0, chatMessage_service_1.createMessageService)({
+                senderId: customer._id.toString(),
+                receiverId: defaultValues.assigned_agent,
+                content: selectedId,
+                chatId: null,
+                source: defaultValues.source
+            });
             switch (selectedId) {
                 case 'already_customer':
                     await (0, wp_service_1.sendReplyButtons)(from, [
@@ -100,6 +120,7 @@ const handlePostRequest = async (req, res) => {
             res.sendStatus(200);
             return;
         }
+        // ------------------------------------
         console.info('userState', userState);
         // Handle text replies
         if (userState?.state === 'awaiting_ticket' && messages.type === 'text') {
@@ -118,11 +139,12 @@ const handlePostRequest = async (req, res) => {
                 customer: customer._id,
                 category: defaultValues.category,
             });
-            await (0, wp_service_1.sendReplyMessage)(from, `Thank you! Your ticket has been created. Ticket ID: ${ticket._id.toString().slice(-6)}`, messages.id);
+            await (0, wp_service_1.sendReplyMessage)(from, `Thank you! Your ticket has been created. Ticket ID: ${ticket._id.toString().slice(-6)}. You will be contacted shortly.`, messages.id);
             await wpUserState_model_1.default.findOneAndUpdate({ wpId: from }, { state: 'in_agent_chat' });
             res.sendStatus(200);
             return;
         }
+        // ------------------------------------
         if (userState?.state === 'awaiting_lead' && messages.type === 'text') {
             // createLead(...)
             console.log('awaiting lead body', messages.text.body);
@@ -131,6 +153,7 @@ const handlePostRequest = async (req, res) => {
             res.sendStatus(200);
             return;
         }
+        // ------------------------------------
         await (0, wp_service_1.sendReplyButtons)(from, [
             { type: "reply", reply: { id: "already_customer", title: "Already a Customer" } },
             { type: "reply", reply: { id: "not_yet_customer", title: "Not Yet a Customer" } }

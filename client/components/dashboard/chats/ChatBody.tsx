@@ -37,6 +37,7 @@ export default function ChatBody() {
             : null
     );
 
+    console.log('messages', messages);
     // functions
 
     const scrollToBottom = () => {
@@ -67,29 +68,29 @@ export default function ChatBody() {
         }
     }, [selectedChat]);
 
+    const handleNewMessage = (newMessage: Message) => {
+        console.log('newMessage', newMessage);
+        mutate(
+            chatKey,
+            (currentData: { result: Message[] } | undefined) => {
+                if (!currentData) return { result: [newMessage] };
+                return { result: [...currentData.result, newMessage] };
+            },
+            false // no fetch
+        );
+    };
+
+    const handleTyping = ({ user }: { user: any }) => {
+
+        setTypingUsers(prev => {
+            if (prev.find(u => u.id === user.id)) return prev;
+            return [...prev, user];
+        });
+    };
+
     useEffect(() => {
         // recieve new message
-        const handleNewMessage = (newMessage: Message) => {
-
-            mutate(
-                chatKey,
-                (currentData: { result: Message[] } | undefined) => {
-                    if (!currentData) return { result: [newMessage] };
-                    return { result: [...currentData.result, newMessage] };
-                },
-                false // no fetch
-            );
-        };
-
         socket.on('newMessage', handleNewMessage);
-
-        const handleTyping = ({ user }: { user: any }) => {
-
-            setTypingUsers(prev => {
-                if (prev.find(u => u.id === user.id)) return prev;
-                return [...prev, user];
-            });
-        };
 
         const handleStopTyping = ({ user }: { user: any }) => {
             setTypingUsers(prev => prev.filter(u => u.id !== user.id));
@@ -145,16 +146,34 @@ export default function ChatBody() {
                                 {
                                     messages?.result?.map((message: Message, i: number) => {
 
-                                        let isCurrentUser = userInfo?.id === message.sender._id;
+                                        const senderId = message.sender ? message.sender._id : message.chat.customer;
+                                        let isCurrentUser = userInfo?.id === senderId;
+
+                                        const senderProfilePic = message.sender
+                                            ? message.sender.profile_pic
+                                            : message.chat.customer?.profile_pic || '/assets/images/profile-pic.png';
+
+                                        const senderName = message.sender
+                                            ? message.sender.full_name
+                                            : message.chat.customer?.full_name || 'WhatsApp User';
 
                                         const isShowDate = isNewDay(message, messages.result[i - 1]);
 
-                                        const showAvatar =
-                                            i === messages.result.length - 1 || // Always show for last message
-                                            messages.result[i + 1]?.sender._id !== message.sender._id; // Show if next message is from different user
-                                        // i === 0 || // Always show for first message
+                                        // Show avatar logic
+                                        const nextSenderId = messages.result[i + 1]?.sender
+                                            ? messages.result[i + 1].sender._id
+                                            : messages.result[i + 1]?.chat?.customer;
 
-                                        const isPrevSameUser = i > 0 && messages.result[i - 1]?.sender._id === message.sender._id;
+                                        const showAvatar =
+                                            i === messages.result.length - 1 ||
+                                            nextSenderId !== senderId;
+
+                                        // Previous same user logic
+                                        const prevSenderId = messages.result[i - 1]?.sender
+                                            ? messages.result[i - 1].sender._id
+                                            : messages.result[i - 1]?.chat?.customer;
+
+                                        const isPrevSameUser = i > 0 && prevSenderId === senderId;
 
                                         return (
                                             <div key={i} className={isPrevSameUser ? 'mt-1' : 'mt-6'}>
@@ -167,26 +186,16 @@ export default function ChatBody() {
                                                 )}
                                                 <div className={`flex items-center gap-3 ${isCurrentUser ? 'justify-end' : ''}`}>
                                                     <div className={`flex-none ${isCurrentUser ? 'order-2' : ''}`}>
-                                                        {showAvatar ? (
-                                                            isCurrentUser ? (
-                                                                <Image
-                                                                    width={36}
-                                                                    height={36}
-                                                                    src={userInfo?.profile_pic || ''}
-                                                                    className="h-8 w-8 rounded-full object-cover"
-                                                                    alt={userInfo?.first_name || ''}
-                                                                />
-                                                            ) : (
-                                                                <Image
-                                                                    width={36}
-                                                                    height={36}
-                                                                    src={message.sender.profile_pic || ''}
-                                                                    className="h-8 w-8 rounded-full object-cover"
-                                                                    alt={message.sender.full_name || ''}
-                                                                />
-                                                            )
+                                                        {showAvatar && !isCurrentUser ? (
+                                                            <Image
+                                                                width={36}
+                                                                height={36}
+                                                                src={senderProfilePic ?? ''}
+                                                                className="h-8 w-8 rounded-full object-cover"
+                                                                alt={senderName}
+                                                            />
                                                         ) : (
-                                                            <div className='h-8 w-8' />
+                                                            <div className={`${isCurrentUser ? 'hidden' : 'size-8'}`} />
                                                         )}
                                                     </div>
                                                     <div className="flex items-center gap-2">
@@ -216,7 +225,7 @@ export default function ChatBody() {
                             </div>
                         )
                     }
-                    
+
                     {typingUsers.length > 0 && (
                         <div className=" animate-pulse text-xs mt-5">
                             {typingUsers.map(u => u.name || 'Someone').join(', ')}

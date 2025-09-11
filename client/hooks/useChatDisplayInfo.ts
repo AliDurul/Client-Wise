@@ -25,22 +25,25 @@ export function useChatDisplayInfo(chatProp?: Chat) {
         };
     }
 
+    const isSourceWp = chat.source === 'whatsapp';
     const isGroup = chat.is_group;
-    let displayName = chat?.chat_name || 'Group Chat';
-    let displayPic = chat?.chat_pic || '/assets/images/profile-pic.png';
+    const subTitle = isSourceWp ? (chat.customer?.full_name || 'unknown name') : ''
+    let displayName = isSourceWp ? 'Whatssap Chat' : (chat?.chat_name || 'Group Chat');
+    let displayPic = isSourceWp ? '/assets/images/wp-logo.png' : (chat?.chat_pic || '/assets/images/profile-pic.png');
     let otherUser: PersonInfo | undefined;
     let otherUserId: string = '';
     let chatId: string = '';
 
     if (!chat?.is_group && chat?.users && userInfo?.id) {
         otherUser = chat.users.find((member: PersonInfo) => member._id !== userInfo.id);
+
         if (otherUser) {
             displayName = otherUser.full_name;
-            displayPic = otherUser.profile_pic || '/assets/images/profile-pic.png';
+            displayPic = (otherUser.profile_pic || '/assets/images/profile-pic.png');
             otherUserId = otherUser._id;
             chatId = chat?._id || '';
         }
     }
 
-    return { displayName, displayPic, otherUser, otherUserId, isGroup, chatId };
+    return { displayName, displayPic, otherUser, otherUserId, isGroup, chatId, subTitle };
 }

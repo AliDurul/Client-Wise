@@ -54,5 +54,5 @@ export const Message = model<IMessage>('Message', messageSchema);
 export interface IMessage {
     sender: ChatUser;
     content: string;
-    chat: Schema.Types.ObjectId;
+    chat: IChat;
 }

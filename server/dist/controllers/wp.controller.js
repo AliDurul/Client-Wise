@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.imgMessage = exports.textMessage = exports.templateMessage = void 0;
 const wp_service_1 = require("../services/wp.service");
+const chatMessage_service_1 = require("../services/chatMessage.service");
 const templateMessage = async (req, res) => {
     const response = await (0, wp_service_1.sendTemplateMessage)("260970732144", "hello_world", "en_US");
     res.status(200).send({
@@ -11,9 +12,17 @@ const templateMessage = async (req, res) => {
 };
 exports.templateMessage = templateMessage;
 const textMessage = async (req, res) => {
-    const { body } = req.body;
+    const { content } = req.body;
     const { to } = req.params;
-    const response = await (0, wp_service_1.sendTextMessage)(to, body);
+    const senderId = req.user.id;
+    const response = await (0, wp_service_1.sendTextMessage)(to, content);
+    await (0, chatMessage_service_1.createMessageService)({
+        senderId,
+        receiverId: to,
+        content,
+        chatId: null,
+        source: 'whatsapp'
+    });
     res.status(200).send({
         error: false,
         result: response.data

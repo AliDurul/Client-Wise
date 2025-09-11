@@ -389,6 +389,8 @@ export interface Task {
 export interface Chat {
   _id: string;
   is_group: boolean;
+  source: 'internal' | 'whatsapp';
+  customer: null | PersonInfo;
   group_admin: null | string | PersonInfo;
   chat_name: null | string;
   chat_pic: null | string;

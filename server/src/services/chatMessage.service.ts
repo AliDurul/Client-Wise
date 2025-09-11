@@ -74,14 +74,12 @@ export async function createMessageService({
     if (!content) throw new CustomError('Content is required.', 400, true);
 
     const chat = await createOrFindChat(senderId, receiverId!, chatId, source);
-    console.log('chat:', chat);
 
     const message = await Message.create({
         chat: chat._id,
         sender: senderId,
         content
     });
-    console.log('message:', message);
 
     if (!message) throw new CustomError('Message not created', 404, true);
 

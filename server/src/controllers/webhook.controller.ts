@@ -42,47 +42,72 @@ export const handlePostRequest = async (req: Request, res: Response) => {
 
     if (messages) {
 
+        const queryObj = {
+            phone_number: from,
+            source: defaultValues.source,
+        };
+
+        let customer = await Customer.findOne(queryObj).select('_id').lean();
+        const userState = await WpUserState.findOne({ wpId: from });
+
+        if (!customer) {
+
+            await sendReplyMessage(from, "Customer does not exist with this number. Creating ...", messages.id);
+
+            customer = await Customer.create({
+                ...queryObj,
+                status: 'prospect',
+                assigned_agent: defaultValues.assigned_agent,
+                first_name: contactname || 'WhatsApp User',
+                last_name: '',
+            });
+        }
+
+        // ------------------------------------
+
         if (messages.type === 'text' && messages.text.body) {
 
-            const queryObj = {
-                phone_number: from,
-                source: defaultValues.source,
-            };
-
-            let customer = await Customer.findOne(queryObj).select('_id').lean();
-            if (!customer) {
-                customer = await Customer.create({
-                    ...queryObj,
-                    status: 'prospect',
-                    assigned_agent: defaultValues.assigned_agent,
-                    first_name: contactname || 'WhatsApp User'
-                });
-            }
-
             // save message to model
-            await createMessageService({
+            const { message, chat } = await createMessageService({
                 senderId: customer._id.toString(),
                 receiverId: defaultValues.assigned_agent,
                 content: messages.text.body,
                 chatId: null,
                 source: defaultValues.source
             });
+            console.log('message created', message);
+            console.log('chat created', chat);
 
             // emit event with socket
-            // const io = getSocketInstance();
+            const io = getSocketInstance();
+            if (io) {
+                console.log('io instance found, emitting newMessage event');
+                io.to(chat._id.toString()).emit('newMessage', { ...message, chat });
+            }
+
         }
 
-        const userState = await WpUserState.findOne({ wpId: from });
+        // ------------------------------------
 
         if (userState?.state === 'in_agent_chat') {
-
             res.sendStatus(200);
             return;
         }
 
+        // ------------------------------------
+
         // Handle button replies with switch
         if (messages.type === 'interactive' && messages.interactive.type === 'button_reply') {
             const selectedId = messages.interactive.button_reply.id;
+
+            // save message to model
+            await createMessageService({
+                senderId: customer._id.toString(),
+                receiverId: defaultValues.assigned_agent,
+                content: selectedId,
+                chatId: null,
+                source: defaultValues.source
+            });
 
             switch (selectedId) {
                 case 'already_customer':
@@ -120,6 +145,7 @@ export const handlePostRequest = async (req: Request, res: Response) => {
             return;
         }
 
+        // ------------------------------------
 
         console.info('userState', userState);
 
@@ -144,11 +170,13 @@ export const handlePostRequest = async (req: Request, res: Response) => {
                 category: defaultValues.category,
             });
 
-            await sendReplyMessage(from, `Thank you! Your ticket has been created. Ticket ID: ${ticket._id.toString().slice(-6)}`, messages.id);
+            await sendReplyMessage(from, `Thank you! Your ticket has been created. Ticket ID: ${ticket._id.toString().slice(-6)}. You will be contacted shortly.`, messages.id);
             await WpUserState.findOneAndUpdate({ wpId: from }, { state: 'in_agent_chat' });
             res.sendStatus(200);
             return;
         }
+
+        // ------------------------------------
 
         if (userState?.state === 'awaiting_lead' && messages.type === 'text') {
             // createLead(...)
@@ -159,7 +187,7 @@ export const handlePostRequest = async (req: Request, res: Response) => {
             return;
         }
 
-
+        // ------------------------------------
 
         await sendReplyButtons(
             from,

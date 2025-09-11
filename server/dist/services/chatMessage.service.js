@@ -55,13 +55,11 @@ async function createMessageService({ senderId, receiverId, content, chatId, sou
     if (!content)
         throw new common_1.CustomError('Content is required.', 400, true);
     const chat = await createOrFindChat(senderId, receiverId, chatId, source);
-    console.log('chat:', chat);
     const message = await chatMessage_model_1.Message.create({
         chat: chat._id,
         sender: senderId,
         content
     });
-    console.log('message:', message);
     if (!message)
         throw new common_1.CustomError('Message not created', 404, true);
     let updatedChat;

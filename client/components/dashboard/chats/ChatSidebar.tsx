@@ -1,7 +1,7 @@
 import Dropdown from '@/components/layout/Dropdown';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { AllChatsIcon, ContactIcon, GroupChatIcon, HelpIcon, SettingIcon, SingleChatIcon } from '@/icons/chat';
-import { selectIsShowChatMenu, selectIsShowUserChat, selectSelectedChat, setIsShowChatMenu, setIsShowUserChat, setSelectedChat } from '@/lib/features/chat/chatSlice';
+import { selectIsShowChatMenu, selectIsShowUserChat } from '@/lib/features/chat/chatSlice';
 import { getAllData } from '@/lib/features/shared/actionUtils';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { Chat, PersonInfo } from '@/types';
@@ -12,10 +12,12 @@ import ChatSidebarList from './ChatSidebarList';
 import ChatSidebarListSkeleton from './ChatSidebarListSkeleton';
 import ChatSidebarContactList from './ChatSidebarContactList';
 import Image from 'next/image';
+import { FaWhatsapp } from "react-icons/fa";
 
 const Tabs = [
     { name: 'All', icon: <AllChatsIcon /> },
     { name: 'Chats', icon: <SingleChatIcon /> },
+    { name: 'WhatsApp', icon: <FaWhatsapp className='size-6 mx-auto mb-1' /> },
     { name: 'Groups', icon: <GroupChatIcon /> },
     { name: 'Contacts', icon: <ContactIcon /> },
 ]
@@ -35,10 +37,9 @@ export default function ChatSidebar() {
     // api
     const { data: chats, isLoading } = useSWR('chats', () => getAllData({ url: 'chats/', customQuery: { limit: 100 } }), {
         onSuccess: (data) => {
-            setFilteredItems(data.result);
+            setFilteredItems(data?.result);
         }
     });
-
 
     // functions
     useEffect(() => {
@@ -49,10 +50,19 @@ export default function ChatSidebar() {
                 // Tab filtering
                 if (selectedTab === 'Chats' && c.is_group) return false;
                 if (selectedTab === 'Groups' && !c.is_group) return false;
+                if(selectedTab === 'WhatsApp' && c.source !== 'whatsapp') return false;
+
                 // Search filtering
                 if (c.is_group) {
                     return c.chat_name?.toLowerCase().includes(searchUser.toLowerCase());
+                } else if (c.source === 'whatsapp' && c.customer) {
+                    // WhatsApp chat: search by customer name or phone
+                    return (
+                        c.customer.full_name?.toLowerCase().includes(searchUser.toLowerCase()) ||
+                        c.customer.phone_number?.includes(searchUser)
+                    );
                 } else {
+                    // Internal chat: search by other user's name
                     const otherUser = c.users.find((u: PersonInfo) => u._id !== userInfo?.id);
                     return otherUser?.full_name.toLowerCase().includes(searchUser.toLowerCase());
                 }
@@ -138,6 +148,9 @@ export default function ChatSidebar() {
                         {
                             isLoading ? <ChatSidebarListSkeleton /> : <ChatSidebarList filteredItems={filteredItems} showGroupBtn={true} />
                         }
+                    </TabPanel>
+                    <TabPanel>
+                        <ChatSidebarList filteredItems={filteredItems} />
                     </TabPanel>
                     <TabPanel>
                         <ChatSidebarList filteredItems={filteredItems} />

@@ -38,8 +38,9 @@ export default function ChatSidebarList({ filteredItems, showGroupBtn }: ChatSid
                     ) : (
                         filteredItems?.map((chat: Chat) => {
 
-                            let displayName = chat?.chat_name || 'Group Chat';
-                            let displayPic = chat?.chat_pic || '/assets/images/profile-pic.png';
+                            let isSourceWp = chat.source === 'whatsapp';
+                            let displayName = isSourceWp ? chat.customer?.phone_number ?? 'Whatsapp Chat' : (chat?.chat_name || 'Group Chat');
+                            let displayPic = isSourceWp ? '/assets/images/wp-logo.png' : (chat?.chat_pic || '/assets/images/profile-pic.png');
                             let otherUser: PersonInfo | undefined;
                             let otherUserId: string = '';
 
