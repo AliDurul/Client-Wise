@@ -11,6 +11,7 @@ import leadRoutes from "./lead.route";
 import chatRoutes from './chatMessage.route';
 import wpRoutes from './wp.route';
 import webhookRoutes from './webhook.route';
+import gmailRoutes from './gmail.route';
 
 const router = Router();
 
@@ -46,6 +47,9 @@ router.use("/chats", chatRoutes);
 
 // WhatsApp
 router.use("/wp", wpRoutes);
+
+// Gmail
+router.use("/gmail", gmailRoutes);
 
 // Webhook
 router.use("/webhook", webhookRoutes)

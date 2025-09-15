@@ -98,6 +98,9 @@ importers:
       swr:
         specifier: ^2.3.4
         version: 2.3.4(react@19.1.0)
+      tippy.js:
+        specifier: ^6.3.7
+        version: 6.3.7
       zod:
         specifier: ^4.0.5
         version: 4.0.5

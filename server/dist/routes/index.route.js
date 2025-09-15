@@ -16,6 +16,7 @@ const lead_route_1 = __importDefault(require("./lead.route"));
 const chatMessage_route_1 = __importDefault(require("./chatMessage.route"));
 const wp_route_1 = __importDefault(require("./wp.route"));
 const webhook_route_1 = __importDefault(require("./webhook.route"));
+const gmail_route_1 = __importDefault(require("./gmail.route"));
 const router = (0, express_1.Router)();
 // authRoutes
 router.use('/auth', auth_route_1.default);
@@ -39,6 +40,8 @@ router.use("/leads", lead_route_1.default);
 router.use("/chats", chatMessage_route_1.default);
 // WhatsApp
 router.use("/wp", wp_route_1.default);
+// Gmail
+router.use("/gmail", gmail_route_1.default);
 // Webhook
 router.use("/webhook", webhook_route_1.default);
 exports.default = router;

@@ -211,7 +211,7 @@ const Sidebar = () => {
                                 <AnimateHeight duration={300} height={currentMenu === 'social-media' ? 'auto' : 0}>
                                     <ul className="sub-menu text-gray-500">
                                         <li>
-                                            <Link href="/mailbox">Emails</Link>
+                                            <Link href="/emails">Emails</Link>
                                         </li>
                                         <li>
                                             <Link href="/chats">Chats</Link>

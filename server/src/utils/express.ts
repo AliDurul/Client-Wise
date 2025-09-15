@@ -1,7 +1,5 @@
 import express from "express";
-import env from "../configs/env";
 import { authenticate, errorHandler, logger, notFound, queryHandler } from "../middlewares/common";
-import { connectDB, disconnectDB } from "../configs/db";
 import { rateLimit } from 'express-rate-limit'
 import api from '../routes/index.route'
 import helmet from "helmet";
@@ -44,7 +42,6 @@ app.use('/uploads', express.static('uploads'));
 
 // API routes:
 app.use("/api", api);
-
 
 
 app.use(notFound).use(errorHandler); // Error handling & 404 middlewares
