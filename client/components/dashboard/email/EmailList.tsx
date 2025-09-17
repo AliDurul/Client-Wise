@@ -1,10 +1,12 @@
+import { selectedEmailTab } from '@/lib/features/email/emailSlice';
+import { useAppSelector } from '@/lib/hooks';
+import { formatDate, truncateText } from '@/lib/utility/functions';
 import Tippy from '@tippyjs/react';
 
 
-interface EmailBodyProps {
+interface EmailListProps {
     pagedMails: any[];
     ids: string[];
-    selectedTab: string;
     selectMail: (mail: any) => void;
     handleCheckboxChange: (id: string) => void;
     setStar: (id: number) => void;
@@ -12,16 +14,20 @@ interface EmailBodyProps {
     showTime: (mail: any) => string;
 }
 
-export default function EmailBody({
+export default function EmailList({
     pagedMails,
     ids,
-    selectedTab,
     selectMail,
     handleCheckboxChange,
     setStar,
     setImportant,
     showTime
-}: EmailBodyProps) {
+}: EmailListProps) {
+
+
+    const selectedTab = useAppSelector(selectedEmailTab);
+
+
     return (
         <>
             {pagedMails.length ? (
@@ -102,7 +108,7 @@ export default function EmailBody({
                                                     </Tippy>
                                                 </div>
                                                 <div className={`whitespace-nowrap font-semibold dark:text-gray-300 ${!mail.isUnread ? 'text-gray-500 dark:text-gray-500' : ''}`}>
-                                                    {mail.firstName ? mail.firstName + ' ' + mail.lastName : mail.email}
+                                                    {mail.fullName}
                                                 </div>
                                             </div>
                                         </td>
@@ -110,20 +116,20 @@ export default function EmailBody({
                                             <div className="min-w-[300px] overflow-hidden font-medium text-white-dark line-clamp-1">
                                                 <span className={`${mail.isUnread ? 'font-semibold text-gray-800 dark:text-gray-300' : ''}`}>
                                                     <span>{mail.title}</span> &minus;
-                                                    <span> {mail.displayDescription}</span>
+                                                    <span className=''> {truncateText(mail.displayDescription, 100)}</span>
                                                 </span>
                                             </div>
                                         </td>
                                         <td>
                                             <div className="flex items-center">
                                                 <div
-                                                    className={`h-2 w-2 rounded-full ${(mail.group === 'personal' && 'bg-primary') ||
-                                                        (mail.group === 'work' && 'bg-warning') ||
-                                                        (mail.group === 'social' && 'bg-success') ||
-                                                        (mail.group === 'private' && 'bg-danger')
+                                                    className={`h-2 w-2 rounded-full ${(mail.labelIds.includes('IMPORTANT') && 'bg-danger') ||
+                                                        (mail.labelIds.includes('INBOX') && 'bg-primary') ||
+                                                        (mail.labelIds.includes('CATEGORY_UPDATES') && 'bg-success') ||
+                                                        (mail.labelIds.includes('CATEGORY_FORUMS') && 'bg-warning')
                                                         }`}
-                                                ></div>
-                                                {mail.attachments && (
+                                                />
+                                                {mail.attachments.length > 0 && (
                                                     <div className="ltr:ml-4 rtl:mr-4">
                                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                             <path
@@ -142,7 +148,7 @@ export default function EmailBody({
                                                 )}
                                             </div>
                                         </td>
-                                        <td className="whitespace-nowrap font-medium ltr:text-right rtl:text-left">{showTime(mail)}</td>
+                                        <td className="whitespace-nowrap font-medium ltr:text-right rtl:text-left">{formatDate(mail.date)}</td>
                                     </tr>
                                 );
                             })}

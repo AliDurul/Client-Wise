@@ -227,22 +227,6 @@ export interface Lead {
   probability: number;
 }
 
-
-
-/* ---------------------------- COPARATE ?---------------------------- */
-export interface Coparate {
-  _id: number;
-  name: string;
-  courier: string;
-  email: string;
-  province: string;
-  exact_location: string;
-  mobile_number: string;
-  created_at: Date;
-  updated_at: Date;
-}
-
-
 /*---------------------------- PRODUCT ----------------------------*/
 export interface Product {
   _id: string;
@@ -271,21 +255,6 @@ export interface ProductDefaultParams {
   price: number | string;
 }
 
-// export interface Author {
-//   _id: number;
-//   first_name: string;
-//   last_name: string;
-//   phone_number: null;
-//   email: string;
-//   location: string;
-// }
-
-// export type ProductTableProp = {
-//   filteredItems: Product[],
-//   deleteProduct: (ProductId: number) => void,
-//   editProduct: (product: Product) => void
-// }
-
 /*---------------------------- FAQ ----------------------------*/
 export interface Faq {
   _id?: number;
@@ -295,83 +264,33 @@ export interface Faq {
 
 /*---------------------------- EMAIL? ----------------------------*/
 export interface Email {
-  "@odata.etag": string;
-  _id: string;
-  type: string;
-  createdDateTime: string;
-  lastModifiedDateTime: string;
-  changeKey: string;
-  categories: string[];
-  receivedDateTime: string;
-  sentDateTime: string;
-  hasAttachments: boolean;
-  internetMessageId: string;
-  subject: string;
-  bodyPreview: string;
-  importance: string;
-  parentFolderId: string;
-  conversationId: string;
-  conversationIndex: string;
-  isDeliveryReceiptRequested: boolean;
-  isReadReceiptRequested: boolean;
-  isRead: boolean;
-  isDraft: boolean;
-  webLink: string;
-  inferenceClassification: string;
-  body: Body;
-  sender: Sender;
-  from: From;
-  toRecipients: ToRecipient[];
-  ccRecipients: any[];
-  bccRecipients: any[];
-  replyTo: any[];
-  flag: Flag;
-}
-
-interface Flag {
-  flagStatus: string;
-}
-
-export interface ToRecipient {
-  emailAddress: {
-    name: string;
-    address: string;
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  title: string;
+  displayDescription: string;
+  isUnread: boolean;
+  isStar: boolean;
+  isImportant: boolean;
+  labelIds: string[];
+  group: string;
+  attachments: any[];
+  date: string;
+  payload: {
+    partId: string;
+    mimeType: string;
+    filename: string;
+    headers: Array<{
+      name: string;
+      value: string;
+    }>;
+    body: {
+      size: number;
+      data: string;
+    };
   };
 }
-
-interface From {
-  emailAddress: EmailAddress1;
-}
-
-interface EmailAddress1 {
-  name: string;
-  address: string;
-}
-
-interface Sender {
-  emailAddress: EmailAddress;
-}
-
-interface EmailAddress {
-  name: string;
-  address: string;
-}
-
-interface Body {
-  contentType: string;
-  content: string;
-}
-
-export interface Folder {
-  _id: string,
-  displayName: string,
-  parentFolderId: string,
-  childFolderCount: number,
-  unreadItemCount: number,
-  totalItemCount: number,
-  isHidden: boolean
-}
-
 
 /*---------------------------- TASK ----------------------------*/
 export interface Task {

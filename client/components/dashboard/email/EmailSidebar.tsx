@@ -1,19 +1,23 @@
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { selectedEmailTab, setSelectedTab } from '@/lib/features/email/emailSlice';
 
 interface EmailSidebarProps {
-    isRtl: boolean;
     isShowMailMenu: boolean;
     setIsShowMailMenu: (value: boolean) => void;
-    selectedTab: string;
-    setSelectedTab: (value: string) => void;
     tabChanged: (tab: string) => void;
     isEdit?: boolean;
     mailList?: any[];
     openMail?: (type: string, mail: any) => void;
 }
 
-export default function EmailSidebar({ isRtl, isShowMailMenu, setIsShowMailMenu, selectedTab,setSelectedTab, tabChanged, isEdit = false, mailList = [], openMail = (type: string, mail: any) => { } }: EmailSidebarProps) {
+export default function EmailSidebar({ isShowMailMenu, setIsShowMailMenu, tabChanged, isEdit = false, mailList = [], openMail = (type: string, mail: any) => { } }: EmailSidebarProps) {
+
+    const dispatch = useAppDispatch();
+    const selectedTab = useAppSelector(selectedEmailTab);
+
+
     return (
         <div className={`panel dark:gray-50 absolute z-10 hidden h-full w-[250px] max-w-full flex-none space-y-3 overflow-hidden p-4 ltr:rounded-r-none rtl:rounded-l-none xl:relative xl:block xl:h-auto ltr:xl:rounded-r-md rtl:xl:rounded-l-md ${isShowMailMenu ? '!block' : ''}`}>
             <div className="flex h-full flex-col pb-16">
@@ -29,7 +33,7 @@ export default function EmailSidebar({ isRtl, isShowMailMenu, setIsShowMailMenu,
                             className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'inbox' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
                                 }`}
                             onClick={() => {
-                                setSelectedTab('inbox');
+                                dispatch(setSelectedTab('inbox'));
                                 tabChanged('inbox');
                             }}
                         >
@@ -60,7 +64,7 @@ export default function EmailSidebar({ isRtl, isShowMailMenu, setIsShowMailMenu,
                             className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'star' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
                                 }`}
                             onClick={() => {
-                                setSelectedTab('star');
+                                dispatch(setSelectedTab('star'));
                                 tabChanged('star');
                             }}
                         >
@@ -72,7 +76,7 @@ export default function EmailSidebar({ isRtl, isShowMailMenu, setIsShowMailMenu,
                                         strokeWidth="1.5"
                                     />
                                 </svg>
-                                <div className="ltr:ml-3 rtl:mr-3">Marked</div>
+                                <div className="ltr:ml-3 rtl:mr-3">Starred</div>
                             </div>
                         </button>
 
@@ -81,7 +85,7 @@ export default function EmailSidebar({ isRtl, isShowMailMenu, setIsShowMailMenu,
                             className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'sent_mail' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
                                 }`}
                             onClick={() => {
-                                setSelectedTab('sent_mail');
+                                dispatch(setSelectedTab('sent_mail'));
                                 tabChanged('sent_mail');
                             }}
                         >
@@ -104,7 +108,7 @@ export default function EmailSidebar({ isRtl, isShowMailMenu, setIsShowMailMenu,
                             className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'spam' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
                                 }`}
                             onClick={() => {
-                                setSelectedTab('spam');
+                                dispatch(setSelectedTab('spam'));
                                 tabChanged('spam');
                             }}
                         >
@@ -128,7 +132,7 @@ export default function EmailSidebar({ isRtl, isShowMailMenu, setIsShowMailMenu,
                             className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'draft' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
                                 }`}
                             onClick={() => {
-                                setSelectedTab('draft');
+                                dispatch(setSelectedTab('draft'));
                                 tabChanged('draft');
                             }}
                         >
@@ -152,7 +156,7 @@ export default function EmailSidebar({ isRtl, isShowMailMenu, setIsShowMailMenu,
                             className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'trash' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
                                 }`}
                             onClick={() => {
-                                setSelectedTab('trash');
+                                dispatch(setSelectedTab('trash'));
                                 tabChanged('trash');
                             }}
                         >
@@ -197,7 +201,7 @@ export default function EmailSidebar({ isRtl, isShowMailMenu, setIsShowMailMenu,
                                                 className={`flex h-10 w-full items-center rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'archive' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
                                                     }`}
                                                 onClick={() => {
-                                                    setSelectedTab('archive');
+                                                    dispatch(setSelectedTab('archive'));
                                                     tabChanged('archive');
                                                 }}
                                             >
@@ -229,7 +233,7 @@ export default function EmailSidebar({ isRtl, isShowMailMenu, setIsShowMailMenu,
                                                 className={`flex h-10 w-full items-center rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'important' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
                                                     }`}
                                                 onClick={() => {
-                                                    setSelectedTab('important');
+                                                    dispatch(setSelectedTab('important'));
                                                     tabChanged('important');
                                                 }}
                                             >

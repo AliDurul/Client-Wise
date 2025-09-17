@@ -33,6 +33,11 @@ const envSchema = zod_1.z.object({
     // wp
     WP_ACCESS_TOKEN: zod_1.z.string().min(1),
     WEB_HOOK_VERIFY_TOKEN: zod_1.z.string().min(1),
+    // google
+    GOOGLE_CLIENT_ID: zod_1.z.string().min(1),
+    GOOGLE_CLIENT_SECRET: zod_1.z.string().min(1),
+    GOOGLE_PROJECT_ID: zod_1.z.string().min(1),
+    GOOGLE_REDIRECT_URIS: zod_1.z.string().min(1),
 });
 const env = envSchema.parse(process.env);
 exports.default = env;

@@ -16,8 +16,7 @@ const env_1 = __importDefault(require("../configs/env"));
 // 1. 404 NOT FOUND MIDDLEWARE
 // ===============================
 const notFound = (req, res, next) => {
-    const error = new Error(`Not Found - ${req.originalUrl}`);
-    res.status(404);
+    const error = new common_1.CustomError(`Not Found - ${req.originalUrl}`, 404, true);
     next(error);
 };
 exports.notFound = notFound;

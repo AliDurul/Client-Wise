@@ -14,8 +14,7 @@ import env from "../configs/env";
 // 1. 404 NOT FOUND MIDDLEWARE
 // ===============================
 export const notFound: RequestHandler = (req, res, next) => {
-    const error = new Error(`Not Found - ${req.originalUrl}`);
-    res.status(404);
+    const error = new CustomError(`Not Found - ${req.originalUrl}`, 404, true);
     next(error);
 };
 

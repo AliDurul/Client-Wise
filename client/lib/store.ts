@@ -1,29 +1,23 @@
 import type { Action, ThunkAction } from "@reduxjs/toolkit";
 import { combineSlices, configureStore } from "@reduxjs/toolkit";
 import { themeSlice } from "./features/theme/themeSlice";
-// import { invoiceSlice } from "./features/invoices/invoiceSlice";
 import { ticketSlice } from "./features/tickets/ticketSlice";
-// import { categorySlice } from "./features/category/categorySlice";
 import { customerSlice } from "./features/customer/customerSlice";
 import { productSlice } from "./features/products/productSlice";
 import { faqSlice } from "./features/faq/faqSlice";
 import { taskSlice } from "./features/task/taskSlice";
 import { chatSlice } from "./features/chat/chatSlice";
-// import { leadSlice } from "./features/leads/leadSlice";
-// import { coparateSlice } from "./features/coparate/coparateSlice";
+import { emailSlice } from "./features/email/emailSlice";
 
 const rootReducer = combineSlices(
     themeSlice,
-    // invoiceSlice,
+    emailSlice,
     ticketSlice,
-    // categorySlice,
     customerSlice,
     productSlice,
     faqSlice,
     taskSlice,
     chatSlice,
-    // leadSlice,
-    // coparateSlice
 );
 export type RootState = ReturnType<typeof rootReducer>;
 

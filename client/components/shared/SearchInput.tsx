@@ -1,4 +1,5 @@
 'use client';
+import { SearchIcon } from '@/icons';
 import { formUrlQuery, removeKeysFromQuery } from '@/lib/utility/functions';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
@@ -52,17 +53,22 @@ export default function SearchInput({ className = '' }: { className?: string }) 
 
         return () => clearTimeout(delayBounceFn);
 
-    }, [query]); 
+    }, [query]);
 
 
 
     return (
-        <input
-            type="text"
-            className={`form-input w-auto ${className}`}
-            placeholder="Search..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-        />
+        <div className='relative'>
+            <input
+                type="text"
+                className={`peer form-input w-auto ${className}`}
+                placeholder="Search..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+            />
+            <div className="absolute top-1/2 -translate-y-1/2 peer-focus:text-primary right-[11px] ">
+                <SearchIcon />
+            </div>
+        </div>
     )
 }

@@ -7,15 +7,12 @@ import { invoiceSchema } from "@/lib/utility/zod";
 
 const BASE_URL = process.env.API_BASE_URL + '/'
 
-
-
 export const InvoiceCrUpAction = async (_: unknown, payload: any) => {
 
   const id = payload._id;
   delete payload._id;
 
   const result = invoiceSchema.safeParse(payload);
-
 
   if (!result.success) {
     const errors = result.error.flatten().fieldErrors;
