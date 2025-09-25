@@ -1,4 +1,4 @@
-import { modifyEmail } from '@/lib/features/email/emailActions';
+'use client';
 import { selectedEmailTab, selectEmail, setEmail } from '@/lib/features/email/emailSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { formatDate, truncateText } from '@/lib/utility/functions';

@@ -1,3 +1,4 @@
+'use client';
 import { selectedEmailTab, setSelectedTab } from '@/lib/features/email/emailSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import React from 'react'

@@ -1,3 +1,4 @@
+'use client';
 
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new//dist/quill.snow.css';
@@ -56,13 +57,13 @@ export default function EmailEdit({ params, setIsShowMailMenu, isShowMailMenu, c
                         theme="snow"
                         value={params.description || ''}
                         defaultValue={params.description || ''}
-                        // onChange={(content, delta, source, editor) => {
-                        //     params.description = content;
-                        //     params.displayDescription = editor.getText();
-                        //     setParams({
-                        //         ...params,
-                        //     });
-                        // }}
+                        onChange={(content, delta, source, editor) => {
+                            params.description = content;
+                            params.displayDescription = editor.getText();
+                            setParams({
+                                ...params,
+                            });
+                        }}
                         style={{ minHeight: '200px' }}
                     />
                 </div>

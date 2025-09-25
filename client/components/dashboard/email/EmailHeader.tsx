@@ -1,3 +1,4 @@
+'use client';
 import Dropdown from '@/components/layout/Dropdown';
 import SearchInput from '@/components/shared/SearchInput';
 import Tippy from '@tippyjs/react';

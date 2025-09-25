@@ -1,3 +1,5 @@
+'use client';
+
 import Dropdown from '@/components/layout/Dropdown';
 import { modifyEmail } from '@/lib/features/email/emailActions';
 import { selectedEmailTab, selectEmail, setEmail } from '@/lib/features/email/emailSlice';

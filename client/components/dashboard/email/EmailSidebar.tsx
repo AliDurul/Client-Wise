@@ -1,3 +1,4 @@
+'use client';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';

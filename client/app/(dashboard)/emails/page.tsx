@@ -6,14 +6,17 @@ import EmailSubHeader from '@/components/dashboard/email/EmailSubHeader';
 import useSWR from 'swr';
 import { getAllData } from '@/lib/features/shared/actionUtils';
 import toast from 'react-hot-toast';
-import EmailEdit from '@/components/dashboard/email/EmailEdit';
+// import EmailEdit from '@/components/dashboard/email/EmailEdit';
 import EmailRead from '@/components/dashboard/email/EmailRead';
 import { Email } from '@/types';
 import EmailList from '@/components/dashboard/email/EmailList';
 import { EmailListSkeleton } from '@/components/dashboard/email/EmailSkeletons';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { selectedEmailTab, selectEmail, setEmail, setSelectedTab } from '@/lib/features/email/emailSlice';
-
+import dynamic from 'next/dynamic';
+const EmailEdit = dynamic(() => import('@/components/dashboard/email/EmailEdit'), { 
+    ssr: false 
+});
 
 export default function page() {
 
