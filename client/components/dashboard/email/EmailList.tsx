@@ -1,7 +1,9 @@
-import { selectedEmailTab } from '@/lib/features/email/emailSlice';
-import { useAppSelector } from '@/lib/hooks';
+import { modifyEmail } from '@/lib/features/email/emailActions';
+import { selectedEmailTab, selectEmail, setEmail } from '@/lib/features/email/emailSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { formatDate, truncateText } from '@/lib/utility/functions';
 import Tippy from '@tippyjs/react';
+import useSWRMutation from 'swr/mutation';
 
 
 interface EmailListProps {
@@ -24,6 +26,7 @@ export default function EmailList({
     showTime
 }: EmailListProps) {
 
+    const dispatch = useAppDispatch();
 
     const selectedTab = useAppSelector(selectedEmailTab);
 
@@ -36,7 +39,10 @@ export default function EmailList({
                         <tbody>
                             {pagedMails.map((mail: any) => {
                                 return (
-                                    <tr key={mail.id} className="cursor-pointer" onClick={() => selectMail(mail)}>
+                                    <tr key={mail.id} className="cursor-pointer" onClick={() => {
+                                        dispatch(setEmail(mail));
+
+                                    }}>
                                         <td>
                                             <div className="flex items-center whitespace-nowrap">
                                                 <div className="ltr:mr-3 rtl:ml-3">

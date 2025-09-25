@@ -12,29 +12,25 @@ import { Email } from '@/types';
 import EmailList from '@/components/dashboard/email/EmailList';
 import { EmailListSkeleton } from '@/components/dashboard/email/EmailSkeletons';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { selectedEmailTab, setSelectedTab } from '@/lib/features/email/emailSlice';
+import { selectedEmailTab, selectEmail, setEmail, setSelectedTab } from '@/lib/features/email/emailSlice';
 
 
 export default function page() {
 
     // api
-    const { data: mailList, isLoading } = useSWR<{ result: Email[], success: boolean }>('gmail/messages', () => getAllData(
-        {
-            url: 'gmail/messages',
-        }),
-        {
-            onError: (err) => {
-                console.log('err', err);
-                toast.error(err?.message ?? 'Error fetching emails', { duration: 3000 });
-            },
-            onSuccess: (data) => {
-                setFilteredMailList(data?.result?.filter((d) => d.labelIds?.includes('INBOX')) || []);
-            }
-        });
+    const { data: mailList, isLoading } = useSWR<{ result: Email[], success: boolean }>('emails', () => getAllData({ url: 'emails', }), {
+        onError: (err) => {
+            console.log('err', err);
+            toast.error(err?.message ?? 'Error fetching emails', { duration: 3000 });
+        },
+        onSuccess: (data) => {
+            setFilteredMailList(data?.result?.filter((d) => d.labelIds?.includes('INBOX')) || []);
+        }
+    });
 
     const defaultParams = {
         id: null,
-        from: 'vristo@mail.com',
+        from: 'alidrl26@mail.com',
         to: '',
         cc: '',
         title: '',
@@ -44,6 +40,7 @@ export default function page() {
     };
 
     const selectedTab = useAppSelector(selectedEmailTab);
+    const selectedEmail = useAppSelector(selectEmail);
     const dispatch = useAppDispatch();
 
 
@@ -52,7 +49,7 @@ export default function page() {
     const [filteredMailList, setFilteredMailList] = useState<Email[]>([]);
     const [ids, setIds] = useState<any>([]);
     const [searchText, setSearchText] = useState<any>('');
-    const [selectedMail, setSelectedMail] = useState<any>(null);
+    // const [selectedMail, setSelectedMail] = useState<Email | null>(null);
     const [params, setParams] = useState<any>(JSON.parse(JSON.stringify(defaultParams)));
     const [pagedMails, setPagedMails] = useState<any>([]);
 
@@ -169,12 +166,12 @@ export default function page() {
                 if (item && item.isUnread) {
                     item.isUnread = false;
                 }
-                setSelectedMail(item);
+                dispatch(setEmail(item));
             } else {
                 openMail('draft', item);
             }
         } else {
-            setSelectedMail('');
+            dispatch(setEmail(null));
         }
     };
 
@@ -213,39 +210,7 @@ export default function page() {
         }
     };
 
-    const openMail = (type: string, item: any) => {
-        if (type === 'add') {
-            setIsShowMailMenu(false);
-            setParams(JSON.parse(JSON.stringify(defaultParams)));
-        } else if (type === 'draft') {
-            let data = JSON.parse(JSON.stringify(item));
-            setParams({
-                ...data,
-                from: defaultParams.from,
-                to: data.email,
-                displayDescription: data.email,
-            });
-        } else if (type === 'reply') {
-            let data = JSON.parse(JSON.stringify(item));
-            setParams({
-                ...data,
-                from: defaultParams.from,
-                to: data.email,
-                title: 'Re: ' + data.title,
-                displayDescription: 'Re: ' + data.title,
-            });
-        } else if (type === 'forward') {
-            let data = JSON.parse(JSON.stringify(item));
-            setParams({
-                ...data,
-                from: defaultParams.from,
-                to: data.email,
-                title: 'Fwd: ' + data.title,
-                displayDescription: 'Fwd: ' + data.title,
-            });
-        }
-        setIsEdit(true);
-    };
+
 
     const searchMails = (isResetPage = true) => {
         if (isResetPage) {
@@ -356,7 +321,8 @@ export default function page() {
             showMessage('Mail has been sent successfully.');
         }
 
-        setSelectedMail(null);
+        dispatch(setEmail(null));
+
         setIsEdit(false);
     };
 
@@ -387,7 +353,7 @@ export default function page() {
     const tabChanged = (tabType: any) => {
         setIsEdit(false);
         setIsShowMailMenu(false);
-        setSelectedMail(null);
+        dispatch(setEmail(null));
     };
 
     const changeValue = (e: any) => {
@@ -423,26 +389,57 @@ export default function page() {
         // toast
     };
 
-    console.log('orgi mails', mailList?.result);
+    // console.log('orgi mails', mailList?.result);
+
+    // --------------------------------------
+
+    const openMail = (type: string, item: any) => {
+        if (type === 'add') {
+            setIsShowMailMenu(false);
+            setParams(JSON.parse(JSON.stringify(defaultParams)));
+        } else if (type === 'draft') {
+            let data = JSON.parse(JSON.stringify(item));
+            setParams({
+                ...data,
+                from: defaultParams.from,
+                to: data.email,
+                displayDescription: data.email,
+            });
+        } else if (type === 'reply') {
+            let data = JSON.parse(JSON.stringify(item));
+            setParams({
+                ...data,
+                from: defaultParams.from,
+                to: data.email,
+                title: 'Re: ' + data.title,
+                displayDescription: 'Re: ' + data.title,
+            });
+        } else if (type === 'forward') {
+            let data = JSON.parse(JSON.stringify(item));
+            setParams({
+                ...data,
+                from: defaultParams.from,
+                to: data.email,
+                title: 'Fwd: ' + data.title,
+                displayDescription: 'Fwd: ' + data.title,
+            });
+        }
+        setIsEdit(true);
+    };
 
     function decodeBase64Url(data: any) {
-        // Gmail uses base64url encoding (replace -/_ and pad)
         const b64 = data.replace(/-/g, '+').replace(/_/g, '/');
-        // Decode
         return decodeURIComponent(escape(window.atob(b64)));
     }
 
     function getMessageBody(payload: any) {
-        // If the message has multiple parts
         if (payload.parts && payload.parts.length) {
-            // Try to find the HTML part first
             const htmlPart = payload.parts.find(
                 (part: any) => part.mimeType === "text/html"
             );
             if (htmlPart && htmlPart.body && htmlPart.body.data) {
                 return decodeBase64Url(htmlPart.body.data);
             }
-            // Fallback to plain text
             const textPart = payload.parts.find(
                 (part: any) => part.mimeType === "text/plain"
             );
@@ -450,7 +447,6 @@ export default function page() {
                 return decodeBase64Url(textPart.body.data);
             }
         }
-        // If no parts, check the main body
         if (payload.body && payload.body.data) {
             return decodeBase64Url(payload.body.data);
         }
@@ -467,10 +463,11 @@ export default function page() {
                 isShowMailMenu={isShowMailMenu}
                 setIsShowMailMenu={setIsShowMailMenu}
                 tabChanged={tabChanged}
+                openMail={openMail}
             />
 
             <div className="panel h-full flex-1 overflow-x-hidden p-0">
-                {!selectedMail && !isEdit && (
+                {!selectedEmail && !isEdit && (
                     <div className="flex h-full flex-col">
 
                         {/* Header */}
@@ -514,10 +511,8 @@ export default function page() {
                     </div>
                 )}
 
-                {selectedMail && !isEdit && (
+                {selectedEmail && !isEdit && (
                     <EmailRead
-                        selectedMail={selectedMail}
-                        setSelectedMail={setSelectedMail}
                         setStar={setStar}
                         setImportant={setImportant}
                         openMail={openMail}
@@ -528,10 +523,12 @@ export default function page() {
                 {isEdit && (
                     <EmailEdit
                         params={params}
-                        selectedMail={selectedMail}
-                        setIsEdit={setIsEdit}
-                        openMail={openMail}
+                        setParams={setParams}
                         setIsShowMailMenu={setIsShowMailMenu}
+                        isShowMailMenu={isShowMailMenu}
+                        closeMsgPopUp={closeMsgPopUp}
+                        saveMail={saveMail}
+                        changeValue={changeValue}
                     />
                 )}
             </div>

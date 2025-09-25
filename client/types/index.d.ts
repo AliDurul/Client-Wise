@@ -262,19 +262,19 @@ export interface Faq {
   answer: string;
 }
 
-/*---------------------------- EMAIL? ----------------------------*/
+/*---------------------------- EMAIL ----------------------------*/
 export interface Email {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
+  to: string;
   title: string;
   displayDescription: string;
   isUnread: boolean;
-  isStar: boolean;
+  isStarred: boolean;
   isImportant: boolean;
   labelIds: string[];
-  group: string;
   attachments: any[];
   date: string;
   payload: {
@@ -289,6 +289,29 @@ export interface Email {
       size: number;
       data: string;
     };
+  };
+}
+
+export interface SendEmailRequest {
+  to: string;
+  subject: string;
+  textBody?: string;
+  htmlBody?: string;
+  cc?: string;
+  bcc?: string;
+  attachments?: Array<{
+    filename: string;
+    content: string; // base64 encoded
+    contentType: string;
+  }>;
+}
+
+export interface SendEmailResponse {
+  success: boolean;
+  message: string;
+  result?: {
+    messageId: string;
+    threadId: string;
   };
 }
 

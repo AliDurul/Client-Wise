@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { listGmailLabels, listGmailMessages } from '../services/gmail.service';
+// Emails
+
 
 // Helper to parse the "From" header
 function parseFromHeader(fromValue: string) {
@@ -21,7 +21,7 @@ function parseFromHeader(fromValue: string) {
 }
 
 // Helper to transform a Gmail message
-function modifyMessage(message: any): any {
+export function modifyMessage(message: any): any {
     const getHeader = (name: string) =>
         message.payload.headers.find((h: any) => h.name.toLowerCase() === name.toLowerCase())?.value || '';
 
@@ -54,31 +54,15 @@ function modifyMessage(message: any): any {
         firstName: fromParsed.firstName,
         lastName: fromParsed.lastName,
         email: fromParsed.email,
+        to: getHeader('To'),
         title: getHeader('Subject'),
         displayDescription: description,
         isUnread: message.labelIds?.includes('UNREAD'),
-        isStar: message.labelIds?.includes('STARRED'),
+        isStarred: message.labelIds?.includes('STARRED'),
         isImportant: message.labelIds?.includes('IMPORTANT'),
         labelIds: message.labelIds,
-        group: '', // Set as needed
         attachments,
         date: getHeader('Date'),
         payload: message.payload,
     };
-}
-
-
-export async function getGmailMessages(req: Request, res: Response) {
-
-
-    const result = await listGmailMessages();
-
-    const transformed = result.map(modifyMessage);
-
-    res.status(200).send({ success: true, result: transformed });
-}
-
-export async function getGmailLabels(req: Request, res: Response) {
-    const result = await listGmailLabels();
-    res.status(200).send({ success: true, result });
 }

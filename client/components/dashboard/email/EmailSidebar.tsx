@@ -9,7 +9,7 @@ interface EmailSidebarProps {
     tabChanged: (tab: string) => void;
     isEdit?: boolean;
     mailList?: any[];
-    openMail?: (type: string, mail: any) => void;
+    openMail: (type: string, mail: any) => void;
 }
 
 export default function EmailSidebar({ isShowMailMenu, setIsShowMailMenu, tabChanged, isEdit = false, mailList = [], openMail = (type: string, mail: any) => { } }: EmailSidebarProps) {

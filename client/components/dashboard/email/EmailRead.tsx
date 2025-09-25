@@ -1,33 +1,67 @@
 import Dropdown from '@/components/layout/Dropdown';
-import { selectedEmailTab } from '@/lib/features/email/emailSlice';
-import { useAppSelector } from '@/lib/hooks';
+import { modifyEmail } from '@/lib/features/email/emailActions';
+import { selectedEmailTab, selectEmail, setEmail } from '@/lib/features/email/emailSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { Email } from '@/types';
 import Tippy from '@tippyjs/react';
-import React from 'react'
+import React, { useEffect } from 'react'
+import { mutate } from 'swr';
+import useSWRMutation from 'swr/mutation';
 
 interface EmailsReadProps {
-    selectedMail: any;
-    setSelectedMail: (mail: any) => void;
-
-    setStar: (id: number) => void;
-    setImportant: (id: number) => void;
+    setStar: (id: any) => void;
+    setImportant: (id: any) => void;
     openMail: (type: string, mail: any) => void;
     getMessageBody: (payload: any) => string;
 }
 
-export default function EmailRead({ selectedMail, setSelectedMail,  setStar, setImportant, openMail, getMessageBody }: EmailsReadProps) {
+export default function EmailRead({ setStar, setImportant, openMail, getMessageBody }: EmailsReadProps) {
+
     const selectedTab = useAppSelector(selectedEmailTab);
+    const selectedEmail = useAppSelector(selectEmail);
+    const dispatch = useAppDispatch();
+
+    const { trigger } = useSWRMutation(`emails`, modifyEmail, {
+
+        onError: (error, key, config) => {
+            console.error('Error modifying email:', error);
+        },
+    });
+
+
+    useEffect(() => {
+        if (selectedEmail?.id) {
+            trigger({ read: true, id: selectedEmail.id }, {
+                optimisticData: (currentData: any) => {
+
+                    if (!currentData?.result) return currentData;
+
+                    return {
+                        ...currentData,
+                        result: currentData.result.map((email: Email) =>
+                            email.id === selectedEmail?.id
+                                ? { ...email, isUnread: false }
+                                : email
+                        )
+                    };
+                },
+                rollbackOnError: true,
+                revalidate: false,
+            });
+        }
+    }, [selectedEmail?.id]);
 
     return (
         <div>
             <div className="flex flex-wrap items-center justify-between p-4">
                 <div className="flex items-center">
-                    <button type="button" className="hover:text-primary ltr:mr-2 rtl:ml-2" onClick={() => setSelectedMail(null)}>
+                    <button type="button" className="hover:text-primary ltr:mr-2 rtl:ml-2" onClick={() => dispatch(setEmail(null))}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-5 w-5 rtl:rotate-180">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                         </svg>
                     </button>
-                    <h4 className="text-base font-medium ltr:mr-2 rtl:ml-2 md:text-lg">{selectedMail.title}</h4>
-                    <div className="badge bg-white-dark hover:top-0">{selectedMail.labelIds.join(',  ')}</div>
+                    <h4 className="text-base font-medium ltr:mr-2 rtl:ml-2 md:text-lg">{selectedEmail?.title}</h4>
+                    <div className="badge bg-white-dark hover:top-0">{selectedEmail?.labelIds.join(',  ')}</div>
                 </div>
                 <div>
                     <Tippy content="Print">
@@ -63,44 +97,43 @@ export default function EmailRead({ selectedMail, setSelectedMail,  setStar, set
             <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
             <div className="relative p-4">
                 <div className="flex flex-wrap">
-                    <div className="flex-shrink-0 ltr:mr-2 rtl:ml-2">
-                        {selectedMail.path ? (
-                            <img src={`/assets/images/${selectedMail.path}`} className="h-12 w-12 rounded-full object-cover" alt="avatar" />
-                        ) : (
-                            <div className="rounded-full border border-gray-300 p-3 dark:border-gray-800">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="12" cy="6" r="4" stroke="currentColor" strokeWidth="1.5" />
-                                    <ellipse opacity="0.5" cx="12" cy="17" rx="7" ry="4" stroke="currentColor" strokeWidth="1.5" />
-                                </svg>
-                            </div>
-                        )}
-                    </div>
+                    {/* <div className="flex-shrink-0 ltr:mr-2 rtl:ml-2">
+                            {selectedEmail?.path ? (
+                                <img src={`/assets/images/${selectedEmail?.path}`} className="h-12 w-12 rounded-full object-cover" alt="avatar" />
+                            ) : (
+                                <div className="rounded-full border border-gray-300 p-3 dark:border-gray-800">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="12" cy="6" r="4" stroke="currentColor" strokeWidth="1.5" />
+                                        <ellipse opacity="0.5" cx="12" cy="17" rx="7" ry="4" stroke="currentColor" strokeWidth="1.5" />
+                                    </svg>
+                                </div>
+                            )}
+                        </div> */}
                     <div className="flex-1 ltr:mr-2 rtl:ml-2">
                         <div className="flex items-center">
                             <div className="whitespace-nowrap text-lg ltr:mr-4 rtl:ml-4">
-                                {selectedMail.firstName ? selectedMail.firstName + ' ' + selectedMail.lastName : selectedMail.email}
+                                {selectedEmail?.firstName ? selectedEmail.firstName + ' ' + selectedEmail.lastName : selectedEmail?.email}
                             </div>
-                            {selectedMail.group && (
-                                <div className="ltr:mr-4 rtl:ml-4">
-                                    <Tippy content={selectedMail.group} className="capitalize">
-                                        <div
-                                            className={`h-2 w-2 rounded-full ${(selectedMail.labelIds.includes('IMPORTANT') && 'bg-danger') ||
-                                                (selectedMail.labelIds.includes('INBOX') && 'bg-primary') ||
-                                                (selectedMail.labelIds.includes('CATEGORY_UPDATES') && 'bg-success') ||
-                                                (selectedMail.labelIds.includes('CATEGORY_FORUMS') && 'bg-warning')
-                                                }`}
-                                        />
-                                    </Tippy>
-                                </div>
-                            )}
-                            <div className="whitespace-nowrap text-white-dark">1 days ago</div>
+                            {/* <div className="ltr:mr-4 rtl:ml-4">
+                                <Tippy content={selectedEmail?.firstName} className="capitalize">
+                                    <div
+                                        className={`h-2 w-2 rounded-full ${(selectedEmail?.isImportant && 'bg-danger') ||
+                                            (selectedEmail?.labelIds.includes('INBOX') && 'bg-primary') ||
+                                            (selectedEmail?.labelIds.includes('CATEGORY_UPDATES') && 'bg-success') ||
+                                            (selectedEmail?.labelIds.includes('CATEGORY_FORUMS') && 'bg-warning')
+                                            }`}
+                                    />
+                                </Tippy>
+                            </div> */}
+
+                            <div className="whitespace-nowrap text-white-dark">{selectedEmail?.date}</div>
                         </div>
                         <div className="flex items-center text-white-dark">
-                            <div className="ltr:mr-1 rtl:ml-1">{selectedMail.type === 'sent_mail' ? selectedMail.email : 'to me'}</div>
+                            <div className="ltr:mr-1 rtl:ml-1">{'to me'}</div>
                             <div className="dropdown">
                                 <Dropdown
                                     offset={[0, 5]}
-                                    placement='bottom-end'
+                                    placement='bottom-start'
                                     btnClassName="hover:text-primary flex items-center"
                                     button={
                                         <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -108,29 +141,29 @@ export default function EmailRead({ selectedMail, setSelectedMail,  setStar, set
                                         </svg>
                                     }
                                 >
-                                    <ul className="sm:w-56">
+                                    <ul className="w-fit ">
                                         <li>
                                             <div className="flex items-center px-4 py-2">
                                                 <div className="w-1/4 text-white-dark ltr:mr-2 rtl:ml-2">From:</div>
-                                                <div className="flex-1">{selectedMail.type === 'sent_mail' ? 'vristo@gmail.com' : selectedMail.email}</div>
+                                                <div className="flex-1">{selectedEmail?.email}</div>
                                             </div>
                                         </li>
                                         <li>
                                             <div className="flex items-center px-4 py-2">
                                                 <div className="w-1/4 text-white-dark ltr:mr-2 rtl:ml-2">To:</div>
-                                                <div className="flex-1">{selectedMail.type !== 'sent_mail' ? 'vristo@gmail.com' : selectedMail.email}</div>
+                                                <div className="flex-1">{selectedEmail?.to}</div>
                                             </div>
                                         </li>
                                         <li>
                                             <div className="flex items-center px-4 py-2">
                                                 <div className="w-1/4 text-white-dark ltr:mr-2 rtl:ml-2">Date:</div>
-                                                <div className="flex-1">{selectedMail.date + ', ' + selectedMail.time}</div>
+                                                <div className="flex-1">{selectedEmail?.date}</div>
                                             </div>
                                         </li>
                                         <li>
                                             <div className="flex items-center px-4 py-2">
                                                 <div className="w-1/4 text-white-dark ltr:mr-2 rtl:ml-2">Subject:</div>
-                                                <div className="flex-1">{selectedMail.title}</div>
+                                                <div className="flex-1">{selectedEmail?.title}</div>
                                             </div>
                                         </li>
                                     </ul>
@@ -144,12 +177,12 @@ export default function EmailRead({ selectedMail, setSelectedMail,  setStar, set
                             <Tippy content="Star">
                                 <button
                                     type="button"
-                                    className={`enabled:hover:text-warning disabled:opacity-60 ${selectedMail.isStar ? 'text-warning' : ''}`}
-                                    onClick={() => setStar(selectedMail.id)}
+                                    className={`enabled:hover:text-warning disabled:opacity-60 ${selectedEmail?.isStarred ? 'text-warning' : ''}`}
+                                    onClick={() => setStar(selectedEmail?.id)}
                                     disabled={selectedTab === 'trash'}
                                 >
                                     <svg
-                                        className={selectedMail.isStar ? 'fill-warning' : ''}
+                                        className={selectedEmail?.isStarred ? 'fill-warning' : ''}
                                         width="20"
                                         height="20"
                                         viewBox="0 0 24 24"
@@ -167,12 +200,12 @@ export default function EmailRead({ selectedMail, setSelectedMail,  setStar, set
                             <Tippy content="Important">
                                 <button
                                     type="button"
-                                    className={`enabled:hover:text-primary disabled:opacity-60 ${selectedMail.isImportant ? 'text-primary' : ''}`}
-                                    onClick={() => setImportant(selectedMail.id)}
+                                    className={`enabled:hover:text-primary disabled:opacity-60 ${selectedEmail?.isImportant ? 'text-primary' : ''}`}
+                                    onClick={() => setImportant(selectedEmail?.id)}
                                     disabled={selectedTab === 'trash'}
                                 >
                                     <svg
-                                        className={`rotate-90 ${selectedMail.isImportant ? 'fill-primary' : ''}`}
+                                        className={`rotate-90 ${selectedEmail?.isImportant ? 'fill-primary' : ''}`}
                                         width="18"
                                         height="18"
                                         viewBox="0 0 24 24"
@@ -188,7 +221,7 @@ export default function EmailRead({ selectedMail, setSelectedMail,  setStar, set
                                 </button>
                             </Tippy>
                             <Tippy content="Reply">
-                                <button type="button" className="hover:text-info" onClick={() => openMail('reply', selectedMail)}>
+                                <button type="button" className="hover:text-info" onClick={() => openMail('reply', selectedEmail)}>
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 rtl:hidden">
                                         <path d="M9.5 7L4.5 12L9.5 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                         <path opacity="0.5" d="M4.5 12L14.5 12C16.1667 12 19.5 13 19.5 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -200,7 +233,7 @@ export default function EmailRead({ selectedMail, setSelectedMail,  setStar, set
                                 </button>
                             </Tippy>
                             <Tippy content="Forward">
-                                <button type="button" className="hover:text-info" onClick={() => openMail('forward', selectedMail)}>
+                                <button type="button" className="hover:text-info" onClick={() => openMail('forward', selectedEmail)}>
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ltr:hidden rtl:block">
                                         <path d="M9.5 7L4.5 12L9.5 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                         <path opacity="0.5" d="M4.5 12L14.5 12C16.1667 12 19.5 13 19.5 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -217,17 +250,17 @@ export default function EmailRead({ selectedMail, setSelectedMail,  setStar, set
 
                 <div
                     className="prose mt-8 max-w-full prose-p:text-sm prose-img:m-0 prose-img:inline-block dark:prose-p:text-white md:prose-p:text-sm"
-                    dangerouslySetInnerHTML={{ __html: getMessageBody(selectedMail.payload) }}
+                    dangerouslySetInnerHTML={{ __html: getMessageBody(selectedEmail?.payload) }}
                 ></div>
                 <p className="mt-4">Best Regards,</p>
-                <p>{selectedMail.firstName + ' ' + selectedMail.lastName}</p>
+                <p>{selectedEmail?.firstName + ' ' + selectedEmail?.lastName}</p>
 
-                {selectedMail.attachments && (
+                {selectedEmail?.attachments && (
                     <div className="mt-8">
                         <div className="mb-4 text-base">Attachments</div>
                         <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
                         <div className="mt-6 flex flex-wrap items-center">
-                            {selectedMail.attachments.map((attachment: any, i: number) => {
+                            {selectedEmail?.attachments.map((attachment: any, i: number) => {
                                 return (
                                     <button
                                         key={i}

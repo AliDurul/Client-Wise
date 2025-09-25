@@ -5,7 +5,11 @@ import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 import fs from 'fs/promises';
 
-const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly', 'https://www.googleapis.com/auth/gmail.compose', 'https://www.googleapis.com/auth/gmail.send'];
+const SCOPES = [
+    'https://www.googleapis.com/auth/gmail.compose',
+    'https://www.googleapis.com/auth/gmail.send',
+    'https://www.googleapis.com/auth/gmail.modify'
+];
 const CREDENTIALS_PATH = path.join(process.cwd(), './src/configs/credentials.json');
 const TOKEN_PATH = path.join(process.cwd(), './src/configs/token.json');
 

@@ -10,10 +10,12 @@ import ticketRoutes from "./ticket.route";
 import leadRoutes from "./lead.route";
 import chatRoutes from './chatMessage.route';
 import wpRoutes from './wp.route';
-import webhookRoutes from './webhook.route';
-import gmailRoutes from './gmail.route';
+import wpWebhookRoutes from './wp.webhook.route';
+import emailRoutes from './email.route';
 
 const router = Router();
+
+// URL: /api
 
 // authRoutes
 router.use('/auth', authRoutes);
@@ -48,10 +50,10 @@ router.use("/chats", chatRoutes);
 // WhatsApp
 router.use("/wp", wpRoutes);
 
-// Gmail
-router.use("/gmail", gmailRoutes);
+// Email
+router.use("/emails", emailRoutes);
 
 // Webhook
-router.use("/webhook", webhookRoutes)
+router.use("/webhook", wpWebhookRoutes);
 
 export default router;
