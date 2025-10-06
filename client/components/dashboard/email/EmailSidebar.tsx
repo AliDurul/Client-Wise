@@ -2,28 +2,35 @@
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { selectedEmailTab, setSelectedTab } from '@/lib/features/email/emailSlice';
+import { selectedEmailTab, selectIsEdit, selectIsShowMailMenu, setEdit, setEmail, setSelectedTab, setShowMailMenu } from '@/lib/features/email/emailSlice';
 
-interface EmailSidebarProps {
-    isShowMailMenu: boolean;
-    setIsShowMailMenu: (value: boolean) => void;
-    tabChanged: (tab: string) => void;
-    isEdit?: boolean;
-    mailList?: any[];
-    openMail: (type: string, mail: any) => void;
-}
 
-export default function EmailSidebar({ isShowMailMenu, setIsShowMailMenu, tabChanged, isEdit = false, mailList = [], openMail = (type: string, mail: any) => { } }: EmailSidebarProps) {
+export default function EmailSidebar() {
+
 
     const dispatch = useAppDispatch();
     const selectedTab = useAppSelector(selectedEmailTab);
+    const isShowMailMenu = useAppSelector(selectIsShowMailMenu)
+    const isEdit = useAppSelector(selectIsEdit);
 
+    const mailList: any[] = []
+
+    const tabChanged = (tabType: string) => {
+        dispatch(setSelectedTab(tabType));
+        dispatch(setEdit(false))
+        dispatch(setShowMailMenu(false))
+        dispatch(setEmail(null));
+    };
 
     return (
         <div className={`panel dark:gray-50 absolute z-10 hidden h-full w-[250px] max-w-full flex-none space-y-3 overflow-hidden p-4 ltr:rounded-r-none rtl:rounded-l-none xl:relative xl:block xl:h-auto ltr:xl:rounded-r-md rtl:xl:rounded-l-md ${isShowMailMenu ? '!block' : ''}`}>
             <div className="flex h-full flex-col pb-16">
                 <div className="pb-5">
-                    <button className="btn btn-primary w-full" type="button" onClick={() => openMail('add', null)}>
+                    <button
+                        className="btn btn-primary w-full"
+                        type="button"
+                    // onClick={() => openMail('add', null)}
+                    >
                         New Message
                     </button>
                 </div>
@@ -34,7 +41,6 @@ export default function EmailSidebar({ isShowMailMenu, setIsShowMailMenu, tabCha
                             className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'inbox' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
                                 }`}
                             onClick={() => {
-                                dispatch(setSelectedTab('inbox'));
                                 tabChanged('inbox');
                             }}
                         >
@@ -186,7 +192,7 @@ export default function EmailSidebar({ isShowMailMenu, setIsShowMailMenu, tabCha
 
                         <Disclosure >
                             {({ open }) => (
-                                <>
+                                <div>
                                     <DisclosureButton className="flex h-10 w-full items-center rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`rotate-90 ${open ? '-rotate-90' : ''}`}>
                                             <path d="M9 5L15 12L9 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -250,7 +256,7 @@ export default function EmailSidebar({ isShowMailMenu, setIsShowMailMenu, tabCha
                                             </button>
                                         </li>
                                     </DisclosurePanel>
-                                </>
+                                </div>
                             )}
                         </Disclosure>
 
@@ -310,7 +316,7 @@ export default function EmailSidebar({ isShowMailMenu, setIsShowMailMenu, tabCha
                     <button
                         type="button"
                         className="group flex w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary"
-                        onClick={() => setIsShowMailMenu(false)}
+                        onClick={() => dispatch(setShowMailMenu(false))}
                     >
                         <div className="flex items-center">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

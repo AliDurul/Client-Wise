@@ -1,184 +1,35 @@
 'use client';
-import React, { useEffect, useState } from 'react'
-import EmailSidebar from '@/components/dashboard/email/EmailSidebar';
-import EmailHeader from '@/components/dashboard/email/EmailHeader';
-import EmailSubHeader from '@/components/dashboard/email/EmailSubHeader';
+import React from 'react'
 import useSWR from 'swr';
 import { getAllData } from '@/lib/features/shared/actionUtils';
 import toast from 'react-hot-toast';
 // import EmailEdit from '@/components/dashboard/email/EmailEdit';
-import EmailRead from '@/components/dashboard/email/EmailRead';
 import { Email } from '@/types';
-import EmailList from '@/components/dashboard/email/EmailList';
 import { EmailListSkeleton } from '@/components/dashboard/email/EmailSkeletons';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { selectedEmailTab, selectEmail, setEmail, setSelectedTab } from '@/lib/features/email/emailSlice';
+import { selectedEmailTab, selectEmailIds, selectEmails, setEmail, setEmails } from '@/lib/features/email/emailSlice';
 import dynamic from 'next/dynamic';
-const EmailEdit = dynamic(() => import('@/components/dashboard/email/EmailEdit'), { 
-    ssr: false 
+import Tippy from '@tippyjs/react';
+import { formatDate, truncateText } from '@/lib/utility/functions';
+import { useRouter } from 'next/navigation';
+const EmailEdit = dynamic(() => import('@/components/dashboard/email/EmailEdit'), {
+    ssr: false
 });
 
 export default function page() {
 
-    // api
-    const { data: mailList, isLoading } = useSWR<{ result: Email[], success: boolean }>('emails', () => getAllData({ url: 'emails', }), {
-        onError: (err) => {
-            console.log('err', err);
-            toast.error(err?.message ?? 'Error fetching emails', { duration: 3000 });
-        },
-        onSuccess: (data) => {
-            setFilteredMailList(data?.result?.filter((d) => d.labelIds?.includes('INBOX')) || []);
-        }
-    });
-
-    const defaultParams = {
-        id: null,
-        from: 'alidrl26@mail.com',
-        to: '',
-        cc: '',
-        title: '',
-        file: null,
-        description: '',
-        displayDescription: '',
-    };
-
-    const selectedTab = useAppSelector(selectedEmailTab);
-    const selectedEmail = useAppSelector(selectEmail);
     const dispatch = useAppDispatch();
+    const emails = useAppSelector(selectEmails);
+    const selectedTab = useAppSelector(selectedEmailTab);
+    const emailIds = useAppSelector(selectEmailIds);
+    const router = useRouter();
+
+    // api call
+    const { isLoading } = useSWR('emails', null);
 
 
-    const [isShowMailMenu, setIsShowMailMenu] = useState(false);
-    const [isEdit, setIsEdit] = useState(false);
-    const [filteredMailList, setFilteredMailList] = useState<Email[]>([]);
-    const [ids, setIds] = useState<any>([]);
-    const [searchText, setSearchText] = useState<any>('');
-    // const [selectedMail, setSelectedMail] = useState<Email | null>(null);
-    const [params, setParams] = useState<any>(JSON.parse(JSON.stringify(defaultParams)));
-    const [pagedMails, setPagedMails] = useState<any>([]);
-
-    const isRtl = false;
-
-    const [pager] = useState<any>({
-        currentPage: 1,
-        totalPages: 0,
-        pageSize: 10,
-        startIndex: 0,
-        endIndex: 0,
-    });
-
-    useEffect(() => {
-        searchMails();
-    }, [selectedTab, searchText, mailList?.result]);
-
-    const refreshMails = () => {
-        setSearchText('');
-        searchMails(false);
-    };
-
-    const setArchive = () => {
-        // if (ids.length) {
-        //     let items = filteredMailList.filter((d: any) => ids.includes(d.id));
-        //     for (let item of items) {
-        //         item.type = item.type === 'archive' ? 'inbox' : 'archive';
-        //     }
-        //     if (selectedTab === 'archive') {
-        //         showMessage(ids.length + ' Mail has been removed from Archive.');
-        //     } else {
-        //         showMessage(ids.length + ' Mail has been added to Archive.');
-        //     }
-        //     searchMails(false);
-        // }
-    };
-
-    const setSpam = () => {
-        // if (ids.length) {
-        //     let items = filteredMailList.filter((d: any) => ids.includes(d.id));
-        //     for (let item of items) {
-        //         item.type = item.type === 'spam' ? 'inbox' : 'spam';
-        //     }
-        //     if (selectedTab === 'spam') {
-        //         showMessage(ids.length + ' Mail has been removed from Spam.');
-        //     } else {
-        //         showMessage(ids.length + ' Mail has been added to Spam.');
-        //     }
-        //     searchMails(false);
-        // }
-    };
-
-    const setGroup = (group: any) => {
-        // if (ids.length) {
-        //     let items = mailList?.result.filter((d: any) => ids.includes(d.id));
-        //     for (let item of items) {
-        //         item.group = group;
-        //     }
-
-        //     showMessage(ids.length + ' Mail has been grouped as ' + group.toUpperCase());
-        //     clearSelection();
-        //     setTimeout(() => {
-        //         searchMails(false);
-        //     });
-        // }
-    };
-
-    const setAction = (type: any) => {
-        // if (ids.length) {
-        //     const totalSelected = ids.length;
-        //     let items = filteredMailList.filter((d: any) => ids.includes(d.id));
-        //     for (let item of items) {
-        //         if (type === 'trash') {
-        //             item.type = 'trash';
-        //             item.group = '';
-        //             item.isStar = false;
-        //             item.isImportant = false;
-        //             showMessage(totalSelected + ' Mail has been deleted.');
-        //             searchMails(false);
-        //         } else if (type === 'read') {
-        //             item.isUnread = false;
-        //             showMessage(totalSelected + ' Mail has been marked as Read.');
-        //         } else if (type === 'unread') {
-        //             item.isUnread = true;
-        //             showMessage(totalSelected + ' Mail has been marked as UnRead.');
-        //         } else if (type === 'important') {
-        //             item.isImportant = true;
-        //             showMessage(totalSelected + ' Mail has been marked as Important.');
-        //         } else if (type === 'unimportant') {
-        //             item.isImportant = false;
-        //             showMessage(totalSelected + ' Mail has been marked as UnImportant.');
-        //         } else if (type === 'star') {
-        //             item.isStar = true;
-        //             showMessage(totalSelected + ' Mail has been marked as Star.');
-        //         }
-        //         //restore & permanent delete
-        //         else if (type === 'restore') {
-        //             item.type = 'inbox';
-        //             showMessage(totalSelected + ' Mail Restored.');
-        //             searchMails(false);
-        //         } else if (type === 'delete') {
-        //             // setMailList(mailList?.result.filter((d: any) => d.id != item.id));
-        //             showMessage(totalSelected + ' Mail Permanently Deleted.');
-        //             searchMails(false);
-        //         }
-        //     }
-        //     clearSelection();
-        // }
-    };
-
-    const selectMail = (item: any) => {
-        if (item) {
-            if (item.type !== 'draft') {
-                if (item && item.isUnread) {
-                    item.isUnread = false;
-                }
-                dispatch(setEmail(item));
-            } else {
-                openMail('draft', item);
-            }
-        } else {
-            dispatch(setEmail(null));
-        }
-    };
-
-    const setStar = (mailId: number) => {
+    // functions
+    const setStar = (mailId: string) => {
         // if (mailId) {
         //     let item = filteredMailList.find((d: any) => d.id === mailId);
         //     item.isStar = !item.isStar;
@@ -188,7 +39,8 @@ export default function page() {
         // }
     };
 
-    const setImportant = (mailId: number) => {
+
+    const setImportant = (mailId: string) => {
         // if (mailId) {
         //     let item = filteredMailList.find((d: any) => d.id === mailId);
         //     item.isImportant = !item.isImportant;
@@ -198,343 +50,152 @@ export default function page() {
         // }
     };
 
-    const showTime = (item: any) => {
-        const displayDt: any = new Date(item.date);
-        const cDt: any = new Date();
-        if (displayDt.toDateString() === cDt.toDateString()) {
-            return item.time;
-        } else {
-            if (displayDt.getFullYear() === cDt.getFullYear()) {
-                var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                return monthNames[displayDt.getMonth()] + ' ' + String(displayDt.getDate()).padStart(2, '0');
-            } else {
-                return String(displayDt.getMonth() + 1).padStart(2, '0') + '/' + String(displayDt.getDate()).padStart(2, '0') + '/' + displayDt.getFullYear();
-            }
-        }
-    };
 
-
-
-    const searchMails = (isResetPage = true) => {
-        if (isResetPage) {
-            pager.currentPage = 1;
-        }
-        let res;
-        if (selectedTab === 'important') {
-            res = mailList?.result.filter((d) => d.labelIds?.includes('IMPORTANT'));
-        } else if (selectedTab === 'star') {
-            res = mailList?.result.filter((d) => d.labelIds?.includes('STAR'));
-        } else if (selectedTab === 'updates') {
-            res = mailList?.result.filter((d) => d.labelIds?.includes('CATEGORY_UPDATES'));
-        } else if (selectedTab === 'forums') {
-            res = mailList?.result.filter((d) => d.labelIds?.includes('CATEGORY_FORUMS'));
-        } else if (selectedTab === 'inbox') {
-            res = mailList?.result.filter((d) => d.labelIds?.includes('INBOX'));
-        }
-
-        let filteredRes = res?.filter(
-            (d) =>
-                (d.title && d.title.toLowerCase().includes(searchText)) ||
-                (d.firstName && d.firstName.toLowerCase().includes(searchText)) ||
-                (d.lastName && d.lastName.toLowerCase().includes(searchText)) ||
-                (d.displayDescription && d.displayDescription.toLowerCase().includes(searchText))
-        );
-
-        setFilteredMailList([
-            ...(res ?? []).filter(
-                (d) =>
-                    (d.title && d.title.toLowerCase().includes(searchText)) ||
-                    (d.firstName && d.firstName.toLowerCase().includes(searchText)) ||
-                    (d.lastName && d.lastName.toLowerCase().includes(searchText)) ||
-                    (d.displayDescription && d.displayDescription.toLowerCase().includes(searchText))
-            ),
-        ]);
-
-        if (filteredRes?.length) {
-            pager.totalPages = pager.pageSize < 1 ? 1 : Math.ceil(filteredRes.length / pager.pageSize);
-            if (pager.currentPage > pager.totalPages) {
-                pager.currentPage = 1;
-            }
-            pager.startIndex = (pager.currentPage - 1) * pager.pageSize;
-            pager.endIndex = Math.min(pager.startIndex + pager.pageSize - 1, filteredRes.length - 1);
-            setPagedMails([...filteredRes.slice(pager.startIndex, pager.endIndex + 1)]);
-        } else {
-            setPagedMails([]);
-            pager.startIndex = -1;
-            pager.endIndex = -1;
-        }
-        clearSelection();
-    };
-
-    const saveMail = (type: any, id: any) => {
-        if (!params.to) {
-            showMessage('To email address is required.', 'error');
-            return false;
-        }
-        if (!params.title) {
-            showMessage('Title of email is required.', 'error');
-            return false;
-        }
-
-        let maxId = 0;
-        if (!params.id) {
-            // maxId = mailList?.result.length ? mailList?.result.reduce((max, character) => (character.id > max ? character.id : max), mailList?.result[0].id) : 0;
-        }
-        let cDt = new Date();
-
-        let obj: any = {
-            id: maxId + 1,
-            path: '',
-            firstName: '',
-            lastName: '',
-            email: params.to,
-            date: cDt.getMonth() + 1 + '/' + cDt.getDate() + '/' + cDt.getFullYear(),
-            time: cDt.toLocaleTimeString(),
-            title: params.title,
-            displayDescription: params.displayDescription,
-            type: 'draft',
-            isImportant: false,
-            group: '',
-            isUnread: false,
-            description: params.description,
-            attachments: null,
-        };
-        if (params.file && params.file.length) {
-            obj.attachments = [];
-            for (let file of params.file) {
-                let flObj = {
-                    name: file.name,
-                    size: getFileSize(file.size),
-                    type: getFileType(file.type),
-                };
-                obj.attachments.push(flObj);
-            }
-        }
-        if (type === 'save' || type === 'save_reply' || type === 'save_forward') {
-            //saved to draft
-            obj.type = 'draft';
-            mailList?.result.splice(0, 0, obj);
-            searchMails();
-            showMessage('Mail has been saved successfully to draft.');
-        } else if (type === 'send' || type === 'reply' || type === 'forward') {
-            //saved to sent mail
-            obj.type = 'sent_mail';
-            mailList?.result.splice(0, 0, obj);
-            searchMails();
-            showMessage('Mail has been sent successfully.');
-        }
-
-        dispatch(setEmail(null));
-
-        setIsEdit(false);
-    };
-
-    const getFileSize = (file_type: any) => {
-        let type = 'file';
-        if (file_type.includes('image/')) {
-            type = 'image';
-        } else if (file_type.includes('application/x-zip')) {
-            type = 'zip';
-        }
-        return type;
-    };
-
-    const getFileType = (total_bytes: number) => {
-        let size = '';
-        if (total_bytes < 1000000) {
-            size = Math.floor(total_bytes / 1000) + 'KB';
-        } else {
-            size = Math.floor(total_bytes / 1000000) + 'MB';
-        }
-        return size;
-    };
-
-    const clearSelection = () => {
-        setIds([]);
-    };
-
-    const tabChanged = (tabType: any) => {
-        setIsEdit(false);
-        setIsShowMailMenu(false);
-        dispatch(setEmail(null));
-    };
-
-    const changeValue = (e: any) => {
-        const { value, id } = e.target;
-        setParams({ ...params, [id]: value });
-    };
-
-    const handleCheckboxChange = (id: any) => {
-        if (ids.includes(id)) {
-            setIds((value: any) => value.filter((d: any) => d !== id));
-        } else {
-            setIds([...ids, id]);
-        }
-    };
-
-    const checkAllCheckbox = () => {
-        if (filteredMailList.length && ids.length === filteredMailList.length) {
-            return true;
-        } else {
-            return false;
-        }
-    };
-
-    const closeMsgPopUp = () => {
-        setIsEdit(false);
-        dispatch(setSelectedTab('inbox'));
-
-        searchMails();
-    };
-
-    const showMessage = (msg = '', type = 'success') => {
-
-        // toast
-    };
-
-    // console.log('orgi mails', mailList?.result);
-
-    // --------------------------------------
-
-    const openMail = (type: string, item: any) => {
-        if (type === 'add') {
-            setIsShowMailMenu(false);
-            setParams(JSON.parse(JSON.stringify(defaultParams)));
-        } else if (type === 'draft') {
-            let data = JSON.parse(JSON.stringify(item));
-            setParams({
-                ...data,
-                from: defaultParams.from,
-                to: data.email,
-                displayDescription: data.email,
-            });
-        } else if (type === 'reply') {
-            let data = JSON.parse(JSON.stringify(item));
-            setParams({
-                ...data,
-                from: defaultParams.from,
-                to: data.email,
-                title: 'Re: ' + data.title,
-                displayDescription: 'Re: ' + data.title,
-            });
-        } else if (type === 'forward') {
-            let data = JSON.parse(JSON.stringify(item));
-            setParams({
-                ...data,
-                from: defaultParams.from,
-                to: data.email,
-                title: 'Fwd: ' + data.title,
-                displayDescription: 'Fwd: ' + data.title,
-            });
-        }
-        setIsEdit(true);
-    };
-
-    function decodeBase64Url(data: any) {
-        const b64 = data.replace(/-/g, '+').replace(/_/g, '/');
-        return decodeURIComponent(escape(window.atob(b64)));
-    }
-
-    function getMessageBody(payload: any) {
-        if (payload.parts && payload.parts.length) {
-            const htmlPart = payload.parts.find(
-                (part: any) => part.mimeType === "text/html"
-            );
-            if (htmlPart && htmlPart.body && htmlPart.body.data) {
-                return decodeBase64Url(htmlPart.body.data);
-            }
-            const textPart = payload.parts.find(
-                (part: any) => part.mimeType === "text/plain"
-            );
-            if (textPart && textPart.body && textPart.body.data) {
-                return decodeBase64Url(textPart.body.data);
-            }
-        }
-        if (payload.body && payload.body.data) {
-            return decodeBase64Url(payload.body.data);
-        }
-        return "";
-    }
 
     return (
-        <div className="relative flex h-full gap-5 sm:h-[calc(100vh_-_150px)]">
 
-            <div className={`overlay absolute z-[5] hidden h-full w-full rounded-md bg-black/60 ${isShowMailMenu ? '!block xl:!hidden' : ''}`} onClick={() => setIsShowMailMenu(!isShowMailMenu)} />
+        <>
+            {
+                isLoading
+                    ? (<EmailListSkeleton />)
+                    : emails.length
+                        ? (
+                            <div className="table-responsive min-h-[400px] grow overflow-y-auto sm:min-h-[300px]">
+                                <table className="table-hover">
+                                    <tbody>
+                                        {emails.map((mail: Email) => {
+                                            return (
+                                                <tr
+                                                    key={mail.id}
+                                                    className="cursor-pointer"
+                                                    onClick={() => {
+                                                        router.push(`/emails/${mail.id}`);
+                                                        dispatch(setEmail(mail));
+                                                    }}>
+                                                    <td>
+                                                        <div className="flex items-center whitespace-nowrap">
+                                                            <div className="ltr:mr-3 rtl:ml-3">
+                                                                {emailIds.includes(mail.id)}
+                                                                <input
+                                                                    type="checkbox"
+                                                                    id={`chk-${mail.id}`}
+                                                                    value={mail.id}
+                                                                    checked={emailIds.length ? emailIds.includes(mail.id) : false}
+                                                                    // onChange={() => handleCheckboxChange(mail.id)}
+                                                                    onClick={(event) => event.stopPropagation()}
+                                                                    className="form-checkbox"
+                                                                />
+                                                            </div>
+                                                            <div className="ltr:mr-3 rtl:ml-3">
+                                                                <Tippy content="Star">
+                                                                    <button
+                                                                        type="button"
+                                                                        className={`flex items-center enabled:hover:text-warning disabled:opacity-60 ${mail.isStarred ? 'text-warning' : ''}`}
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            setStar(mail.id);
+                                                                        }}
+                                                                        disabled={selectedTab === 'trash'}
+                                                                    >
+                                                                        <svg
+                                                                            className={mail.isStarred ? 'fill-warning' : ''}
+                                                                            width="20"
+                                                                            height="20"
+                                                                            viewBox="0 0 24 24"
+                                                                            fill="none"
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                        >
+                                                                            <path
+                                                                                d="M9.15316 5.40838C10.4198 3.13613 11.0531 2 12 2C12.9469 2 13.5802 3.13612 14.8468 5.40837L15.1745 5.99623C15.5345 6.64193 15.7144 6.96479 15.9951 7.17781C16.2757 7.39083 16.6251 7.4699 17.3241 7.62805L17.9605 7.77203C20.4201 8.32856 21.65 8.60682 21.9426 9.54773C22.2352 10.4886 21.3968 11.4691 19.7199 13.4299L19.2861 13.9372C18.8096 14.4944 18.5713 14.773 18.4641 15.1177C18.357 15.4624 18.393 15.8341 18.465 16.5776L18.5306 17.2544C18.7841 19.8706 18.9109 21.1787 18.1449 21.7602C17.3788 22.3417 16.2273 21.8115 13.9243 20.7512L13.3285 20.4768C12.6741 20.1755 12.3469 20.0248 12 20.0248C11.6531 20.0248 11.3259 20.1755 10.6715 20.4768L10.0757 20.7512C7.77268 21.8115 6.62118 22.3417 5.85515 21.7602C5.08912 21.1787 5.21588 19.8706 5.4694 17.2544L5.53498 16.5776C5.60703 15.8341 5.64305 15.4624 5.53586 15.1177C5.42868 14.773 5.19043 14.4944 4.71392 13.9372L4.2801 13.4299C2.60325 11.4691 1.76482 10.4886 2.05742 9.54773C2.35002 8.60682 3.57986 8.32856 6.03954 7.77203L6.67589 7.62805C7.37485 7.4699 7.72433 7.39083 8.00494 7.17781C8.28555 6.96479 8.46553 6.64194 8.82547 5.99623L9.15316 5.40838Z"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="1.5"
+                                                                            />
+                                                                        </svg>
+                                                                    </button>
+                                                                </Tippy>
+                                                            </div>
+                                                            <div className="ltr:mr-3 rtl:ml-3">
+                                                                <Tippy content="Important">
+                                                                    <button
+                                                                        type="button"
+                                                                        className={`flex items-center enabled:hover:text-primary disabled:opacity-60 ${mail.isImportant ? 'text-primary' : ''}`}
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            setImportant(mail.id);
+                                                                        }}
+                                                                        disabled={selectedTab === 'trash'}
+                                                                    >
+                                                                        <svg
+                                                                            className={`rotate-90 ${mail.isImportant ? 'fill-primary' : ''}`}
+                                                                            width="18"
+                                                                            height="18"
+                                                                            viewBox="0 0 24 24"
+                                                                            fill="none"
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                        >
+                                                                            <path
+                                                                                d="M21 16.0909V11.0975C21 6.80891 21 4.6646 19.682 3.3323C18.364 2 16.2426 2 12 2C7.75736 2 5.63604 2 4.31802 3.3323C3 4.6646 3 6.80891 3 11.0975V16.0909C3 19.1875 3 20.7358 3.73411 21.4123C4.08421 21.735 4.52615 21.9377 4.99692 21.9915C5.98402 22.1045 7.13673 21.0849 9.44216 19.0458C10.4612 18.1445 10.9708 17.6938 11.5603 17.5751C11.8506 17.5166 12.1494 17.5166 12.4397 17.5751C13.0292 17.6938 13.5388 18.1445 14.5578 19.0458C16.8633 21.0849 18.016 22.1045 19.0031 21.9915C19.4739 21.9377 19.9158 21.735 20.2659 21.4123C21 20.7358 21 19.1875 21 16.0909Z"
+                                                                                stroke="currentColor"
+                                                                                strokeWidth="1.5"
+                                                                            />
+                                                                        </svg>
+                                                                    </button>
+                                                                </Tippy>
+                                                            </div>
+                                                            <div className={`whitespace-nowrap font-semibold dark:text-gray-300 ${!mail.isUnread ? 'text-gray-500 dark:text-gray-500' : ''}`}>
+                                                                {mail.firstName} {mail.lastName}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div className="min-w-[300px] overflow-hidden font-medium text-white-dark line-clamp-1">
+                                                            <span className={`${mail.isUnread ? 'font-semibold text-gray-800 dark:text-gray-300' : ''}`}>
+                                                                <span>{mail.title}</span> &minus;
+                                                                <span className=''> {truncateText(mail.displayDescription, 100)}</span>
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div className="flex items-center">
+                                                            <div
+                                                                className={`h-2 w-2 rounded-full ${(mail.labelIds.includes('IMPORTANT') && 'bg-danger') ||
+                                                                    (mail.labelIds.includes('INBOX') && 'bg-primary') ||
+                                                                    (mail.labelIds.includes('CATEGORY_UPDATES') && 'bg-success') ||
+                                                                    (mail.labelIds.includes('CATEGORY_FORUMS') && 'bg-warning')
+                                                                    }`}
+                                                            />
+                                                            {mail.attachments.length > 0 && (
+                                                                <div className="ltr:ml-4 rtl:mr-4">
+                                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                        <path
+                                                                            d="M7.9175 17.8068L15.8084 10.2535C16.7558 9.34668 16.7558 7.87637 15.8084 6.96951M3 10.0346L9.40419 3.90441C12.0569 1.3652 16.3578 1.3652 19.0105 3.90441"
+                                                                            stroke="currentColor"
+                                                                            strokeWidth="1.5"
+                                                                            strokeLinecap="round"
+                                                                        />
+                                                                        <path
+                                                                            opacity="0.5"
+                                                                            d="M19.0105 13.0996L19.5291 13.6414L19.0105 13.0996ZM11.0624 20.7076L10.5438 20.1658L11.0624 20.7076ZM4.54388 14.4679L5.0625 15.0097L4.54388 14.4679ZM12.3776 6.9694L11.859 6.4276L12.3776 6.9694ZM19.5291 3.3625C19.2299 3.07608 18.7551 3.08646 18.4687 3.38568C18.1823 3.68491 18.1927 4.15967 18.4919 4.44609L19.5291 3.3625ZM18.4919 12.5578L10.5438 20.1658L11.581 21.2494L19.5291 13.6414L18.4919 12.5578ZM5.0625 15.0097L12.8962 7.51119L11.859 6.4276L4.02527 13.9262L5.0625 15.0097ZM16.327 6.4276C15.0896 5.24313 13.0964 5.24313 11.859 6.4276L12.8962 7.51119C13.5536 6.88194 14.6324 6.88194 15.2898 7.51119L16.327 6.4276ZM5.0625 20.1658C3.57096 18.7381 3.57096 16.4375 5.0625 15.0097L4.02527 13.9262C1.91671 15.9445 1.91671 19.2311 4.02527 21.2494L5.0625 20.1658ZM10.5438 20.1658C9.03379 21.6112 6.57253 21.6112 5.0625 20.1658L4.02527 21.2494C6.11533 23.25 9.49098 23.25 11.581 21.2494L10.5438 20.1658ZM18.4919 4.44609C20.8361 6.68999 20.8361 10.3139 18.4919 12.5578L19.5291 13.6414C22.4903 10.8069 22.4903 6.19703 19.5291 3.3625L18.4919 4.44609Z"
+                                                                            fill="currentColor"
+                                                                        />
+                                                                    </svg>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                    <td className="whitespace-nowrap font-medium ltr:text-right rtl:text-left">{formatDate(mail.date)}</td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )
+                        : (
+                            <div className="grid h-full min-h-[300px] place-content-center text-lg font-semibold">No data available</div >
+                        )
 
-            {/* Sidebar */}
-            <EmailSidebar
-                isShowMailMenu={isShowMailMenu}
-                setIsShowMailMenu={setIsShowMailMenu}
-                tabChanged={tabChanged}
-                openMail={openMail}
-            />
-
-            <div className="panel h-full flex-1 overflow-x-hidden p-0">
-                {!selectedEmail && !isEdit && (
-                    <div className="flex h-full flex-col">
-
-                        {/* Header */}
-                        <EmailHeader
-                            checkAllCheckbox={checkAllCheckbox}
-                            ids={ids}
-                            setIds={setIds}
-                            filteredMailList={filteredMailList}
-                            refreshMails={refreshMails}
-                            setArchive={setArchive}
-                            setSpam={setSpam}
-                            setAction={setAction}
-                            setIsShowMailMenu={setIsShowMailMenu}
-                            isShowMailMenu={isShowMailMenu}
-                        />
-
-                        <div className="h-px border-b border-white-light dark:border-[#1b2e4b]" />
-
-                        {/* Sub Header */}
-                        <EmailSubHeader
-                            tabChanged={tabChanged}
-                            pager={pager}
-                            searchMails={searchMails}
-                            filteredMailList={filteredMailList}
-                        />
-
-                        <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
-
-                        {
-                            isLoading ? <EmailListSkeleton /> : <EmailList
-                                pagedMails={filteredMailList}
-                                ids={ids}
-                                selectMail={selectMail}
-                                handleCheckboxChange={handleCheckboxChange}
-                                setStar={setStar}
-                                setImportant={setImportant}
-                                showTime={showTime}
-                            />
-                        }
-
-                    </div>
-                )}
-
-                {selectedEmail && !isEdit && (
-                    <EmailRead
-                        setStar={setStar}
-                        setImportant={setImportant}
-                        openMail={openMail}
-                        getMessageBody={getMessageBody}
-                    />
-                )}
-
-                {isEdit && (
-                    <EmailEdit
-                        params={params}
-                        setParams={setParams}
-                        setIsShowMailMenu={setIsShowMailMenu}
-                        isShowMailMenu={isShowMailMenu}
-                        closeMsgPopUp={closeMsgPopUp}
-                        saveMail={saveMail}
-                        changeValue={changeValue}
-                    />
-                )}
-            </div>
-        </div>
+            }
+        </>
     )
 }

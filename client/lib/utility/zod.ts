@@ -139,3 +139,20 @@ export const ticketCommentSchema = z.object({
     ticketId: z.string().min(1, "Ticket ID is required"),
     comment: z.string().min(10, "Comment is required, please provide a detailed explanation."),
 });
+
+/* -------------------- Email Schema -------------------- */
+export const sendEmailSchema = z.object({
+    to: z.email("Recipient email is required and must be valid"),
+    subject: z.string().min(1, "Subject is required"),
+    textBody: z.string().optional(),
+    htmlBody: z.string().optional(),
+    cc: z.email("CC must be a valid email address").optional(),
+    bcc: z.email("BCC must be a valid email address").optional(),
+    attachments: z.array(
+        z.object({
+            filename: z.string().min(1, "Filename is required"),
+            content: z.string().min(1, "Attachment content is required"),
+            contentType: z.string().min(1, "Content type is required"),
+        })
+    ).optional(),
+});

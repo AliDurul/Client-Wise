@@ -292,7 +292,7 @@ export interface Email {
   };
 }
 
-export interface SendEmailRequest {
+export interface ISendEmail {
   to: string;
   subject: string;
   textBody?: string;

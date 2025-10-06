@@ -1,5 +1,9 @@
 'use client';
 
+import InputBox from '@/components/shared/InputBox';
+import { sendEmail } from '@/lib/features/email/emailActions';
+import { useActionState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new//dist/quill.snow.css';
 
@@ -16,6 +20,17 @@ interface EmailEditProps {
 
 export default function EmailEdit({ params, setIsShowMailMenu, isShowMailMenu, closeMsgPopUp, saveMail, changeValue, setParams }: EmailEditProps) {
 
+    const [state, action, isPending] = useActionState(sendEmail, null);
+
+    useEffect(() => {
+        if (!state) return;
+        console.log('State:', state);
+        if (state?.success) {
+            toast.success(state?.message || 'Operation completed successfully');
+        } else {
+            toast.error(state?.message || 'Operation failed');
+        }
+    }, [state]);
 
     return (
         <div className="relative">
@@ -30,27 +45,37 @@ export default function EmailEdit({ params, setIsShowMailMenu, isShowMailMenu, c
                 <h4 className="text-lg font-medium text-gray-600 dark:text-gray-400">Message</h4>
             </div>
             <div className="h-px bg-gradient-to-l from-indigo-900/20 via-black to-indigo-900/20 opacity-[0.1] dark:via-white" />
-            <form className="grid gap-6 p-6">
-                <div>
-                    <input
-                        id="to"
-                        type="text"
-                        className="form-input"
-                        placeholder="Enter To"
-                        defaultValue={params.to}
-                        onChange={(e) => {
-                            changeValue(e);
-                        }}
-                    />
-                </div>
+            <form className="grid gap-6 p-6" action={action}>
 
-                <div>
-                    <input id="cc" type="text" className="form-input" placeholder="Enter Cc" defaultValue={params.cc} onChange={(e) => changeValue(e)} />
-                </div>
+                <InputBox
+                    type='text'
+                    id='to'
+                    name='to'
+                    className="form-input"
+                    placeholder="Enter To"
+                    value={state?.inputs?.to}
+                    errors={state?.errors?.to}
+                />
 
-                <div>
-                    <input id="title" type="text" className="form-input" placeholder="Enter Subject" defaultValue={params.title} onChange={(e) => changeValue(e)} />
-                </div>
+                <InputBox
+                    type='text'
+                    id='cc'
+                    name='cc'
+                    className="form-input"
+                    placeholder="Enter Cc"
+                    value={state?.inputs?.cc}
+                    errors={state?.errors?.cc}
+                />
+
+                <InputBox
+                    type='text'
+                    id='subject'
+                    name='subject'
+                    className="form-input"
+                    placeholder="Enter Subject"
+                    value={state?.inputs?.subject}
+                    errors={state?.errors?.subject}
+                />
 
                 <div className="h-fit">
                     <ReactQuill
@@ -58,6 +83,8 @@ export default function EmailEdit({ params, setIsShowMailMenu, isShowMailMenu, c
                         value={params.description || ''}
                         defaultValue={params.description || ''}
                         onChange={(content, delta, source, editor) => {
+                            console.log(content);
+                            console.log(editor.getText());
                             params.description = content;
                             params.displayDescription = editor.getText();
                             setParams({
@@ -66,26 +93,37 @@ export default function EmailEdit({ params, setIsShowMailMenu, isShowMailMenu, c
                         }}
                         style={{ minHeight: '200px' }}
                     />
+                    <input
+                        type="hidden"
+                        name="htmlBody"
+                        value={params.description || ''}
+                    />
+                    <input
+                        type="hidden"
+                        name="textBody"
+                        value={params.displayDescription || ''}
+                    />
                 </div>
 
                 <div>
-                    <input
+                    {/* <input
+                        name='attachments'
                         type="file"
                         className="form-input p-0 file:border-0 file:bg-primary/90 file:py-2 file:px-4 file:font-semibold file:text-white file:hover:bg-primary ltr:file:mr-5 rtl:file:ml-5"
                         multiple
                         accept="image/*,.zip,.pdf,.xls,.xlsx,.txt.doc,.docx"
                         required
-                    />
+                    /> */}
                 </div>
                 <div className="mt-8 flex items-center ltr:ml-auto rtl:mr-auto">
-                    <button type="button" className="btn btn-outline-danger ltr:mr-3 rtl:ml-3" onClick={closeMsgPopUp}>
+                    {/* <button type="button" className="btn btn-outline-danger ltr:mr-3 rtl:ml-3" onClick={closeMsgPopUp}>
                         Close
                     </button>
                     <button type="button" className="btn btn-success ltr:mr-3 rtl:ml-3" onClick={() => saveMail('save', null)}>
                         Save
-                    </button>
-                    <button type="button" className="btn btn-primary" onClick={() => saveMail('send', params.id)}>
-                        Send
+                    </button> */}
+                    <button type="submit" className="btn btn-primary" disabled={isPending} >
+                        {isPending ? 'Sending...' : 'Send'}
                     </button>
                 </div>
             </form>
