@@ -1,8 +1,6 @@
 'use client';
 import React from 'react'
 import useSWR from 'swr';
-import { getAllData } from '@/lib/features/shared/actionUtils';
-import toast from 'react-hot-toast';
 // import EmailEdit from '@/components/dashboard/email/EmailEdit';
 import { Email } from '@/types';
 import { EmailListSkeleton } from '@/components/dashboard/email/EmailSkeletons';

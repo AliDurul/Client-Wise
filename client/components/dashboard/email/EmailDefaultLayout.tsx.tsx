@@ -36,7 +36,7 @@ export default function EmailDefaultLayout({ children }: PropsWithChildren) {
                 dispatch(setEmails(data?.result?.filter((d) => d.labelIds?.includes('INBOX')) || []));
             },
             revalidateOnFocus: false,
-            dedupingInterval: 2000, 
+            dedupingInterval: 2000,
         }
     );
 
@@ -422,7 +422,17 @@ export default function EmailDefaultLayout({ children }: PropsWithChildren) {
     };
 
 
-
+    //  {isEdit && (
+    //                     <EmailEdit
+    //                         params={params}
+    //                         setParams={setParams}
+    //                         setIsShowMailMenu={setIsShowMailMenu}
+    //                         isShowMailMenu={isShowMailMenu}
+    //                         closeMsgPopUp={closeMsgPopUp}
+    //                         saveMail={saveMail}
+    //                         changeValue={changeValue}
+    //                     />
+    //                 )}
 
 
 

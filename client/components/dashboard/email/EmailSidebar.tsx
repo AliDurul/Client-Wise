@@ -3,12 +3,14 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { selectedEmailTab, selectIsEdit, selectIsShowMailMenu, setEdit, setEmail, setSelectedTab, setShowMailMenu } from '@/lib/features/email/emailSlice';
+import { useRouter } from 'next/navigation';
 
 
 export default function EmailSidebar() {
 
 
     const dispatch = useAppDispatch();
+    const router = useRouter();
     const selectedTab = useAppSelector(selectedEmailTab);
     const isShowMailMenu = useAppSelector(selectIsShowMailMenu)
     const isEdit = useAppSelector(selectIsEdit);
@@ -29,8 +31,9 @@ export default function EmailSidebar() {
                     <button
                         className="btn btn-primary w-full"
                         type="button"
-                    // onClick={() => openMail('add', null)}
-                    >
+                        // onClick={() => openMail('add', null)}
+                        onClick={() => router.push('/emails/action')}
+                        >
                         New Message
                     </button>
                 </div>

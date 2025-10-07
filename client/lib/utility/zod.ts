@@ -146,7 +146,8 @@ export const sendEmailSchema = z.object({
     subject: z.string().min(1, "Subject is required"),
     textBody: z.string().optional(),
     htmlBody: z.string().optional(),
-    cc: z.email("CC must be a valid email address").optional(),
+    // cc: z.email("CC must be a valid email address").optional(),
+    cc: z.union([z.email("CC must be a valid email address"), z.literal('')]).optional(),
     bcc: z.email("BCC must be a valid email address").optional(),
     attachments: z.array(
         z.object({

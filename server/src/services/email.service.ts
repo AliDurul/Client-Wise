@@ -97,7 +97,10 @@ export async function sendEmailService(emailData: ISendEmailService) {
     const gmail = google.gmail({ version: 'v1', auth });
 
     // Generate unique boundary for MIME multipart
-    const boundary = `----CMS_Email_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    const hasAttachments = !!emailData.attachments?.length;
+    const mixedBoundary = `----CMS_MIXED_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    const altBoundary = `----CMS_ALT_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 
     // Build email headers (filter out empty optional headers)
     const headers = [
@@ -106,59 +109,79 @@ export async function sendEmailService(emailData: ISendEmailService) {
         emailData.bcc && `Bcc: ${emailData.bcc}`,
         `Subject: ${emailData.subject}`,
         'MIME-Version: 1.0',
-        `Content-Type: multipart/mixed; boundary="${boundary}"`
-    ].filter(Boolean); // Remove falsy values (undefined, empty strings)
+        hasAttachments
+            ? `Content-Type: multipart/mixed; boundary="${mixedBoundary}"`
+            : `Content-Type: multipart/alternative; boundary="${altBoundary}"`
+    ].filter(Boolean as any) as string[];
 
-    // Build email body parts
-    const bodyParts: string[] = [];
-
-    // Add text content if provided
+     // Build the alternative part (HTML preferred; text as fallback)
+    const altParts: string[] = [];
     if (emailData.textBody) {
-        bodyParts.push(
-            `--${boundary}`,
-            'Content-Type: text/plain; charset=utf-8',
+        altParts.push(
+            `--${altBoundary}`,
+            'Content-Type: text/plain; charset=UTF-8',
             'Content-Transfer-Encoding: 7bit',
             '',
             emailData.textBody
         );
     }
-
-    // Add HTML content if provided
     if (emailData.htmlBody) {
-        bodyParts.push(
-            `--${boundary}`,
-            'Content-Type: text/html; charset=utf-8',
+        altParts.push(
+            `--${altBoundary}`,
+            'Content-Type: text/html; charset=UTF-8',
             'Content-Transfer-Encoding: 7bit',
             '',
             emailData.htmlBody
         );
     }
 
-    // Add attachments if provided
-    if (emailData.attachments?.length) {
-        for (const attachment of emailData.attachments) {
+    // Ensure there is at least one body part
+    if (altParts.length === 0) {
+        altParts.push(
+            `--${altBoundary}`,
+            'Content-Type: text/plain; charset=UTF-8',
+            'Content-Transfer-Encoding: 7bit',
+            '',
+            '(no content)'
+        );
+    }
+    altParts.push(`--${altBoundary}--`);
+
+    const bodyParts: string[] = [];
+
+    if (hasAttachments) {
+        // Mixed container with an inner alternative part
+        bodyParts.push(
+            `--${mixedBoundary}`,
+            `Content-Type: multipart/alternative; boundary="${altBoundary}"`,
+            '',
+            ...altParts,
+            ''
+        );
+
+        for (const attachment of emailData.attachments!) {
             bodyParts.push(
-                `--${boundary}`,
+                `--${mixedBoundary}`,
                 `Content-Type: ${attachment.contentType}`,
                 `Content-Disposition: attachment; filename="${attachment.filename}"`,
                 'Content-Transfer-Encoding: base64',
                 '',
-                attachment.content
+                attachment.content,
+                ''
             );
         }
+        bodyParts.push(`--${mixedBoundary}--`);
+    } else {
+        // Only the alternative part at the top level
+        bodyParts.push(...altParts);
     }
 
-    // Close the multipart message
-    bodyParts.push(`--${boundary}--`);
-
-    // Combine headers and body with proper spacing
     const completeEmail = [
         ...headers,
-        '', // Blank line separating headers from body (RFC requirement)
+        '',
         ...bodyParts
-    ].join('\n');
+    ].join('\r\n');
 
-    // Encode for Gmail API (base64url encoding)
     const encodedEmail = Buffer.from(completeEmail)
         .toString('base64')
         .replace(/\+/g, '-')
@@ -176,7 +199,7 @@ export async function sendEmailService(emailData: ISendEmailService) {
             threadId: res.data.threadId!,
             success: true
         };
-    } catch (error) {
+    } catch {
         throw new CustomError('Failed to send email via Gmail API', 500, true);
     }
 }

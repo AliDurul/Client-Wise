@@ -39,7 +39,6 @@ export const modifyEmail = async (url: string, { arg }: { arg: modifyEmailProps 
 
 export const sendEmail = async (_: unknown, payload: FormData) => {
 
-    console.log('Payload:', Object.fromEntries(payload));
 
     const rowData = { ...Object.fromEntries(payload) };
 
