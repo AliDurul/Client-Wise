@@ -4,15 +4,45 @@ import { modifyMessage } from '../utils/functions';
 import { CustomError } from '../utils/common';
 import { sendEmailSchema } from '../utils/validationSchemas';
 
-
 export async function getEmails(req: Request, res: Response) {
 
+    const {
+        page = '1',
+        limit = '20',
+        labelIds,
+        q,
+        includeSpamTrash = 'false'
+    } = req.query;
 
-    const result = await getEmailsService();
+    // Parse and validate query parameters
+    const queryParams = {
+        page: parseInt(page as string, 10),
+        limit: parseInt(limit as string, 10),
+        labelIds: labelIds ? (labelIds as string).split(',').filter(Boolean) : undefined,
+        q: q as string,
+        includeSpamTrash: includeSpamTrash === 'true'
+    };
 
-    const transformed = result.map(modifyMessage);
+    console.log('qeuryParams', queryParams);
 
-    res.status(200).send({ success: true, result: transformed });
+    // Validate pagination parameters
+    if (isNaN(queryParams.page) || queryParams.page < 1) {
+        throw new CustomError('Invalid page number', 400, true);
+    }
+
+    if (isNaN(queryParams.limit) || queryParams.limit < 1 || queryParams.limit > 50) {
+        throw new CustomError('Invalid limit. Must be between 1 and 50', 400, true);
+    }
+
+    const result = await getEmailsService(queryParams);
+
+    const transformed = result.emails.map(modifyMessage);
+
+    res.status(200).send({
+        success: true,
+        result: transformed,
+        details: result.pagination
+    });
 }
 
 
@@ -39,7 +69,7 @@ export const getEmailById = async (req: Request, res: Response) => {
 export const sendEmail = async (req: Request, res: Response) => {
     // Validate request body
     const validation = sendEmailSchema.safeParse(req.body);
-    
+
     if (!validation.success)
         throw new CustomError(validation.error.errors.map(e => e.message).join(', '), 400, true);
 

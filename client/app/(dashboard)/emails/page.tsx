@@ -5,25 +5,27 @@ import useSWR from 'swr';
 import { Email } from '@/types';
 import { EmailListSkeleton } from '@/components/dashboard/email/EmailSkeletons';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { selectedEmailTab, selectEmailIds, selectEmails, setEmail, setEmails } from '@/lib/features/email/emailSlice';
+import { selectEmailIds, selectFilteredEmails, setEmail } from '@/lib/features/email/emailSlice';
 import dynamic from 'next/dynamic';
 import Tippy from '@tippyjs/react';
 import { formatDate, truncateText } from '@/lib/utility/functions';
 import { useRouter } from 'next/navigation';
+import { useUrlParams } from '@/hooks/useUrlParams';
 const EmailEdit = dynamic(() => import('@/components/dashboard/email/EmailEdit'), {
     ssr: false
 });
 
 export default function page() {
 
-    const dispatch = useAppDispatch();
-    const emails = useAppSelector(selectEmails);
-    const selectedTab = useAppSelector(selectedEmailTab);
-    const emailIds = useAppSelector(selectEmailIds);
     const router = useRouter();
+    const dispatch = useAppDispatch();
+    const filteredEmails = useAppSelector(selectFilteredEmails);
+    const emailIds = useAppSelector(selectEmailIds);
+    const { getParam } = useUrlParams()
+    const selectedTab = getParam('tab', 'INBOX');
 
     // api call
-    const { isLoading } = useSWR('emails', null);
+    const { isLoading, isValidating } = useSWR(`emails/${selectedTab}`, null);
 
 
     // functions
@@ -54,14 +56,14 @@ export default function page() {
 
         <>
             {
-                isLoading
+                isLoading || isValidating
                     ? (<EmailListSkeleton />)
-                    : emails.length
+                    : filteredEmails.length
                         ? (
                             <div className="table-responsive min-h-[400px] grow overflow-y-auto sm:min-h-[300px]">
                                 <table className="table-hover">
                                     <tbody>
-                                        {emails.map((mail: Email) => {
+                                        {filteredEmails.map((mail: Email) => {
                                             return (
                                                 <tr
                                                     key={mail.id}

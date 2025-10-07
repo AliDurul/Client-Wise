@@ -12,7 +12,7 @@ interface EmailHeaderProps {
     ids?: any;
     setIds?: any;
     filteredMailList?: any;
-    selectedTab?: string;
+    selectedTab: string;
     refreshMails?: any;
     setArchive?: any;
     setSpam?: any;
@@ -21,11 +21,10 @@ interface EmailHeaderProps {
 
 }
 
-export default function EmailHeader({ checkAllCheckbox, ids, setIds, filteredMailList, selectedTab, refreshMails, setArchive, setSpam, setAction, isShowMailMenu}: EmailHeaderProps) {
+export default function EmailHeader({ checkAllCheckbox, ids, setIds, filteredMailList, selectedTab, refreshMails, setArchive, setSpam, setAction, isShowMailMenu }: EmailHeaderProps) {
 
     const dispatch = useAppDispatch();
-    const { isValidating } = useSWR('emails');
-
+    const { isValidating, isLoading } = useSWR(`emails/${selectedTab}`);
 
     return (
         <div className="flex flex-wrap-reverse items-center justify-between gap-4 p-4">
@@ -53,7 +52,7 @@ export default function EmailHeader({ checkAllCheckbox, ids, setIds, filteredMai
                 <div className="ltr:mr-4 rtl:ml-4">
                     <Tippy content="Refresh">
                         {
-                            isValidating
+                            isValidating || isLoading
                                 ? (<div className="animate-spin rounded-full size-5 border-b-2 border-primary" />)
                                 : (
                                     <button type="button" className="flex items-center hover:text-primary" onClick={() => refreshMails()}>

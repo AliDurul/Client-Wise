@@ -5,18 +5,16 @@ import { sharedInitialState } from "../shared/sliceUtils";
 
 
 export interface EmailSliceState {
-    emails: Email[];
+    filteredEmails: Email[];
     email: Email | null;
-    selectedEmailTab: string;
     isShowMailMenu: boolean;
     isEdit: boolean;
     emailsIds: string[];
 }
 
 const initialState: EmailSliceState = {
-    emails: [],
+    filteredEmails: [],
     email: null,
-    selectedEmailTab: 'inbox',
     isShowMailMenu: false,
     isEdit: false,
     emailsIds: [],
@@ -31,18 +29,15 @@ export const emailSlice = createAppSlice({
             state.email = action.payload;
         }),
 
-        setEmails: reducer((state, action: PayloadAction<Email[]>) => {
-            state.emails = action.payload;
+        setFilteredEmails: reducer((state, action: PayloadAction<Email[]>) => {
+            state.filteredEmails = action.payload;
         }),
 
         setEmailIds: reducer((state, action: PayloadAction<string[]>) => {
             state.emailsIds = action.payload;
         }),
 
-        // UI state management
-        setSelectedTab: reducer((state, action: PayloadAction<string>) => {
-            state.selectedEmailTab = action.payload;
-        }),
+
 
         setEdit: reducer((state, action: PayloadAction<boolean>) => {
             state.isEdit = action.payload;
@@ -54,9 +49,8 @@ export const emailSlice = createAppSlice({
 
     }),
     selectors: {
-        selectEmails: (email) => email.emails,
+        selectFilteredEmails: (email) => email.filteredEmails,
         selectEmail: (email) => email.email,
-        selectedEmailTab: (email) => email.selectedEmailTab,
         selectIsShowMailMenu: (email) => email.isShowMailMenu,
         selectIsEdit: (email) => email.isEdit,
         selectEmailIds: (email) => email.emailsIds,
@@ -65,17 +59,15 @@ export const emailSlice = createAppSlice({
 
 export const {
     setEmail,
-    setSelectedTab,
     setShowMailMenu,
     setEdit,
-    setEmails,
+    setFilteredEmails,
     setEmailIds,
 } = emailSlice.actions;
 
 export const {
-    selectEmails,
+    selectFilteredEmails,
     selectEmail,
-    selectedEmailTab,
     selectIsShowMailMenu,
     selectIsEdit,
     selectEmailIds,

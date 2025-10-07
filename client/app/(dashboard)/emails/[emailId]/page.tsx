@@ -1,7 +1,7 @@
 'use client';
 import Dropdown from '@/components/layout/Dropdown';
+import { useUrlParams } from '@/hooks/useUrlParams';
 import { modifyEmail } from '@/lib/features/email/emailActions';
-import { selectedEmailTab } from '@/lib/features/email/emailSlice';
 import { getData } from '@/lib/features/shared/actionUtils';
 import { useAppSelector } from '@/lib/hooks';
 import { Email } from '@/types';
@@ -16,10 +16,10 @@ export default function page({ params }: { params: Promise<{ emailId: string }> 
 
     const { emailId } = use(params);
     const router = useRouter();
-    const selectedTab = useAppSelector(selectedEmailTab);
+    const { getParam } = useUrlParams()
+    const selectedTab = getParam('tab', 'INBOX');
 
-
-    const { trigger } = useSWRMutation(`emails`, modifyEmail, {
+    const { trigger } = useSWRMutation(`emails/${selectedTab}`, modifyEmail, {
         onError: (error, key, config) => {
             console.error('Error modifying email:', error);
         },
@@ -94,7 +94,8 @@ export default function page({ params }: { params: Promise<{ emailId: string }> 
                                         type="button"
                                         className="hover:text-primary ltr:mr-2 rtl:ml-2"
                                         onClick={() => {
-                                            router.push('/emails');
+                                            // router.push('/emails');
+                                            router.back();
                                             // dispatch(setEmail(null))
                                         }}
                                     >

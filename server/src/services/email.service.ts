@@ -2,25 +2,113 @@ import { google } from 'googleapis';
 import { authorize } from '../configs/googleApiAuth';
 import { CustomError } from '../utils/common';
 
+interface IGetEmailsQuery {
+    page?: number;
+    limit?: number;
+    labelIds?: string[];
+    q?: string; // Search query
+    includeSpamTrash?: boolean;
+}
 
-export async function getEmailsService() {
+export async function getEmailsService(queryParams: IGetEmailsQuery = {}) {
     const auth = await authorize();
 
     if (!auth) throw new CustomError('Authentication failed', 401, true);
 
     const gmail = google.gmail({ version: 'v1', auth });
 
-    const res = await gmail.users.messages.list({ userId: 'me', maxResults: 10 });
-    const messages = res.data.messages || [];
+    // Set default pagination values
+    const page = Math.max(1, queryParams.page || 1);
+    const limit = Math.min(50, Math.max(1, queryParams.limit || 20));
 
+    const gmailParams: any = {
+        userId: 'me',
+        maxResults: limit,
+        includeSpamTrash: queryParams.includeSpamTrash || false
+    };
+
+    // Add search query if provided
+    if (queryParams.q) {
+        gmailParams.q = queryParams.q;
+    }
+
+    // Add label filtering
+    if (queryParams.labelIds?.length) {
+        const labelQuery = queryParams.labelIds.map(label => `label:${label}`).join(' ');
+        gmailParams.q = gmailParams.q ? `${gmailParams.q} ${labelQuery}` : labelQuery;
+    }
+
+    // Get first page to establish total count
+    const initialRes = await gmail.users.messages.list(gmailParams);
+    const totalMessages = initialRes.data.resultSizeEstimate || 0;
+    const messages = initialRes.data.messages || [];
+
+    // Handle pagination with pageToken for subsequent pages
+    let currentMessages = messages;
+    let pageToken = initialRes.data.nextPageToken;
+
+
+    // Skip pages if not first page
+    if (page > 1) {
+        let currentPage = 1;
+        let tempPageToken = pageToken;
+
+        while (currentPage < page && tempPageToken) {
+            const pageRes = await gmail.users.messages.list({
+                ...gmailParams,
+                pageToken: tempPageToken
+            });
+
+            if (currentPage === page - 1) {
+                currentMessages = pageRes.data.messages || [];
+                pageToken = pageRes.data.nextPageToken;
+                break;
+            }
+
+            tempPageToken = pageRes.data.nextPageToken;
+            currentPage++;
+        }
+
+        // If we've gone past available pages
+        if (currentPage < page) {
+            currentMessages = [];
+            pageToken = undefined;
+        }
+    }
+
+    // Fetch full message details
     const fullMessages = await Promise.all(
-        messages.map(async (msg) => {
-            const msgRes = await gmail.users.messages.get({ userId: 'me', id: msg.id! });
+        currentMessages.map(async (msg) => {
+            const msgRes = await gmail.users.messages.get({
+                userId: 'me',
+                id: msg.id!,
+                format: 'full' // Get full message details
+            });
             return msgRes.data;
         })
     );
 
-    return fullMessages;
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(totalMessages / limit);
+    const hasNextPage = !!pageToken && page < totalPages;
+    const hasPrevPage = page > 1;
+
+    return {
+        emails: fullMessages,
+        pagination: {
+            limit,
+            page,
+            totalRecords: totalMessages,
+            pages: {
+                previous: hasPrevPage ? page - 1 : false,
+                current: page,
+                next: hasNextPage ? page + 1 : false,
+                total: totalPages,
+                nextPageToken: pageToken
+            },
+        }
+    };
+
 };
 
 export async function modifyEmailService(emailId: string, { read, starred, important }: { read?: boolean, starred?: boolean, important?: boolean }) {
@@ -114,7 +202,7 @@ export async function sendEmailService(emailData: ISendEmailService) {
             : `Content-Type: multipart/alternative; boundary="${altBoundary}"`
     ].filter(Boolean as any) as string[];
 
-     // Build the alternative part (HTML preferred; text as fallback)
+    // Build the alternative part (HTML preferred; text as fallback)
     const altParts: string[] = [];
     if (emailData.textBody) {
         altParts.push(

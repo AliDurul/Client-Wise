@@ -2,27 +2,24 @@
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { selectedEmailTab, selectIsEdit, selectIsShowMailMenu, setEdit, setEmail, setSelectedTab, setShowMailMenu } from '@/lib/features/email/emailSlice';
+import { selectIsEdit, selectIsShowMailMenu, setEdit, setEmail, setShowMailMenu } from '@/lib/features/email/emailSlice';
 import { useRouter } from 'next/navigation';
+import { useUrlParams } from '@/hooks/useUrlParams';
 
 
-export default function EmailSidebar() {
+export default function EmailSidebar({ tabChanged }: { tabChanged: (tabType: string) => void }) {
 
 
-    const dispatch = useAppDispatch();
     const router = useRouter();
-    const selectedTab = useAppSelector(selectedEmailTab);
+    const dispatch = useAppDispatch();
     const isShowMailMenu = useAppSelector(selectIsShowMailMenu)
     const isEdit = useAppSelector(selectIsEdit);
+    const { updateUrlParams, getParam, hasParam } = useUrlParams()
+    const selectedTab = getParam('tab', 'INBOX');
 
+    
     const mailList: any[] = []
 
-    const tabChanged = (tabType: string) => {
-        dispatch(setSelectedTab(tabType));
-        dispatch(setEdit(false))
-        dispatch(setShowMailMenu(false))
-        dispatch(setEmail(null));
-    };
 
     return (
         <div className={`panel dark:gray-50 absolute z-10 hidden h-full w-[250px] max-w-full flex-none space-y-3 overflow-hidden p-4 ltr:rounded-r-none rtl:rounded-l-none xl:relative xl:block xl:h-auto ltr:xl:rounded-r-md rtl:xl:rounded-l-md ${isShowMailMenu ? '!block' : ''}`}>
@@ -33,7 +30,7 @@ export default function EmailSidebar() {
                         type="button"
                         // onClick={() => openMail('add', null)}
                         onClick={() => router.push('/emails/action')}
-                        >
+                    >
                         New Message
                     </button>
                 </div>
@@ -41,10 +38,10 @@ export default function EmailSidebar() {
                     <div className="space-y-1">
                         <button
                             type="button"
-                            className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'inbox' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
+                            className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'INBOX' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
                                 }`}
                             onClick={() => {
-                                tabChanged('inbox');
+                                tabChanged('INBOX');
                             }}
                         >
                             <div className="flex items-center">
@@ -65,17 +62,16 @@ export default function EmailSidebar() {
                                 <div className="ltr:ml-3 rtl:mr-3">Inbox</div>
                             </div>
                             <div className="whitespace-nowrap rounded-md bg-primary-light py-0.5 px-2 font-semibold dark:bg-[#060818]">
-                                {mailList && mailList.filter((d) => d.type === 'inbox').length}
+                                {mailList && mailList.filter((d) => d.type === 'INBOX').length}
                             </div>
                         </button>
 
                         <button
                             type="button"
-                            className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'star' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
+                            className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'STARRED' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
                                 }`}
                             onClick={() => {
-                                dispatch(setSelectedTab('star'));
-                                tabChanged('star');
+                                tabChanged('STARRED');
                             }}
                         >
                             <div className="flex items-center">
@@ -92,11 +88,10 @@ export default function EmailSidebar() {
 
                         <button
                             type="button"
-                            className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'sent_mail' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
+                            className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'SENT' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
                                 }`}
                             onClick={() => {
-                                dispatch(setSelectedTab('sent_mail'));
-                                tabChanged('sent_mail');
+                                tabChanged('SENT');
                             }}
                         >
                             <div className="flex items-center">
@@ -115,11 +110,10 @@ export default function EmailSidebar() {
 
                         <button
                             type="button"
-                            className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'spam' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
+                            className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'SPAM' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
                                 }`}
                             onClick={() => {
-                                dispatch(setSelectedTab('spam'));
-                                tabChanged('spam');
+                                tabChanged('SPAM');
                             }}
                         >
                             <div className="flex items-center">
@@ -139,11 +133,10 @@ export default function EmailSidebar() {
 
                         <button
                             type="button"
-                            className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'draft' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
+                            className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'DRAFT' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
                                 }`}
                             onClick={() => {
-                                dispatch(setSelectedTab('draft'));
-                                tabChanged('draft');
+                                tabChanged('DRAFT');
                             }}
                         >
                             <div className="flex items-center">
@@ -157,17 +150,16 @@ export default function EmailSidebar() {
                                 <div className="ltr:ml-3 rtl:mr-3">Drafts</div>
                             </div>
                             <div className="whitespace-nowrap rounded-md bg-primary-light py-0.5 px-2 font-semibold dark:bg-[#060818]">
-                                {mailList && mailList.filter((d) => d.type === 'draft').length}
+                                {mailList && mailList.filter((d) => d.type === 'DRAFT').length}
                             </div>
                         </button>
 
                         <button
                             type="button"
-                            className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'trash' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
+                            className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'TRASH' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
                                 }`}
                             onClick={() => {
-                                dispatch(setSelectedTab('trash'));
-                                tabChanged('trash');
+                                tabChanged('TRASH');
                             }}
                         >
                             <div className="flex items-center">
@@ -208,11 +200,10 @@ export default function EmailSidebar() {
                                         <li>
                                             <button
                                                 type="button"
-                                                className={`flex h-10 w-full items-center rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'archive' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
+                                                className={`flex h-10 w-full items-center rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'ARCHIVE' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
                                                     }`}
                                                 onClick={() => {
-                                                    dispatch(setSelectedTab('archive'));
-                                                    tabChanged('archive');
+                                                    tabChanged('ARCHIVE');
                                                 }}
                                             >
                                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -240,11 +231,10 @@ export default function EmailSidebar() {
                                         <li>
                                             <button
                                                 type="button"
-                                                className={`flex h-10 w-full items-center rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'important' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
+                                                className={`flex h-10 w-full items-center rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'IMPORTANT' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
                                                     }`}
                                                 onClick={() => {
-                                                    dispatch(setSelectedTab('important'));
-                                                    tabChanged('important');
+                                                    tabChanged('IMPORTANT');
                                                 }}
                                             >
                                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

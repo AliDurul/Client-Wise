@@ -17,7 +17,7 @@ export const modifyEmail = async (url: string, { arg }: { arg: modifyEmailProps 
     try {
         const headers = await authConfig();
 
-        const response = await fetch(`${BASE_URL}${url}/${arg.id}`, {
+        const response = await fetch(`${BASE_URL}emails/${arg.id}`, {
             method: 'PUT',
             headers,
             body: JSON.stringify(arg),
