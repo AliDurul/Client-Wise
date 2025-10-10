@@ -23,8 +23,6 @@ export async function getEmails(req: Request, res: Response) {
         includeSpamTrash: includeSpamTrash === 'true'
     };
 
-    console.log('qeuryParams', queryParams);
-
     // Validate pagination parameters
     if (isNaN(queryParams.page) || queryParams.page < 1) {
         throw new CustomError('Invalid page number', 400, true);

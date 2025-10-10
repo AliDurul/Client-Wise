@@ -55,13 +55,35 @@ export interface Register {
 }
 
 
+/* ---------------------------- USER ---------------------------- */
+export interface User {
+  _id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  role: string;
+  department: string;
+  employee_id: string;
+  status: 'active' | 'inactive' | 'suspended';
+  is_verified: boolean;
+  profile_pic: string;
+  date_joined: string;
+  full_name: string;
+  __v?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+
 /* ---------------------------- TIKCET ---------------------------- */
 export interface Ticket {
   _id: string;
   caller_phone: string;
   assigned_agent: PersonInfo;
-  customer: PersonInfo;
+  customer: PersonInfo | null;
   title: string;
+  source: 'email' | 'phone' | 'whatsapp' | 'other';
   description: string;
   email_id: string | null;
   status: 'pending' | 'active' | 'resolved' | 'cancelled' | 'escalated';

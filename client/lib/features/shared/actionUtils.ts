@@ -128,6 +128,7 @@ export const getAllData = async ({ url, searchQueries, customQuery, filterQuerie
         }
     );
 
+    // console.log(finalUrl);
 
     try {
         const headers = await authConfig();

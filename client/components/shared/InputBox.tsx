@@ -51,7 +51,7 @@ export default function InputBox({ name, type, id, value, placeholder, icon, err
                         defaultValue={defaultValue}
                         id={id}
                         disabled={disabled}
-                        // readOnly={readOnly}
+                        readOnly={readOnly}
                         className={`form-textarea placeholder:text-gray-400  ${className}`}
                         onChange={handleChange}
                     />

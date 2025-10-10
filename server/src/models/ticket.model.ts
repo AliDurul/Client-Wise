@@ -42,7 +42,7 @@ const ticketSchema: Schema<ITicket> = new Schema({
     customer: {
         type: Schema.Types.ObjectId,
         ref: 'Customer',
-        required: true,
+        // required: true,
     },
 
 
@@ -76,7 +76,7 @@ const ticketSchema: Schema<ITicket> = new Schema({
         type: String,
         default: null,
         trim: true,
-    },
+        },
 
     source: {
         type: String,

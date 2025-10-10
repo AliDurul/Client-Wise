@@ -6,7 +6,7 @@ import { flagOp, priorityOp, statusOp } from './TicketConstants';
 import { delData } from '@/lib/features/shared/actionUtils';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { formatDate } from '@/lib/utility/functions';
+import { capitalize, formatDate } from '@/lib/utility/functions';
 import TicketUserSideProfile from './TicketUserSideProfile';
 import Link from 'next/link';
 import { useAppDispatch } from '@/lib/hooks';
@@ -17,6 +17,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 
 
 export default function TicketReview({ ticket }: { ticket: Ticket }) {
+    console.log(ticket);
 
     // hooks
     const dispatch = useAppDispatch();
@@ -96,7 +97,12 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
             {/* Header */}
             <div className=" mb-1 flex flex-col gap-3 lg:flex-row  items-start justify-between  p-5  ">
                 <div className="sm:text-2xl text-sm font-extrabold ">Ticket / <span className='text-sm'>{ticket?._id ?? ''}</span></div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 flex-wrap">
+                    <div className='hidden md:flex'>
+                        <span className='font-bold'>
+                            Source : {capitalize(ticket?.source ?? 'other')}
+                        </span>
+                    </div>
                     <div className="dropdown">
                         <Dropdown
                             offset={[0, -5]}
@@ -345,7 +351,7 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
                                 {
                                     ticket?.email_id && (
                                         <li>
-                                            <Link type="button" href={`/mailbox?emailId=${ticket?.email_id}`}>
+                                            <Link type="button" href={`/emails/${ticket?.email_id}`}>
                                                 Show Email
                                             </Link>
                                         </li>
@@ -449,7 +455,7 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
                 <TicketUserSideProfile
                     sideProfileModal={sideProfileModal}
                     setSideProfileModal={setSideProfileModal}
-                    customerId={ticket?.customer._id}
+                    customerId={ticket?.customer?._id}
                 />
             )}
 

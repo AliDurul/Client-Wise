@@ -2,7 +2,7 @@
 import SearchInput from '@/components/shared/SearchInput';
 import { DeleteIcon, EditIcon, PreviewIcon } from '@/icons';
 import { delMultiCustomer } from '@/lib/features/customer/customerActions'; // TODO: Create proper invoice actions
-import { formatDate, truncateText } from '@/lib/utility/functions';
+import { capitalize, formatDate, truncateText } from '@/lib/utility/functions';
 import { Ticket, Pagination } from '@/types';
 import { DataTable, type DataTableColumn, type DataTableProps } from 'mantine-datatable';
 import Link from 'next/link';
@@ -106,7 +106,17 @@ export default function TicketTable({ tickets }: TicketTableProps) {
             accessor: 'customer.first_name',
             title: 'Customer Name',
             sortable: true,
-            render: ({ customer }) => `${customer?.full_name}`,
+            render: ({ customer }) => {
+                const isExist = customer === undefined || customer === null;
+                if (isExist) return 'N/A';
+                return `${customer?.full_name}`
+
+            },
+        },
+        {
+            accessor: 'source',
+            sortable: true,
+            render: ({ source }) => <span >{capitalize(source)}</span>,
         },
         {
             accessor: 'title',

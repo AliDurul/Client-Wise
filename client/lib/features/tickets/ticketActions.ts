@@ -6,12 +6,18 @@ import { revalidateTag } from "next/cache";
 
 const BASE_URL = process.env.API_BASE_URL + '/';
 
-export const ticketCrUpAction = async (_: unknown, payload: FormData) => {
+export const ticketCrUpAction = async (_: any, payload: FormData) => {
+
+    if (_?.message?.includes('ID already exists.')) {
+        return { success: false, message: 'A ticket with this email ID already exists.' };
+    }
 
     const id = payload.get('_id') as string;
     payload.delete('_id');
 
     const rowData = { ...Object.fromEntries(payload) };
+
+    // console.log('rowData', rowData);
 
     const result = ticketSchema.safeParse(rowData);
 
@@ -60,9 +66,9 @@ export const ticketCommentCrUpAction = async (_: unknown, payload: FormData) => 
     payload.delete('commentId');
 
     const rowData = { ...Object.fromEntries(payload) };
-    
+
     const result = ticketCommentSchema.safeParse(rowData);
-    
+
 
     if (!result.success) {
         const errors = result.error.flatten().fieldErrors;

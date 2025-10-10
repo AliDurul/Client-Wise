@@ -121,7 +121,10 @@ export const ticketEscalateSchema = z.object({
 
 export const ticketSchema = z.object({
     caller_phone: z.string().optional(),
-    customer: z.string().min(1, "Customer is required"),
+    customer: z.string().optional(),
+    assigned_agent: z.string().optional(),
+    email_id: z.string().optional(),
+    source: z.enum(['email', 'phone', 'whatsapp', 'other']).optional(),
     title: z.string().min(1, "Title is required"),
     category: z.string().min(1, "Category is required"),
     status: z.enum(['pending', 'active', 'resolved', 'cancelled', 'escalated']),

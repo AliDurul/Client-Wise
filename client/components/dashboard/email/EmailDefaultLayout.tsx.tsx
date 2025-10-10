@@ -34,13 +34,14 @@ export default function EmailDefaultLayout({ children }: PropsWithChildren) {
     const filteredEmails = useAppSelector(selectFilteredEmails);
     const emailIds = useAppSelector(selectEmailIds);
 
-    const { updateUrlParams, getParam, hasParam } = useUrlParams()
+
+    const { updateUrlParams, getParam } = useUrlParams()
     const selectedTab = getParam('tab', 'INBOX');
     const page = getParam('page', '1');
 
-
-
     // Fetch emails
+    // const { data: emails, mutate } = useSWR(`emails/${selectedTab}`, null);
+
     const { data: emails, mutate } = useSWR<Pagination<Email>>(
         [selectedTab ? `emails/${selectedTab}` : null, page],
         () => getAllData({
@@ -58,15 +59,6 @@ export default function EmailDefaultLayout({ children }: PropsWithChildren) {
             }
         }),
         {
-            onError: (err) => {
-                console.error('Error fetching emails:', err);
-                toast.error(err?.message ?? 'Error fetching emails', { duration: 3000 });
-            },
-            onSuccess: (data) => {
-                // Sync to Redux for local filtering/sorting
-                console.log('data fetched', data);
-                dispatch(setFilteredEmails(data?.result || []));
-            },
             revalidateOnFocus: false,
             dedupingInterval: 2000,
         }
@@ -74,15 +66,6 @@ export default function EmailDefaultLayout({ children }: PropsWithChildren) {
 
     // -----------------------
 
-
-
-    // const [pager] = useState<any>({
-    //     currentPage: 1,
-    //     totalPages: 0,
-    //     pageSize: 10,
-    //     startIndex: 0,
-    //     endIndex: 0,
-    // });
 
     const refreshMails = async () => {
         // setSearchText('');

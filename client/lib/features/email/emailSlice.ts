@@ -10,6 +10,7 @@ export interface EmailSliceState {
     isShowMailMenu: boolean;
     isEdit: boolean;
     emailsIds: string[];
+    assignModal: boolean;
 }
 
 const initialState: EmailSliceState = {
@@ -18,6 +19,7 @@ const initialState: EmailSliceState = {
     isShowMailMenu: false,
     isEdit: false,
     emailsIds: [],
+    assignModal: false,
 };
 
 export const emailSlice = createAppSlice({
@@ -37,7 +39,12 @@ export const emailSlice = createAppSlice({
             state.emailsIds = action.payload;
         }),
 
+        // UI state management
 
+        setAssignModal: reducer((state, action: PayloadAction<{ open: boolean, email: Email | null }>) => {
+            state.assignModal = action.payload.open;
+            state.email = action.payload.email;
+        }),
 
         setEdit: reducer((state, action: PayloadAction<boolean>) => {
             state.isEdit = action.payload;
@@ -54,6 +61,7 @@ export const emailSlice = createAppSlice({
         selectIsShowMailMenu: (email) => email.isShowMailMenu,
         selectIsEdit: (email) => email.isEdit,
         selectEmailIds: (email) => email.emailsIds,
+        selectAssignModal: (email) => email.assignModal,
     }
 });
 
@@ -63,6 +71,7 @@ export const {
     setEdit,
     setFilteredEmails,
     setEmailIds,
+    setAssignModal,
 } = emailSlice.actions;
 
 export const {
@@ -71,4 +80,5 @@ export const {
     selectIsShowMailMenu,
     selectIsEdit,
     selectEmailIds,
+    selectAssignModal,
 } = emailSlice.selectors;

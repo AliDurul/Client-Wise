@@ -35,7 +35,7 @@ export const formatDate = (date: Date | string | number | null | undefined, show
     }
 };
 
-
+// Truncate text function
 export const truncateText = (text: string | undefined, charLimit: number) => {
     if (!text) return '';
     if (text.length <= charLimit) {
@@ -108,3 +108,38 @@ export function removeKeysFromQuery({ params, keysToRemove }: TRemoveUrlQueryPar
     )
 }
 
+// Email body parser
+
+function decodeBase64Url(data: any) {
+    const b64 = data.replace(/-/g, '+').replace(/_/g, '/');
+    return decodeURIComponent(escape(window.atob(b64)));
+}
+
+export function getMessageBody(payload: any, isHtml = true): string {
+    if (payload.parts && payload.parts.length) {
+
+        if (isHtml) {
+            const htmlPart = payload.parts.find(
+                (part: any) => part.mimeType === "text/html"
+            );
+            if (htmlPart && htmlPart.body && htmlPart.body.data) {
+                return decodeBase64Url(htmlPart.body.data);
+            }
+        } else {
+            const textPart = payload.parts.find(
+                (part: any) => part.mimeType === "text/plain"
+            );
+
+            if (textPart && textPart.body && textPart.body.data) {
+                return decodeBase64Url(textPart.body.data);
+            }
+        }
+
+    }
+
+    if (payload.body && payload.body.data) {
+        return decodeBase64Url(payload.body.data);
+    }
+
+    return "";
+}

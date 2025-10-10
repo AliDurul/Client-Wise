@@ -11,7 +11,7 @@ import useSWR from 'swr'
 interface SideProfileProps {
     sideProfileModal: boolean,
     setSideProfileModal: (value: boolean) => void,
-    customerId: string
+    customerId: string | undefined
 }
 
 export default function TicketUserSideProfile({ sideProfileModal, setSideProfileModal, customerId }: SideProfileProps) {
