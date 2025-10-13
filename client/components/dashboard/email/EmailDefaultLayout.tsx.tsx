@@ -1,5 +1,5 @@
 'use client';
-import React, { PropsWithChildren, useEffect, useState } from 'react'
+import React, { PropsWithChildren } from 'react'
 import EmailSidebar from './EmailSidebar'
 import { selectEmail, selectEmailIds, selectFilteredEmails, selectIsEdit, selectIsShowMailMenu, setEdit, setEmail, setEmailIds, setFilteredEmails, setShowMailMenu } from '@/lib/features/email/emailSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
@@ -7,11 +7,8 @@ import EmailHeader from './EmailHeader';
 import EmailSubHeader from './EmailSubHeader';
 import { usePathname } from 'next/navigation';
 
-import { Email, Pagination } from '@/types';
-import { getAllData } from '@/lib/features/shared/actionUtils';
-import toast from 'react-hot-toast';
-import useSWR from 'swr';
 import { useUrlParams } from '@/hooks/useUrlParams';
+import useEmails from '@/hooks/useEmail';
 
 // interface EmailsResponse {
 //     result: Email[];
@@ -34,35 +31,10 @@ export default function EmailDefaultLayout({ children }: PropsWithChildren) {
     const filteredEmails = useAppSelector(selectFilteredEmails);
     const emailIds = useAppSelector(selectEmailIds);
 
-
     const { updateUrlParams, getParam } = useUrlParams()
     const selectedTab = getParam('tab', 'INBOX');
-    const page = getParam('page', '1');
 
-    // Fetch emails
-    // const { data: emails, mutate } = useSWR(`emails/${selectedTab}`, null);
-
-    const { data: emails, mutate } = useSWR<Pagination<Email>>(
-        [selectedTab ? `emails/${selectedTab}` : null, page],
-        () => getAllData({
-            url: 'emails',
-            customQuery: {
-                labelIds: selectedTab
-                    ? selectedTab === 'UPDATES'
-                        ? 'CATEGORY_UPDATES'
-                        : selectedTab === 'FORUMS'
-                            ? 'CATEGORY_FORUMS'
-                            : selectedTab
-                    : 'INBOX',
-                page: page ?? '1',
-
-            }
-        }),
-        {
-            revalidateOnFocus: false,
-            dedupingInterval: 2000,
-        }
-    );
+    const { mutate, emails } = useEmails();
 
     // -----------------------
 
@@ -367,11 +339,11 @@ export default function EmailDefaultLayout({ children }: PropsWithChildren) {
     };
 
     const checkAllCheckbox = () => {
-        if (filteredEmails.length && emailIds.length === filteredEmails.length) {
-            return true;
-        } else {
-            return false;
-        }
+        // if (filteredEmails.length && emailIds.length === filteredEmails.length) {
+        //     return true;
+        // } else {
+        //     return false;
+        // }
     };
 
     const closeMsgPopUp = () => {
@@ -456,9 +428,8 @@ export default function EmailDefaultLayout({ children }: PropsWithChildren) {
                         {/* Sub Header */}
                         <EmailSubHeader
                             tabChanged={tabChanged}
-                            pager={emails?.details}
+                            details={filteredEmails.details}
                             searchMails={searchMails}
-                            filteredMailList={emails?.result || []}
                         />
 
                         <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>

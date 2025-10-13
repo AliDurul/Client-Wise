@@ -3,30 +3,26 @@
 /* Pagination */
 export type Pagination<T> = {
   success: boolean;
-  details: {
-    limit: number;
-    page: number;
-    totalRecords: number;
-    pages: {
-      previous: boolean;
-      current: number;
-      next: number | boolean;
-      total: number;
-    } | false;
-  };
+  details: ResDetails;
   result: T[];
 }
 
-export interface ApiResponse extends Pagination<any> {
-  error?: any;
-}
+export interface ResDetails {
+  limit: number;
+  page: number;
+  totalRecords: number;
+  pages: Pages;
+};
 
-export interface IUseActionInitVal {
-  success: boolean;
-  message: string;
-  // errors?: Record<string, string[]>;
-  // inputs?: Record<string, string>;
-}
+export type Pages = {
+  previous: boolean;
+  current: number;
+  next: number | boolean;
+  total: number;
+  nextPageToken?: string | null;
+  previousPageToken?: string | null;
+} | null;
+
 
 export type PageSearchParams = { searchParams: Promise<{ [key: string]: string | undefined }> }
 
@@ -334,6 +330,20 @@ export interface SendEmailResponse {
   result?: {
     messageId: string;
     threadId: string;
+  };
+}
+
+export interface EmailStats {
+  success: boolean;
+  result: {
+    inbox: number;
+    inboxUnread: number;
+    starred: number;
+    sent: number;
+    spam: number;
+    drafts: number;
+    trash: number;
+    important: number;
   };
 }
 

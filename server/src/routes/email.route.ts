@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import {  getEmailById,  getEmails, modifyEmail, sendEmail } from '../controllers/email.controller';
+import {  getEmailById,  getEmails, getEmailStats, modifyEmail, sendEmail } from '../controllers/email.controller';
 
 const router = Router();
 
@@ -8,6 +8,8 @@ const router = Router();
 router.route('/')
     .get(getEmails)
     .post(sendEmail);
+
+router.get('/stats', getEmailStats);
 
 router.route('/:id')
     .put(modifyEmail)

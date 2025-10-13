@@ -5,6 +5,7 @@ import { CustomError } from '../utils/common';
 interface IGetEmailsQuery {
     page?: number;
     limit?: number;
+    pageToken?: string;
     labelIds?: string[];
     q?: string; // Search query
     includeSpamTrash?: boolean;
@@ -27,6 +28,11 @@ export async function getEmailsService(queryParams: IGetEmailsQuery = {}) {
         includeSpamTrash: queryParams.includeSpamTrash || false
     };
 
+    // If caller provided a Gmail pageToken, use it directly to fetch that page.
+    if (queryParams.pageToken) {
+        gmailParams.pageToken = queryParams.pageToken;
+    }
+
     // Add search query if provided
     if (queryParams.q) {
         gmailParams.q = queryParams.q;
@@ -40,18 +46,26 @@ export async function getEmailsService(queryParams: IGetEmailsQuery = {}) {
 
     // Get first page to establish total count
     const initialRes = await gmail.users.messages.list(gmailParams);
+    // console.log(initialRes);
     const totalMessages = initialRes.data.resultSizeEstimate || 0;
     const messages = initialRes.data.messages || [];
 
     // Handle pagination with pageToken for subsequent pages
     let currentMessages = messages;
     let pageToken = initialRes.data.nextPageToken;
+    let previousPageToken: string | undefined = undefined;
 
-
-    // Skip pages if not first page
-    if (page > 1) {
+    // If caller provided pageToken, `initialRes` already corresponds to that page
+    // and we should not attempt to skip pages by number. Otherwise, if caller
+    // requested a numeric page, iterate tokens until we reach it. While iterating
+    // record the token that points to the start of each page so we can return
+    // a previousPageToken for numeric paging.
+    if (!queryParams.pageToken && page > 1) {
         let currentPage = 1;
+        // tempPageToken points to the token that will return the NEXT page when used
         let tempPageToken = pageToken;
+        // Keep track of the token that returned the last fetched page
+        let tokenAtPreviousPage: string | undefined = undefined;
 
         while (currentPage < page && tempPageToken) {
             const pageRes = await gmail.users.messages.list({
@@ -59,12 +73,25 @@ export async function getEmailsService(queryParams: IGetEmailsQuery = {}) {
                 pageToken: tempPageToken
             });
 
+            // The pageRes corresponds to the page that tempPageToken points to.
+            // Record the token that would get to this page so that after advancing
+            // we can use it as previousPageToken for the next page.
+            const thisPageToken = tempPageToken;
+
             if (currentPage === page - 1) {
+                // We want the messages for the target page (page), which are
+                // returned in this pageRes because tempPageToken pointed to it.
                 currentMessages = pageRes.data.messages || [];
+                // pageRes.nextPageToken is the token for page+1
                 pageToken = pageRes.data.nextPageToken;
+                // previousPageToken should be the token that returned the previous page
+                previousPageToken = tokenAtPreviousPage;
                 break;
             }
 
+            // Move token history forward: the token that pointed to this page
+            // becomes the previous token for the next iteration.
+            tokenAtPreviousPage = thisPageToken;
             tempPageToken = pageRes.data.nextPageToken;
             currentPage++;
         }
@@ -73,6 +100,7 @@ export async function getEmailsService(queryParams: IGetEmailsQuery = {}) {
         if (currentPage < page) {
             currentMessages = [];
             pageToken = undefined;
+            previousPageToken = undefined;
         }
     }
 
@@ -104,7 +132,8 @@ export async function getEmailsService(queryParams: IGetEmailsQuery = {}) {
                 current: page,
                 next: hasNextPage ? page + 1 : false,
                 total: totalPages,
-                nextPageToken: pageToken
+                nextPageToken: pageToken,
+                previousPageToken: previousPageToken
             },
         }
     };
@@ -290,4 +319,62 @@ export async function sendEmailService(emailData: ISendEmailService) {
     } catch {
         throw new CustomError('Failed to send email via Gmail API', 500, true);
     }
+}
+
+export async function getEmailStatsService() {
+    const auth = await authorize();
+    if (!auth) throw new CustomError('Authentication failed', 401, true);
+
+    const gmail = google.gmail({ version: 'v1', auth });
+
+    // Standard Gmail label IDs
+    const LABELS = {
+        INBOX: 'INBOX',
+        STARRED: 'STARRED',
+        SENT: 'SENT',
+        SPAM: 'SPAM',
+        DRAFT: 'DRAFT',
+        TRASH: 'TRASH',
+        IMPORTANT: 'IMPORTANT'
+    };
+
+    // Fetch label summaries in parallel
+    const labelPromises = Object.values(LABELS).map(id =>
+        gmail.users.labels.get({ userId: 'me', id })
+    );
+
+    const labelResults = await Promise.allSettled(labelPromises);
+
+    const stats: Record<string, number> = {};
+
+    // Map results to counts, fallback to 0 on errors
+    Object.keys(LABELS).forEach((key, idx) => {
+        const res = labelResults[idx];
+        if (res.status === 'fulfilled' && res.value && res.value.data) {
+            const data = res.value.data;
+            stats[key.toLowerCase()] = Number(data.messagesTotal || 0);
+            // also expose unread counts for inbox
+            if (key === 'INBOX') {
+                stats['inbox_unread'] = Number(data.messagesUnread || 0);
+            }
+        } else {
+            stats[key.toLowerCase()] = 0;
+            if (key === 'INBOX') stats['inbox_unread'] = 0;
+        }
+    });
+
+    // Normalize keys for response
+    return {
+        counts: {
+            inbox: stats['inbox'] || 0,
+            inboxUnread: stats['inbox_unread'] || 0,
+            starred: stats['starred'] || 0,
+            sent: stats['sent'] || 0,
+            spam: stats['spam'] || 0,
+            drafts: stats['draft'] || 0,
+            trash: stats['trash'] || 0,
+            important: stats['important'] || 0,
+        }
+    };
+
 }

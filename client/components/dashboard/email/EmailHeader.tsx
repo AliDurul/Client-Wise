@@ -2,6 +2,7 @@
 import Dropdown from '@/components/layout/Dropdown';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import SearchInput from '@/components/shared/SearchInput';
+import useEmails from '@/hooks/useEmail';
 import { setShowMailMenu } from '@/lib/features/email/emailSlice';
 import { useAppDispatch } from '@/lib/hooks';
 import Tippy from '@tippyjs/react';
@@ -24,8 +25,7 @@ interface EmailHeaderProps {
 export default function EmailHeader({ checkAllCheckbox, ids, setIds, filteredMailList, selectedTab, refreshMails, setArchive, setSpam, setAction, isShowMailMenu }: EmailHeaderProps) {
 
     const dispatch = useAppDispatch();
-    const { isValidating, isLoading } = useSWR(`emails/${selectedTab}`);
-
+    const { isValidating, isLoading } = useEmails();
     return (
         <div className="flex flex-wrap-reverse items-center justify-between gap-4 p-4">
             <div className="flex w-full items-center sm:w-auto">

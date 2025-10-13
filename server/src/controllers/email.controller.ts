@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { getEmailByIdService, getEmailsService, modifyEmailService, sendEmailService } from '../services/email.service';
+import { getEmailStatsService } from '../services/email.service';
 import { modifyMessage } from '../utils/functions';
 import { CustomError } from '../utils/common';
 import { sendEmailSchema } from '../utils/validationSchemas';
@@ -9,6 +10,7 @@ export async function getEmails(req: Request, res: Response) {
     const {
         page = '1',
         limit = '20',
+        pageToken,
         labelIds,
         q,
         includeSpamTrash = 'false'
@@ -18,11 +20,13 @@ export async function getEmails(req: Request, res: Response) {
     const queryParams = {
         page: parseInt(page as string, 10),
         limit: parseInt(limit as string, 10),
+        pageToken: pageToken as string | undefined,
         labelIds: labelIds ? (labelIds as string).split(',').filter(Boolean) : undefined,
         q: q as string,
         includeSpamTrash: includeSpamTrash === 'true'
     };
 
+    console.log(queryParams);
     // Validate pagination parameters
     if (isNaN(queryParams.page) || queryParams.page < 1) {
         throw new CustomError('Invalid page number', 400, true);
@@ -38,8 +42,8 @@ export async function getEmails(req: Request, res: Response) {
 
     res.status(200).send({
         success: true,
-        result: transformed,
-        details: result.pagination
+        details: result.pagination,
+        result: transformed
     });
 }
 
@@ -93,4 +97,10 @@ export const sendEmail = async (req: Request, res: Response) => {
         }
     });
 
+};
+
+export const getEmailStats = async (req: Request, res: Response) => {
+    const stats = await getEmailStatsService();
+
+    res.status(200).send({ success: true, result: stats.counts });
 };

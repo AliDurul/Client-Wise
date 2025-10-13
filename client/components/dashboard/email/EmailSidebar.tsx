@@ -5,6 +5,9 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { selectIsEdit, selectIsShowMailMenu, setEdit, setEmail, setShowMailMenu } from '@/lib/features/email/emailSlice';
 import { useRouter } from 'next/navigation';
 import { useUrlParams } from '@/hooks/useUrlParams';
+import useSWR from 'swr';
+import { getAllData } from '@/lib/features/shared/actionUtils';
+import { EmailStats } from '@/types';
 
 
 export default function EmailSidebar({ tabChanged }: { tabChanged: (tabType: string) => void }) {
@@ -17,9 +20,8 @@ export default function EmailSidebar({ tabChanged }: { tabChanged: (tabType: str
     const { updateUrlParams, getParam, hasParam } = useUrlParams()
     const selectedTab = getParam('tab', 'INBOX');
 
-    
-    const mailList: any[] = []
 
+    const { data: emailStats, isLoading, isValidating } = useSWR<EmailStats>('emails/stats', () => getAllData({ url: 'emails/stats' }), { revalidateOnFocus: false });
 
     return (
         <div className={`panel dark:gray-50 absolute z-10 hidden h-full w-[250px] max-w-full flex-none space-y-3 overflow-hidden p-4 ltr:rounded-r-none rtl:rounded-l-none xl:relative xl:block xl:h-auto ltr:xl:rounded-r-md rtl:xl:rounded-l-md ${isShowMailMenu ? '!block' : ''}`}>
@@ -61,8 +63,8 @@ export default function EmailSidebar({ tabChanged }: { tabChanged: (tabType: str
                                 </svg>
                                 <div className="ltr:ml-3 rtl:mr-3">Inbox</div>
                             </div>
-                            <div className="whitespace-nowrap rounded-md bg-primary-light py-0.5 px-2 font-semibold dark:bg-[#060818]">
-                                {mailList && mailList.filter((d) => d.type === 'INBOX').length}
+                            <div className={`whitespace-nowrap rounded-md bg-primary-light size-6 py-0.5 px-2 font-semibold dark:bg-[#060818] ${isLoading && 'animate-pulse opacity-10'}`}>
+                                {emailStats?.result.inboxUnread || '0'}
                             </div>
                         </button>
 
@@ -83,6 +85,9 @@ export default function EmailSidebar({ tabChanged }: { tabChanged: (tabType: str
                                     />
                                 </svg>
                                 <div className="ltr:ml-3 rtl:mr-3">Starred</div>
+                            </div>
+                            <div className={`whitespace-nowrap rounded-md bg-primary-light size-6 py-0.5 px-2 font-semibold dark:bg-[#060818] ${isLoading && 'animate-pulse opacity-10'}`}>
+                                {emailStats?.result.starred || '0'}
                             </div>
                         </button>
 
@@ -149,8 +154,8 @@ export default function EmailSidebar({ tabChanged }: { tabChanged: (tabType: str
                                 </svg>
                                 <div className="ltr:ml-3 rtl:mr-3">Drafts</div>
                             </div>
-                            <div className="whitespace-nowrap rounded-md bg-primary-light py-0.5 px-2 font-semibold dark:bg-[#060818]">
-                                {mailList && mailList.filter((d) => d.type === 'DRAFT').length}
+                            <div className={`whitespace-nowrap rounded-md bg-primary-light size-6 py-0.5 px-2 font-semibold dark:bg-[#060818] ${isLoading && 'animate-pulse opacity-10'}`}>
+                                {emailStats?.result.drafts || '0'}
                             </div>
                         </button>
 
@@ -231,21 +236,28 @@ export default function EmailSidebar({ tabChanged }: { tabChanged: (tabType: str
                                         <li>
                                             <button
                                                 type="button"
-                                                className={`flex h-10 w-full items-center rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'IMPORTANT' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
+                                                className={`flex h-10 w-full items-center justify-between rounded-md p-2 font-medium hover:bg-white-dark/10 hover:text-primary dark:hover:bg-[#181F32] dark:hover:text-primary ${!isEdit && selectedTab === 'IMPORTANT' ? 'bg-gray-100 text-primary dark:bg-[#181F32] dark:text-primary' : ''
                                                     }`}
                                                 onClick={() => {
                                                     tabChanged('IMPORTANT');
                                                 }}
                                             >
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path
-                                                        d="M21 16.0909V11.0975C21 6.80891 21 4.6646 19.682 3.3323C18.364 2 16.2426 2 12 2C7.75736 2 5.63604 2 4.31802 3.3323C3 4.6646 3 6.80891 3 11.0975V16.0909C3 19.1875 3 20.7358 3.73411 21.4123C4.08421 21.735 4.52615 21.9377 4.99692 21.9915C5.98402 22.1045 7.13673 21.0849 9.44216 19.0458C10.4612 18.1445 10.9708 17.6938 11.5603 17.5751C11.8506 17.5166 12.1494 17.5166 12.4397 17.5751C13.0292 17.6938 13.5388 18.1445 14.5578 19.0458C16.8633 21.0849 18.016 22.1045 19.0031 21.9915C19.4739 21.9377 19.9158 21.735 20.2659 21.4123C21 20.7358 21 19.1875 21 16.0909Z"
-                                                        stroke="currentColor"
-                                                        strokeWidth="1.5"
-                                                    />
-                                                    <path opacity="0.5" d="M15 6H9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                                                </svg>
-                                                <div className="ltr:ml-3 rtl:mr-3">Important</div>
+                                                <div className='flex items-center'>
+
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M21 16.0909V11.0975C21 6.80891 21 4.6646 19.682 3.3323C18.364 2 16.2426 2 12 2C7.75736 2 5.63604 2 4.31802 3.3323C3 4.6646 3 6.80891 3 11.0975V16.0909C3 19.1875 3 20.7358 3.73411 21.4123C4.08421 21.735 4.52615 21.9377 4.99692 21.9915C5.98402 22.1045 7.13673 21.0849 9.44216 19.0458C10.4612 18.1445 10.9708 17.6938 11.5603 17.5751C11.8506 17.5166 12.1494 17.5166 12.4397 17.5751C13.0292 17.6938 13.5388 18.1445 14.5578 19.0458C16.8633 21.0849 18.016 22.1045 19.0031 21.9915C19.4739 21.9377 19.9158 21.735 20.2659 21.4123C21 20.7358 21 19.1875 21 16.0909Z"
+                                                            stroke="currentColor"
+                                                            strokeWidth="1.5"
+                                                        />
+                                                        <path opacity="0.5" d="M15 6H9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                                                    </svg>
+                                                    <div className="ltr:ml-3 rtl:mr-3">Important</div>
+                                                </div>
+
+                                                <div className={`whitespace-nowrap rounded-md bg-primary-light size-6 py-0.5 px-2 font-semibold dark:bg-[#060818] ${isLoading && 'animate-pulse opacity-10'}`}>
+                                                    {emailStats?.result.important || '0'}
+                                                </div>
                                             </button>
                                         </li>
                                     </DisclosurePanel>
@@ -332,7 +344,7 @@ export default function EmailSidebar({ tabChanged }: { tabChanged: (tabType: str
                         </div>
                     </button>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     )
 }

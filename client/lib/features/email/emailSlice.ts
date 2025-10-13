@@ -1,11 +1,11 @@
 import { createAppSlice } from "@/lib/createAppSlice";
-import { ApiResponse, Email, Pagination } from "@/types";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { sharedInitialState } from "../shared/sliceUtils";
+import { Email, Pagination } from "@/types";
 
 
 export interface EmailSliceState {
-    filteredEmails: Email[];
+    filteredEmails: Pagination<Email>;
     email: Email | null;
     isShowMailMenu: boolean;
     isEdit: boolean;
@@ -14,7 +14,11 @@ export interface EmailSliceState {
 }
 
 const initialState: EmailSliceState = {
-    filteredEmails: [],
+    filteredEmails: {
+        success: false,
+        details: { limit: 20, page: 1, totalRecords: 0, pages: null },
+        result: []
+    },
     email: null,
     isShowMailMenu: false,
     isEdit: false,
@@ -31,7 +35,7 @@ export const emailSlice = createAppSlice({
             state.email = action.payload;
         }),
 
-        setFilteredEmails: reducer((state, action: PayloadAction<Email[]>) => {
+        setFilteredEmails: reducer((state, action: PayloadAction<Pagination<Email>>) => {
             state.filteredEmails = action.payload;
         }),
 

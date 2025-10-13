@@ -1,34 +1,25 @@
 'use client';
+import useEmails from '@/hooks/useEmail';
 import usePagination from '@/hooks/usePagination';
 import { useUrlParams } from '@/hooks/useUrlParams';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { Pages, ResDetails } from '@/types';
 import React from 'react'
 
 interface EmailSubHeaderProps {
     tabChanged: (tab: string) => void;
-    pager: {
-        limit: number;
-        page: number;
-        totalRecords: number;
-        pages: {
-            previous: boolean;
-            current: number;
-            next: number | boolean;
-            total: number;
-        } | false;
-    } | undefined;
+    details: ResDetails;
     searchMails: (query: boolean) => void;
-    filteredMailList: any[];
 }
 
-export default function EmailSubHeader({ tabChanged, pager, searchMails, filteredMailList, }: EmailSubHeaderProps) {
+export default function EmailSubHeader({ tabChanged, details }: EmailSubHeaderProps) {
 
-    const { getParam } = useUrlParams()
+    const { getParam } = useUrlParams();
     const selectedTab = getParam('tab', 'INBOX');
 
 
-    const { getPaginationText, handlePreviousPage, handleNextPage, isPreviousDisabled, isNextDisabled, } = usePagination(pager);
-
+    const { getPaginationText, isPreviousDisabled, isNextDisabled, } = usePagination(details);
+    const { next, prev, isLoading, isValidating } = useEmails();
 
     return (
         <div className="flex flex-col flex-wrap items-center justify-between px-4 pb-4 md:flex-row xl:w-auto">
@@ -115,17 +106,15 @@ export default function EmailSubHeader({ tabChanged, pager, searchMails, filtere
                 </button>
             </div>
 
-            <div className="mt-4 flex-1 md:flex-auto">
-                <div className="flex items-center justify-center md:justify-end">
-                    <div className="ltr:mr-3 rtl:ml-3">{getPaginationText()}</div>
+            <div className={`mt-4 flex-1 md:flex-auto ${isLoading || isValidating ? 'animate-pulse opacity-60 pointer-events-none' : ''} `}>
+                <div className="flex items-center justify-center md:justify-end ">
+                    <div className="ltr:mr-3 rtl:ml-3" >{getPaginationText()}</div>
                     <button
                         type="button"
                         disabled={isPreviousDisabled}
-                        className="rounded-md bg-[#f4f4f4] p-1 enabled:hover:bg-primary-light disabled:cursor-not-allowed disabled:opacity-60 ltr:mr-3 rtl:ml-3 dark:bg-white-dark/20 enabled:dark:hover:bg-white-dark/30"
+                        className="rounded-md bg-[#f4f4f4] p-1 enabled:hover:bg-primary-light disabled:cursor-not-allowed disabled:opacity-60 ltr:mr-3 rtl:ml-3 dark:bg-white-dark/20 enabled:dark:hover:bg-white-dark/30 "
                         onClick={() => {
-                            // pager.currentPage--;
-                            // searchMails(false);
-                            handlePreviousPage();
+                            prev();
                         }}
                     >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ltr:rotate-180">
@@ -137,9 +126,7 @@ export default function EmailSubHeader({ tabChanged, pager, searchMails, filtere
                         disabled={isNextDisabled}
                         className="rounded-md bg-[#f4f4f4] p-1 enabled:hover:bg-primary-light disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white-dark/20 enabled:dark:hover:bg-white-dark/30"
                         onClick={() => {
-                            // pager.currentPage++;
-                            // searchMails(false);
-                            handleNextPage();
+                            next();
                         }}
                     >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="rtl:rotate-180">

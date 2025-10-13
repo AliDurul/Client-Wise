@@ -1,41 +1,38 @@
+import { Pages, ResDetails } from '@/types';
 import { useUrlParams } from './useUrlParams';
 
-const usePagination = (pagination: any | undefined, searchParams?: URLSearchParams) => {
+const usePagination = (details: ResDetails, searchParams?: URLSearchParams) => {
     const { getParam, updateUrlParams } = useUrlParams();
 
     const getPaginationText = () => {
-        if (!pagination || pagination.totalRecords === 0) {
+        if (!details || details.totalRecords === 0) {
             return '0-0 of 0';
         }
 
-        const startRecord = Math.max(1, (pagination.page - 1) * pagination.limit + 1);
-        const endRecord = Math.min(pagination.page * pagination.limit, pagination.totalRecords);
+        const startRecord = Math.max(1, (details.page - 1) * details.limit + 1);
+        const endRecord = Math.min(details.page * details.limit, details.totalRecords);
 
-        return `${startRecord}-${endRecord} of ${pagination.totalRecords}`;
+        return `${startRecord}-${endRecord} of ${details.totalRecords}`;
     };
 
-    const hasValidPagination = (pages: any | boolean | undefined): pages is any => {
+    const hasValidPagination = (pages: any): pages is any => {
         return pages !== undefined && pages !== false && typeof pages === 'object';
     };
 
     const handlePreviousPage = () => {
-        if (!hasValidPagination(pagination?.pages) || pagination.pages.current <= 1) {
+        if(details?.pages === null) return;
+
+        if (!hasValidPagination(details?.pages) || details?.pages?.current <= 1) {
             return;
         }
-
-        // const newUrl = formUrlQuery({
-        //     params: searchParams.toString(),
-        //     key: 'page',
-        //     value: (pagination.pages.current - 1).toString()
-        // });
-        // router.replace(newUrl, { scroll: false });
-
-        updateUrlParams({ page: (pagination.pages.current - 1).toString() }, { replace: true });
+        updateUrlParams({ page: (details?.pages.current - 1).toString() }, { replace: true });
 
     };
 
     const handleNextPage = () => {
-        if (!hasValidPagination(pagination?.pages) || pagination.pages.current >= pagination.pages.total) {
+        if (details?.pages === null) return;
+        
+        if (!hasValidPagination(details?.pages) || details?.pages?.current >= details?.pages?.total) {
             return;
         }
 
@@ -46,12 +43,20 @@ const usePagination = (pagination: any | undefined, searchParams?: URLSearchPara
         // });
         // router.replace(newUrl, { scroll: false });
 
-        updateUrlParams({ page: (pagination.pages.current + 1).toString() }, { replace: true });
+        updateUrlParams({ page: (details.pages.current + 1).toString() }, { replace: true });
 
     };
 
-    const isPreviousDisabled = !hasValidPagination(pagination?.pages) || pagination.pages.current <= 1;
-    const isNextDisabled = !hasValidPagination(pagination?.pages) || pagination.pages.current >= pagination.pages.total;
+    const isPreviousDisabled =
+        !hasValidPagination(details?.pages) ||
+        typeof details?.pages?.current !== 'number' ||
+        details.pages.current <= 1;
+
+    const isNextDisabled =
+        !hasValidPagination(details?.pages) ||
+        typeof details?.pages?.current !== 'number' ||
+        typeof details?.pages?.total !== 'number' ||
+        details.pages.current >= details.pages.total;
 
     return {
         getPaginationText,

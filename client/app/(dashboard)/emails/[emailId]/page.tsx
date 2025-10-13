@@ -12,7 +12,7 @@ import Tippy from '@tippyjs/react';
 import { useRouter } from 'next/navigation';
 import React, { use, useEffect } from 'react'
 import toast from 'react-hot-toast';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import useSWRMutation from 'swr/mutation';
 
 export default function page({ params }: { params: Promise<{ emailId: string }> }) {
@@ -26,8 +26,6 @@ export default function page({ params }: { params: Promise<{ emailId: string }> 
     const assignModal = useAppSelector(selectAssignModal);
     const selectedTab = getParam('tab', 'INBOX');
     const { emailId } = use(params);
-
-
 
     // validation
     const { trigger } = useSWRMutation(`emails/${selectedTab}`, modifyEmail, {
@@ -43,6 +41,8 @@ export default function page({ params }: { params: Promise<{ emailId: string }> 
             toast.error(err?.message ?? 'Error fetching email', { duration: 3000 });
         },
         onSuccess: () => {
+            mutate('emails/stats');
+
             trigger({ read: true, id: emailId }, {
                 optimisticData: (currentData: any) => {
 
@@ -79,7 +79,6 @@ export default function page({ params }: { params: Promise<{ emailId: string }> 
                                         onClick={() => {
                                             // router.push('/emails');
                                             router.back();
-                                            // dispatch(setEmail(null))
                                         }}
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-5 w-5 rtl:rotate-180">

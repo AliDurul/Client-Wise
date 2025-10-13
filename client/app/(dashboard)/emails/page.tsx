@@ -11,6 +11,7 @@ import { useUrlParams } from '@/hooks/useUrlParams';
 import toast from 'react-hot-toast';
 import { getAllData } from '@/lib/features/shared/actionUtils';
 import EmailtoTicketModal from '@/components/dashboard/email/EmailtoTicketModal';
+import useEmails from '@/hooks/useEmail';
 
 export default function page() {
 
@@ -21,41 +22,8 @@ export default function page() {
     const emailIds = useAppSelector(selectEmailIds);
     const { getParam } = useUrlParams()
     const selectedTab = getParam('tab', 'INBOX');
-    const page = getParam('page', '1');
-
-    // api call
-    // const { isLoading, isValidating } = useSWR(`emails/${selectedTab}`, null);
-
-    const { isLoading } = useSWR<Pagination<Email>>(
-        [selectedTab ? `emails/${selectedTab}` : null, page],
-        () => getAllData({
-            url: 'emails',
-            customQuery: {
-                labelIds: selectedTab
-                    ? selectedTab === 'UPDATES'
-                        ? 'CATEGORY_UPDATES'
-                        : selectedTab === 'FORUMS'
-                            ? 'CATEGORY_FORUMS'
-                            : selectedTab
-                    : 'INBOX',
-                page: page ?? '1',
-
-            }
-        }),
-        {
-            onError: (err) => {
-                console.error('Error fetching emails:', err);
-                toast.error(err?.message ?? 'Error fetching emails', { duration: 3000 });
-            },
-            onSuccess: (data) => {
-                // Sync to Redux for local filtering/sorting
-                dispatch(setFilteredEmails(data?.result || []));
-            },
-            revalidateOnFocus: false,
-            dedupingInterval: 2000,
-        }
-    );
-
+    
+    const { isLoading } = useEmails();
 
     // functions
     const setStar = (mailId: string) => {
@@ -93,12 +61,12 @@ export default function page() {
             {
                 isLoading
                     ? (<EmailListSkeleton />)
-                    : filteredEmails.length
+                    : filteredEmails.result.length
                         ? (
                             <div className="table-responsive min-h-[400px] grow overflow-y-auto sm:min-h-[300px]">
                                 <table className="table-hover">
                                     <tbody>
-                                        {filteredEmails.map((mail: Email) => {
+                                        {filteredEmails.result.map((mail: Email) => {
                                             return (
                                                 <tr
                                                     key={mail.id}
