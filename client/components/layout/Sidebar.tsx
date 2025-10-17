@@ -167,10 +167,10 @@ const Sidebar = () => {
                                             <Link href="/leads">Leads</Link>
                                         </li>
                                         <li>
-                                            <Link href="#">Leads Dashboard</Link>
+                                            <Link href="/leads/dashboard">Leads Dashboard</Link>
                                         </li>
                                         <li>
-                                            <Link href="#">Create Lead</Link>
+                                            <Link href="/leads/new">Create Lead</Link>
                                         </li>
                                     </ul>
                                 </AnimateHeight>

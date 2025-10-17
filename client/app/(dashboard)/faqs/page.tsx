@@ -3,14 +3,12 @@ import FaqList from '@/components/dashboard/faq/FaqList'
 import FaqModal from '@/components/dashboard/faq/FaqModal'
 import NoDataFound from '@/components/shared/NoDataFound'
 import SearchInput from '@/components/shared/SearchInput'
-import TopPageNavigation from '@/components/shared/TopPageNavigation'
 import { getAllData } from '@/lib/features/shared/actionUtils'
 import React from 'react'
 
 export default async function page({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
     const sp = await searchParams
     const query = sp?.q as string | undefined
-    console.log(query);
 
     const faqs = await getAllData({ url: 'faqs/', searchQueries: { 'question': query } });
 

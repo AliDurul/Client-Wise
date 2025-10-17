@@ -13,6 +13,7 @@ import { useDataTable } from '@/hooks/useDataTable';
 import { delData, delMultiData } from '@/lib/features/shared/actionUtils';
 import Dropdown from '@/components/layout/Dropdown';
 import { useUrlParams } from '@/hooks/useUrlParams';
+import Link from 'next/link';
 
 interface CustomerMainProps {
   customerPromise: Promise<Pagination<Customer>>;
@@ -162,6 +163,16 @@ export default function CustomerTable({ customerPromise }: CustomerMainProps) {
               Delete
             </button>
           }
+
+          <Link
+            href={`/customers/action/?s=c`}
+            className="btn btn-primary btn-sm  gap-2">
+            <svg className="h-5 w-5" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Create New KYC
+          </Link>
 
           <div className="inline-flex">
             <button className="btn btn-sm btn-outline-primary ltr:rounded-r-none rtl:rounded-l-none">{capitalize(getParam('ct', 'Individual'))}</button>
