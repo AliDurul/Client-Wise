@@ -6,7 +6,7 @@ import React from 'react'
 export default function FaqCreateBtn() {
     const dispatch = useAppDispatch();
     return (
-        <button type="button" className="btn btn-primary ltr:ml-4 rtl:mr-4" onClick={() => { dispatch(setFaqModal(true)), dispatch(setFaq({ question: '', answer: '' })) }}>
+        <button type="button" className="btn btn-primary " onClick={() => { dispatch(setFaqModal(true)), dispatch(setFaq({ question: '', answer: '' })) }}>
             Add Question
         </button>
     )

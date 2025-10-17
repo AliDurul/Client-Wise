@@ -1,4 +1,5 @@
 'use client';
+import { SingleMailSkeleton } from '@/components/dashboard/email/EmailSkeletons';
 import EmailtoTicketModal from '@/components/dashboard/email/EmailtoTicketModal';
 import Dropdown from '@/components/layout/Dropdown';
 import { useUrlParams } from '@/hooks/useUrlParams';
@@ -68,7 +69,7 @@ export default function page({ params }: { params: Promise<{ emailId: string }> 
         <>
             {
                 isLoading
-                    ? (<h1>Loading...</h1>)
+                    ? (<SingleMailSkeleton />)
                     : (
                         <div>
                             <div className="flex flex-wrap items-center justify-between p-4">

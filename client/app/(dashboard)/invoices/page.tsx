@@ -1,4 +1,5 @@
 import InvoiceTable from '@/components/dashboard/invoice/InvoiceTable';
+import { TableSkeleton } from '@/components/shared/Skeletons';
 import { getAllData } from '@/lib/features/shared/actionUtils';
 import { PageSearchParams } from '@/types'
 import React, { Suspense } from 'react'
@@ -25,7 +26,7 @@ export default async function page({ searchParams }: PageSearchParams) {
             <div className="panel mt-5 border-white-light px-0 dark:border-[#1b2e4b]">
 
                 {/* <ClientErrorBoundary> */}
-                <Suspense fallback={<div className="flex h-full items-center justify-center">Loading...</div>}>
+                <Suspense fallback={<TableSkeleton />}>
                     <InvoiceTable invoicePromise={invoicePromise} />
                 </Suspense>
                 {/* </ClientErrorBoundary> */}

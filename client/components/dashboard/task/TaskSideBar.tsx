@@ -152,7 +152,7 @@ const TaskSidebar = () => {
                         <div>
                             <HamburgerIcon />
                         </div>
-                        <h3 className="text-lg font-semibold ltr:ml-3 rtl:mr-3">Todo list</h3>
+                        <h3 className="text-lg font-semibold ltr:ml-3 rtl:mr-3">Tasks</h3>
                     </div>
                 </div>
                 <div className="mb-5 h-px w-full border-b border-white-light dark:border-[#1b2e4b]" />

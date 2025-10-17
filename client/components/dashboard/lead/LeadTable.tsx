@@ -1,21 +1,17 @@
 'use client';
-import { capitalize, formatDate } from '@/lib/utility/functions';
-import { Customer, Lead, Pagination } from '@/types';
+import { formatDate } from '@/lib/utility/functions';
+import { Lead, Pagination } from '@/types';
 import { LuMousePointerClick } from "react-icons/lu";
-import Image from 'next/image';
 import { DeleteIcon, EditIcon, PreviewIcon } from '@/icons';
-import { use, useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import type { DataTableColumn, DataTableProps } from 'mantine-datatable';
 import { DataTable } from 'mantine-datatable';
 import SearchInput from '@/components/shared/SearchInput';
-import { delMultiCustomer } from '@/lib/features/customer/customerActions';
 import { useDataTable } from '@/hooks/useDataTable';
 import { delData, delMultiData } from '@/lib/features/shared/actionUtils';
-import Dropdown from '@/components/layout/Dropdown';
 import { useUrlParams } from '@/hooks/useUrlParams';
 import ColumnChooser from '@/components/shared/ColumnChooser';
-import { format } from 'path';
-import { spawn } from 'child_process';
+
 
 interface CustomerMainProps {
   leads: Pagination<Lead>
@@ -207,12 +203,12 @@ export default function LeadTable({ leads }: CustomerMainProps) {
       render: ({ converted_to_invoice }: Lead) => (<span className={`${converted_to_invoice ? 'text-success' : 'text-danger'}`}>{converted_to_invoice ? 'Yes' : 'No'}</span>),
       sortable: true,
     },
-
     {
       accessor: 'probability',
       title: 'Probability',
       render: ({ probability }: Lead) => {
-        const value = probability ?? 0;
+        const raw = Number(probability ?? 0);
+        const value = Number.isFinite(raw) ? Math.max(0, Math.min(100, raw)) : 0;
         let bgColor = 'bg-danger';
         if (value > 75) bgColor = 'bg-success';
         else if (value > 50) bgColor = 'bg-primary';
@@ -220,8 +216,13 @@ export default function LeadTable({ leads }: CustomerMainProps) {
 
         return (
           <div className='w-48'>
-            <div className="w-full h-4 bg-[#ebedf2] dark:bg-dark/40 rounded-full flex">
-              <div className={`${bgColor} h-4 rounded-full min-w-6 w-[${value}%] flex items-center justify-center text-[${value > 20 ? '11' : '10'}px] overflow-hidden text-white `}>{value}%</div>
+            <div className="w-full h-4 bg-[#ebedf2] dark:bg-dark/40 rounded-full">
+              <div
+                className={`${bgColor} h-4 rounded-full flex items-center justify-center overflow-hidden text-white`}
+                style={{ width: `${value}%`, fontSize: value > 20 ? 11 : 10 }}
+              >
+                {value}%
+              </div>
             </div>
           </div>
         );
@@ -251,13 +252,6 @@ export default function LeadTable({ leads }: CustomerMainProps) {
   return (
     <div className="panel mt-5  border-white-light dark:border-[#1b2e4b]">
       <div className="pl-1 datatables pagination-padding">
-        {/* Loading Overlay */}
-        {/* <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 flex flex-col items-center gap-4 shadow-xl">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"/>
-          <p className="text-gray-700 dark:text-gray-300 font-medium">Processing...</p>
-        </div>
-      </div> */}
 
 
         <div className='flex justify-between items-center md:flex-row md:items-center mb-3'>
@@ -273,8 +267,8 @@ export default function LeadTable({ leads }: CustomerMainProps) {
                 Delete
               </button>
             }
+            <ColumnChooser cols={columnChooserCols} />
           </div>
-          <ColumnChooser cols={columnChooserCols} />
 
           <SearchInput />
         </div>

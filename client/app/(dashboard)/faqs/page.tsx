@@ -2,13 +2,17 @@ import FaqCreateBtn from '@/components/dashboard/faq/FaqCreateBtn'
 import FaqList from '@/components/dashboard/faq/FaqList'
 import FaqModal from '@/components/dashboard/faq/FaqModal'
 import NoDataFound from '@/components/shared/NoDataFound'
+import SearchInput from '@/components/shared/SearchInput'
 import TopPageNavigation from '@/components/shared/TopPageNavigation'
 import { getAllData } from '@/lib/features/shared/actionUtils'
 import React from 'react'
 
-export default async function page() {
+export default async function page({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
+    const sp = await searchParams
+    const query = sp?.q as string | undefined
+    console.log(query);
 
-    const faqs = await getAllData({ url: 'faqs/' });
+    const faqs = await getAllData({ url: 'faqs/', searchQueries: { 'question': query } });
 
     return (
         <div>
@@ -16,10 +20,13 @@ export default async function page() {
 
             <div className="pt-5">
                 <div className='flex justify-between items-center max-w-[80%] mx-auto'>
-                    <h2 className="text-center text-xl font-bold md:text-3xl">
-                        Frequently Asked <span className="text-primary">Questions</span>
-                    </h2>
-                    <FaqCreateBtn />
+                    <div>
+                        <h2 className="text-center text-xl font-bold md:text-3xl mb-2">
+                            Frequently Asked <span className="text-primary">Questions</span>
+                        </h2>
+                        <FaqCreateBtn />
+                    </div>
+                    <SearchInput />
                 </div>
             </div>
 

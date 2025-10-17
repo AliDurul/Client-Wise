@@ -148,17 +148,7 @@ export default function CustomerTable({ customerPromise }: CustomerMainProps) {
 
 
   return (
-
     <div className="pl-1 datatables pagination-padding">
-      {/* Loading Overlay */}
-      {/* <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 flex flex-col items-center gap-4 shadow-xl">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-          <p className="text-gray-700 dark:text-gray-300 font-medium">Processing...</p>
-        </div>
-      </div> */}
-
-
       <div className='flex justify-between items-center md:flex-row md:items-center mb-3'>
         <div className="flex flex-wrap items-center justify-around gap-2 pl-3">
           {
@@ -172,32 +162,33 @@ export default function CustomerTable({ customerPromise }: CustomerMainProps) {
               Delete
             </button>
           }
+
+          <div className="inline-flex">
+            <button className="btn btn-sm btn-outline-primary ltr:rounded-r-none rtl:rounded-l-none">{capitalize(getParam('ct', 'Individual'))}</button>
+            <div className="dropdown">
+              <Dropdown
+                placement='bottom-end'
+                btnClassName="btn btn-outline-primary ltr:rounded-l-none rtl:rounded-r-none dropdown-toggle before:border-[5px] before:border-l-transparent before:border-r-transparent before:border-t-inherit before:border-b-0 before:inline-block hover:before:border-t-white-light h-full"
+                button={<span className="sr-only">Toggle dropdown</span>}
+              >
+                <ul className="!min-w-[100px]">
+                  <li>
+                    <button type="button" onClick={() => updateUrlParams({ ct: 'individual' })}>
+                      Individual
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" onClick={() => updateUrlParams({ ct: 'corporate' })}>
+                      Corporate
+                    </button>
+                  </li>
+                </ul>
+              </Dropdown>
+            </div>
+          </div>
           {/* <TicketModal ticketModal={ticketModal} setTicketModal={setTicketModal} /> */}
         </div>
 
-        <div className="inline-flex">
-          <button className="btn btn-outline-primary ltr:rounded-r-none rtl:rounded-l-none">{capitalize(getParam('ct', 'Individual'))}</button>
-          <div className="dropdown">
-            <Dropdown
-              placement='bottom-end'
-              btnClassName="btn btn-outline-primary ltr:rounded-l-none rtl:rounded-r-none dropdown-toggle before:border-[5px] before:border-l-transparent before:border-r-transparent before:border-t-inherit before:border-b-0 before:inline-block hover:before:border-t-white-light h-full"
-              button={<span className="sr-only">Toggle dropdown</span>}
-            >
-              <ul className="!min-w-[170px]">
-                <li>
-                  <button type="button" onClick={() => updateUrlParams({ ct: 'individual' })}>
-                    Individual
-                  </button>
-                </li>
-                <li>
-                  <button type="button" onClick={() => updateUrlParams({ ct: 'corporate' })}>
-                    Corporate
-                  </button>
-                </li>
-              </ul>
-            </Dropdown>
-          </div>
-        </div>
 
         <SearchInput />
 
@@ -213,3 +204,11 @@ export default function CustomerTable({ customerPromise }: CustomerMainProps) {
     </div>
   )
 }
+
+// screen cover loading 
+{/* <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+<div className="bg-white dark:bg-gray-800 rounded-lg p-6 flex flex-col items-center gap-4 shadow-xl">
+<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+<p className="text-gray-700 dark:text-gray-300 font-medium">Processing...</p>
+</div>
+</div> */}

@@ -1,6 +1,8 @@
 import CustomerHeaderBtns from "@/components/dashboard/customer/CustomerHeaderBtns";
 import CustomerTable from "@/components/dashboard/customer/CustomerTable";
 import { ClientErrorBoundary } from "@/components/shared/ClientErrorBoundary";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import { TableSkeleton } from "@/components/shared/Skeletons";
 import TopPageNavigation from "@/components/shared/TopPageNavigation";
 import { getAllData } from "@/lib/features/shared/actionUtils";
 import { PageSearchParams } from "@/types";
@@ -33,15 +35,14 @@ export default async function page({ searchParams }: PageSearchParams) {
         <>
             {/* <TopPageNavigation /> */}
 
-            <div className="flex justify-end mt-3">
+            {/* <div className="flex justify-end mt-3">
                 <div className="flex gap-3">
                     <CustomerHeaderBtns />
                 </div>
-            </div>
+            </div> */}
 
             <div className="panel mt-5 border-white-light px-0 dark:border-[#1b2e4b]">
-
-                <Suspense fallback={<div className="flex h-full items-center justify-center">Loading...</div>}>
+                <Suspense fallback={<TableSkeleton />}>
                     <CustomerTable customerPromise={customerPromise} />
                 </Suspense>
             </div>

@@ -121,6 +121,7 @@ export default function TicketTable({ tickets }: TicketTableProps) {
         {
             accessor: 'title',
             sortable: true,
+            render: ({ title }) => <span className="font-medium">{truncateText(title, 25)}</span>,
         },
         {
             accessor: 'category',
@@ -130,7 +131,7 @@ export default function TicketTable({ tickets }: TicketTableProps) {
         {
             accessor: 'description',
             sortable: true,
-            render: ({ description }) => `${truncateText(description, 70)}`,
+            render: ({ description }) => `${truncateText(description, 50)}`,
         },
         {
             accessor: 'createdAt',
@@ -193,7 +194,7 @@ export default function TicketTable({ tickets }: TicketTableProps) {
                     </button>
                 </div>
 
-                <SearchInput className='mr-3' />
+                <SearchInput className='mr-3' placeholder='Search Title..' />
 
             </div>
 
