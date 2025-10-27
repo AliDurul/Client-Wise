@@ -1,6 +1,7 @@
 import TaskAddEditModal from '@/components/dashboard/task/TaskAddEditModal';
 import TaskMain from '@/components/dashboard/task/TaskMain';
 import TaskSidebar from '@/components/dashboard/task/TaskSideBar';
+import { TaskMainSkeleton, TaskSidebarSkeleton } from '@/components/shared/Skeletons';
 import TopPageNavigation from '@/components/shared/TopPageNavigation'
 import { PageSearchParams } from '@/types';
 import React, { Suspense } from 'react'
@@ -13,12 +14,12 @@ export default async function page({ searchParams }: PageSearchParams) {
             <TopPageNavigation />
 
             <div className="relative flex h-full gap-5 mt-4 sm:h-[calc(100vh-160px)]">
-                <Suspense fallback={<div className="flex h-full items-center justify-center">Loading...</div>}>
+                <Suspense fallback={<TaskSidebarSkeleton />}>
                     <TaskSidebar />
                 </Suspense>
 
 
-                <Suspense fallback={<div className="flex h-full items-center justify-center  text-lg font-semibold w-full">Loading...</div>}>
+                <Suspense fallback={<TaskMainSkeleton />}>
                     <TaskMain searchParams={searchParams} />
                 </Suspense>
 

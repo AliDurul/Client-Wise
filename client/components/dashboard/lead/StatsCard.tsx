@@ -10,7 +10,7 @@ interface StatsCardProps {
 
 export default function StatsCard({ title, value, change, icon, colorClass = 'bg-blue-500' }: StatsCardProps) {
   return (
-    <div className="bg-white dark:bg-[#0b1530] shadow rounded-lg p-4 flex items-center gap-4">
+    <div className="panel shadow rounded-lg p-4 flex items-center gap-4">
       <div className={`rounded-md p-3 text-white ${colorClass} flex items-center justify-center`}>
         {icon}
       </div>

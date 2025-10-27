@@ -79,6 +79,7 @@ export const customerCrUpAction = async (_: unknown, payload: FormData) => {
     }
 
 
+    revalidateTag('dashboard-overview');
     revalidateTag('customers');
     return {
       message: !!id ? "Customer updated successfully!" : "Customer created successfully!",

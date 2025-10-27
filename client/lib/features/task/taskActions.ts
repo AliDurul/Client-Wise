@@ -104,6 +104,8 @@ export const delTask = async (id: number) => {
 
 
 export const getCountDetail = async () => {
+  
+
   try {
     const headers = await authConfig();
     const response = await fetch(`${BASE_URL}tasks/count/`, {

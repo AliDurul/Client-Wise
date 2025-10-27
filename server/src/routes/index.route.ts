@@ -12,6 +12,7 @@ import chatRoutes from './chatMessage.route';
 import wpRoutes from './wp.route';
 import wpWebhookRoutes from './wp.webhook.route';
 import emailRoutes from './email.route';
+import dashboardRoutes from './dashboard.route';
 
 const router = Router();
 
@@ -55,5 +56,8 @@ router.use("/emails", emailRoutes);
 
 // Webhook
 router.use("/webhook", wpWebhookRoutes);
+
+// Dashboard
+router.use("/dashboard", dashboardRoutes);
 
 export default router;

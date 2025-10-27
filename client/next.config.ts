@@ -25,6 +25,11 @@ const nextConfig: NextConfig = {
 
   eslint: {
     ignoreDuringBuilds: true
+  },
+  logging: {
+    fetches: {
+      fullUrl: true,
+    }
   }
 
 };

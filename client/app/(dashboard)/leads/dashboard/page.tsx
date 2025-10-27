@@ -10,7 +10,6 @@ const mockLeads = [
 export default function page() {
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-semibold mb-4">Leads Dashboard</h2>
       <LeadsDashboard leads={mockLeads as any} />
     </div>
   )

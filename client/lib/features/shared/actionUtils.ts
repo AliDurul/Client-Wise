@@ -106,7 +106,6 @@ export const getAllData = async ({ url, searchQueries, customQuery, filterQuerie
 
     if (!url) return { success: false, error: 'URL parameter is required' };
 
-    //    await wait(5000);
 
     const queryObject = buildQueryParams({
         searchQueries,

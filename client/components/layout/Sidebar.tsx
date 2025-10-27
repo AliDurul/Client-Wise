@@ -67,7 +67,7 @@ const Sidebar = () => {
                     <div className="flex items-center justify-between px-2 py-3 overflow-hidden">
                         <Link href="/" className="flex shrink-0 items-center">
                             <Image className="flex-none" src="/assets/images/logo.png" alt="logo" width={60} height={80} />
-                            <span className=" px-1 align-middle text-base font-semibold ml-1  dark:text-white-light lg:inline">Software Company</span>
+                            <span className=" px-1 align-middle text-base font-semibold dark:text-white-light lg:inline">Customer Management</span>
                         </Link>
                         <button
                             type="button"
@@ -110,13 +110,13 @@ const Sidebar = () => {
                                 <AnimateHeight duration={300} height={currentMenu === 'dashboard' ? 'auto' : 0}>
                                     <ul className="sub-menu text-gray-500">
                                         <li>
-                                            <Link href="/">Owerview</Link>
+                                            <Link href="/">Overview</Link>
                                         </li>
                                         <li>
-                                            <Link href="/analytics">Analytics</Link>
+                                            <Link href="#">Analytics</Link>
                                         </li>
                                         <li>
-                                            <Link href="/finance">Finance</Link>
+                                            <Link href="#">Finance</Link>
                                         </li>
                                     </ul>
                                 </AnimateHeight>

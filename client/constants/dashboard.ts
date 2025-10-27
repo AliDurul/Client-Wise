@@ -2,154 +2,145 @@ const isDark = true; // Change this based on your theme
 const isRtl = false; // Change this based on your layout direction
 
 //Revenue Chart
- export const revenueChart: any = {
-    series: [
-        {
-            name: 'Income',
-            data: [16800, 16800, 15500, 17800, 15500, 17000, 19000, 16000, 15000, 17000, 14000, 17000],
-        },
-        {
-            name: 'Expenses',
-            data: [16500, 17500, 16200, 17300, 16000, 19500, 16000, 17000, 16000, 19000, 18000, 19000],
-        },
-    ],
-    options: {
-        chart: {
-            height: 325,
-            type: 'area',
-            fontFamily: 'Nunito, sans-serif',
-            zoom: {
-                enabled: false,
-            },
-            toolbar: {
-                show: false,
-            },
-        },
 
-        dataLabels: {
-            enabled: false,
-        },
-        stroke: {
-            show: true,
-            curve: 'smooth',
-            width: 2,
-            lineCap: 'square',
-        },
-        dropShadow: {
-            enabled: true,
-            opacity: 0.2,
-            blur: 10,
-            left: -7,
-            top: 22,
-        },
-        colors: isDark ? ['#2196F3', '#E7515A'] : ['#1B55E2', '#E7515A'],
-        markers: {
-            discrete: [
-                {
-                    seriesIndex: 0,
-                    dataPointIndex: 6,
-                    fillColor: '#1B55E2',
-                    strokeColor: 'transparent',
-                    size: 7,
+
+export const createRevenueChart = (series: Array<{ name: string; data: number[] }>) => {
+    const getMaxValueIndex = (data: number[]): number => {
+        return data.indexOf(Math.max(...data));
+    };
+
+    return {
+        series,
+        options: {
+            chart: {
+                height: 325,
+                type: 'area',
+                fontFamily: 'Nunito, sans-serif',
+                zoom: {
+                    enabled: false,
                 },
-                {
-                    seriesIndex: 1,
-                    dataPointIndex: 5,
-                    fillColor: '#E7515A',
-                    strokeColor: 'transparent',
-                    size: 7,
-                },
-            ],
-        },
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        xaxis: {
-            axisBorder: {
-                show: false,
-            },
-            axisTicks: {
-                show: false,
-            },
-            crosshairs: {
-                show: true,
-            },
-            labels: {
-                offsetX: isRtl ? 2 : 0,
-                offsetY: 5,
-                style: {
-                    fontSize: '12px',
-                    cssClass: 'apexcharts-xaxis-title',
-                },
-            },
-        },
-        yaxis: {
-            tickAmount: 7,
-            labels: {
-                formatter: (value: number) => {
-                    return value / 1000 + 'K';
-                },
-                offsetX: isRtl ? -30 : -10,
-                offsetY: 0,
-                style: {
-                    fontSize: '12px',
-                    cssClass: 'apexcharts-yaxis-title',
-                },
-            },
-            opposite: isRtl ? true : false,
-        },
-        grid: {
-            borderColor: isDark ? '#191E3A' : '#E0E6ED',
-            strokeDashArray: 5,
-            xaxis: {
-                lines: {
+                toolbar: {
                     show: false,
                 },
             },
-            yaxis: {
-                lines: {
+
+            dataLabels: {
+                enabled: false,
+            },
+            stroke: {
+                show: true,
+                curve: 'smooth',
+                width: 2,
+                lineCap: 'square',
+            },
+            dropShadow: {
+                enabled: true,
+                opacity: 0.2,
+                blur: 10,
+                left: -7,
+                top: 22,
+            },
+            colors: isDark ? ['#2196F3', '#E7515A'] : ['#1B55E2', '#E7515A'],
+            markers: {
+                discrete: series.map((serie, index) => ({
+                    seriesIndex: index,
+                    dataPointIndex: getMaxValueIndex(serie.data),
+                    fillColor: index === 0 ? '#1B55E2' : '#E7515A',
+                    strokeColor: 'transparent',
+                    size: 7,
+                })),
+            },
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            xaxis: {
+                axisBorder: {
+                    show: false,
+                },
+                axisTicks: {
+                    show: false,
+                },
+                crosshairs: {
                     show: true,
                 },
+                labels: {
+                    offsetX: isRtl ? 2 : 0,
+                    offsetY: 5,
+                    style: {
+                        fontSize: '12px',
+                        cssClass: 'apexcharts-xaxis-title',
+                    },
+                },
             },
-            padding: {
-                top: 0,
-                right: 0,
-                bottom: 0,
-                left: 0,
+            yaxis: {
+                tickAmount: 7,
+                labels: {
+                    formatter: (value: number) => {
+                        return value / 1000 + 'K';
+                    },
+                    offsetX: isRtl ? -30 : -10,
+                    offsetY: 0,
+                    style: {
+                        fontSize: '12px',
+                        cssClass: 'apexcharts-yaxis-title',
+                    },
+                },
+                opposite: isRtl ? true : false,
+            },
+            grid: {
+                borderColor: isDark ? '#191E3A' : '#E0E6ED',
+                strokeDashArray: 5,
+                xaxis: {
+                    lines: {
+                        show: false,
+                    },
+                },
+                yaxis: {
+                    lines: {
+                        show: true,
+                    },
+                },
+                padding: {
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 0,
+                },
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'right',
+                fontSize: '16px',
+                markers: {
+                    width: 10,
+                    height: 10,
+                    offsetX: -2,
+                },
+                itemMargin: {
+                    horizontal: 10,
+                    vertical: 5,
+                },
+            },
+            tooltip: {
+                marker: {
+                    show: true,
+                },
+                x: {
+                    show: false,
+                },
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    inverseColors: !1,
+                    opacityFrom: isDark ? 0.19 : 0.28,
+                    opacityTo: 0.05,
+                    stops: isDark ? [100, 100] : [45, 100],
+                },
             },
         },
-        legend: {
-            position: 'top',
-            horizontalAlign: 'right',
-            fontSize: '16px',
-            markers: {
-                width: 10,
-                height: 10,
-                offsetX: -2,
-            },
-            itemMargin: {
-                horizontal: 10,
-                vertical: 5,
-            },
-        },
-        tooltip: {
-            marker: {
-                show: true,
-            },
-            x: {
-                show: false,
-            },
-        },
-        fill: {
-            type: 'gradient',
-            gradient: {
-                shadeIntensity: 1,
-                inverseColors: !1,
-                opacityFrom: isDark ? 0.19 : 0.28,
-                opacityTo: 0.05,
-                stops: isDark ? [100, 100] : [45, 100],
-            },
-        },
-    },
+    };
 };
+
 //Sales By Category
 export const salesByCategory: any = {
     series: [985, 737, 270],
@@ -415,51 +406,9 @@ export const uniqueVisitorSeries: any = {
         },
     },
 };
-// followersOptions
- export const followers: any = {
-    series: [
-        {
-            data: [38, 60, 38, 52, 36, 40, 28],
-        },
-    ],
-    options: {
-        chart: {
-            height: 160,
-            type: 'area',
-            fontFamily: 'Nunito, sans-serif',
-            sparkline: {
-                enabled: true,
-            },
-        },
-        stroke: {
-            curve: 'smooth',
-            width: 2,
-        },
-        colors: ['#4361ee'],
-        grid: {
-            padding: {
-                top: 5,
-            },
-        },
-        yaxis: {
-            show: false,
-        },
-        tooltip: {
-            x: {
-                show: false,
-            },
-            y: {
-                title: {
-                    formatter: () => {
-                        return '';
-                    },
-                },
-            },
-        },
-    },
-};
+
 // referralOptions
- export const referral: any = {
+export const referral: any = {
     series: [
         {
             data: [60, 28, 52, 38, 40, 36, 38],
@@ -502,7 +451,7 @@ export const uniqueVisitorSeries: any = {
     },
 };
 // engagementOptions
- export const engagement: any = {
+export const engagement: any = {
     series: [
         {
             name: 'Sales',
@@ -541,6 +490,211 @@ export const uniqueVisitorSeries: any = {
                         return '';
                     },
                 },
+            },
+        },
+    },
+};
+
+//Total invoices Chart
+export const createTotalSaleChart = (series: Array<{ name: string; data: number[] }>) => {
+
+    return {
+        series,
+        options: {
+            chart: {
+                height: 290,
+                type: 'area',
+                fontFamily: 'Nunito, sans-serif',
+                sparkline: {
+                    enabled: true,
+                },
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 2,
+            },
+            colors: ['#00ab55'],
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            yaxis: {
+                min: 0,
+                show: false,
+            },
+            grid: {
+                padding: {
+                    top: 125,
+                    right: 0,
+                    bottom: 0,
+                    left: 0,
+                },
+            },
+            fill: {
+                opacity: 1,
+                type: 'gradient',
+                gradient: {
+                    type: 'vertical',
+                    shadeIntensity: 1,
+                    inverseColors: !1,
+                    opacityFrom: 0.3,
+                    opacityTo: 0.05,
+                    stops: [100, 100],
+                },
+            },
+            tooltip: {
+                x: {
+                    show: true,
+                },
+            },
+        },
+    };
+}
+
+export const createTicketChart = (series: Array<{ name: string; data: number[] }>) => {
+
+    return {
+        series,
+        options: {
+            chart: {
+                height: 160,
+                type: 'area',
+                fontFamily: 'Nunito, sans-serif',
+                sparkline: {
+                    enabled: true,
+                },
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 2,
+            },
+            colors: ['#4361ee'],
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            grid: {
+                padding: {
+                    top: 5,
+                },
+            },
+            yaxis: {
+                min: 0,
+                show: false,
+            },
+            tooltip: {
+                x: {
+                    show: true,
+                },
+            },
+        },
+    };
+}
+
+export const createLeadChart = (series: Array<{ name: string; data: number[] }>) => {
+    return {
+        series,
+        options: {
+            chart: {
+                height: 160,
+                type: 'area',
+                fontFamily: 'Nunito, sans-serif',
+                sparkline: {
+                    enabled: true,
+                },
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 2,
+            },
+            colors: ['#e7515a'],
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            grid: {
+                padding: {
+                    top: 5,
+                },
+            },
+            yaxis: {
+                show: false,
+            },
+            tooltip: {
+                x: {
+                    show: true,
+                },
+            },
+        },
+    }
+}
+//Daily Sales
+export const dailySales: any = {
+    series: [
+        {
+            name: 'Sales',
+            data: [44, 55, 41, 67, 22, 43, 21],
+        },
+        {
+            name: 'Last Week',
+            data: [13, 23, 20, 8, 13, 27, 33],
+        },
+    ],
+    options: {
+        chart: {
+            height: 160,
+            type: 'bar',
+            fontFamily: 'Nunito, sans-serif',
+            toolbar: {
+                show: false,
+            },
+            stacked: true,
+            stackType: '100%',
+        },
+        dataLabels: {
+            enabled: false,
+        },
+        stroke: {
+            show: true,
+            width: 1,
+        },
+        colors: ['#e2a03f', '#e0e6ed'],
+        responsive: [
+            {
+                breakpoint: 480,
+                options: {
+                    legend: {
+                        position: 'bottom',
+                        offsetX: -10,
+                        offsetY: 0,
+                    },
+                },
+            },
+        ],
+        xaxis: {
+            labels: {
+                show: false,
+            },
+            categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'],
+        },
+        yaxis: {
+            show: false,
+        },
+        fill: {
+            opacity: 1,
+        },
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                columnWidth: '25%',
+            },
+        },
+        legend: {
+            show: false,
+        },
+        grid: {
+            show: false,
+            xaxis: {
+                lines: {
+                    show: false,
+                },
+            },
+            padding: {
+                top: 10,
+                right: -20,
+                bottom: -20,
+                left: -20,
             },
         },
     },

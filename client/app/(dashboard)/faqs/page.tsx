@@ -4,9 +4,9 @@ import FaqModal from '@/components/dashboard/faq/FaqModal'
 import NoDataFound from '@/components/shared/NoDataFound'
 import SearchInput from '@/components/shared/SearchInput'
 import { getAllData } from '@/lib/features/shared/actionUtils'
-import React from 'react'
+import React, { Suspense } from 'react'
 
-export default async function page({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
+export default async function page({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
     const sp = await searchParams
     const query = sp?.q as string | undefined
 
@@ -24,7 +24,10 @@ export default async function page({ searchParams }: { searchParams: { [key: str
                         </h2>
                         <FaqCreateBtn />
                     </div>
-                    <SearchInput />
+                    <Suspense>
+                        <SearchInput />
+                    </Suspense>
+
                 </div>
             </div>
 

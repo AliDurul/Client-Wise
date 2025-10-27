@@ -67,7 +67,7 @@ export default function LeadsDashboard({ leads = [] }: Props) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 bg-white dark:bg-[#07122a] shadow rounded-lg p-4">
+        <div className="lg:col-span-2 panel ">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Pipeline Revenue</h3>
@@ -85,14 +85,14 @@ export default function LeadsDashboard({ leads = [] }: Props) {
         </div>
 
         <div className="lg:col-span-1">
-          <div className="bg-white dark:bg-[#07122a] shadow rounded-lg p-4 mb-4">
+          <div className="panel mb-4">
             <h4 className="text-lg font-semibold text-gray-800 dark:text-white">Status Distribution</h4>
             <div className="mt-3 h-56">
               <ReactApexChart options={donutOptions} series={donutSeries} type="donut" height={220} />
             </div>
           </div>
 
-          <div className="bg-white dark:bg-[#07122a] shadow rounded-lg p-4">
+          <div className="">
             <h4 className="text-lg font-semibold text-gray-800 dark:text-white">Quick Summary</h4>
             <div className="mt-3 space-y-3">
               <div className="flex items-center justify-between">

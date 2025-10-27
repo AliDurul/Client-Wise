@@ -15,7 +15,7 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 const NavbarProfileDrop = () => {
   const { userInfo, isLoading } = useCurrentUser();
-  
+
   return (
     <div className="dropdown flex shrink-0">
       {
@@ -62,29 +62,29 @@ const NavbarProfileDrop = () => {
                   </div>
                 </div>
               </li>
-              {/* <li>
-            <Link href="/profile" className="dark:hover:text-white">
-              <UserProfileIcon />
-              Profile
-            </Link>
-          </li> */}
-              {/* <li>
-            <Link href="/mailbox" className="dark:hover:text-white">
-              <ProfileMailBoxIcon />
-              Mailbox
-            </Link>
-          </li> */}
               <li>
-                <Link
-                  href="/login"
-                  className="dark:hover:text-white"
-                >
-                  <ProfileLockScreen />
-                  login page
+                <Link href="/#" className="flex items-center gap-2 px-4 py-3 rounded hover:bg-slate-700 dark:hover:bg-slate-700 dark:hover:text-white">
+                  <UserProfileIcon />
+                  Profile
                 </Link>
               </li>
-              <li className="border-t border-white-light dark:border-white-light/10 hover:bg-primary/10 hover:text-primary">
-                <button className="!py-3 !pl-4 text-danger flex"
+              <li>
+                <Link href="/#" className="flex items-center gap-2 px-4 py-3 rounded hover:bg-slate-700 dark:hover:bg-slate-700 dark:hover:text-white">
+                  <ProfileMailBoxIcon />
+                  Mailbox
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/#"
+                  className="flex items-center gap-2 px-4 py-3 rounded hover:bg-slate-700 dark:hover:bg-slate-700 dark:hover:text-white"
+                >
+                  <ProfileLockScreen />
+                  Lock Screen
+                </Link>
+              </li>
+              <li className="border-t border-white-light dark:border-white-light/10">
+                <button className="w-full text-left !py-3 !pl-4 text-danger flex items-center gap-2 hover:bg-slate-700 dark:hover:bg-slate-700"
                   onClick={() => signOut()}
                 >
                   <ProfileSigninIcon />
@@ -93,7 +93,7 @@ const NavbarProfileDrop = () => {
               </li>
             </ul>
           </Dropdown>
-        ) 
+        )
       }
     </div>
   );

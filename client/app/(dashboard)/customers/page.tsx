@@ -40,13 +40,12 @@ export default async function page({ searchParams }: PageSearchParams) {
                     <CustomerHeaderBtns />
                 </div>
             </div> */}
-
+            
             <div className="panel mt-5 border-white-light px-0 dark:border-[#1b2e4b]">
                 <Suspense fallback={<TableSkeleton />}>
                     <CustomerTable customerPromise={customerPromise} />
                 </Suspense>
             </div>
-
         </>
     )
 }

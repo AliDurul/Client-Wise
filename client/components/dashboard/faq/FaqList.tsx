@@ -26,7 +26,7 @@ export default function FaqList({ faqs }: { faqs: Faq[] }) {
                 faqs?.map((faq: Faq, index: number) => (
                     <div key={index} className="rounded-md border border-[#ebedf2] bg-white dark:border-[#191e3a] dark:bg-black ">
                         <div className={`flex cursor-pointer rounded-t-md p-5  font-semibold ${active === index + 1 ? 'bg-primary/20 text-black' : ''}`} onClick={() => togglePara(index + 1)}>
-                            <span className="text-dark">{faq.question}</span>
+                            <span className="text-white-dark">{faq.question}</span>
                             <div className="flex  ltr:ml-auto rtl:mr-auto">
                                 <svg className={`h-5 w-5 ${active === index + 1 ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M19 9L12 15L5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

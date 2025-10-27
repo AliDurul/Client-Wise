@@ -38,6 +38,47 @@ export interface PersonInfo {
   profile_pic: string | null;
 };
 
+/* ---------------------------- Dashboard ----------------------------*/
+export interface DashCardStats {
+  customers: DashCustomers;
+  leads: DashLeads;
+  tickets: DashTickets;
+  invoices: DashInvoices;
+}
+
+export interface DashCustomers {
+  total: number;
+  byType: {
+    corporate: number;
+    individual: number;
+    [key: string]: number;
+  };
+}
+
+export interface DashLeads {
+  total: number;
+  // pipeline_stage keys may contain hyphens like "Closed-Won", use an index signature
+  pipeline_stage: Record<string, number>;
+}
+
+export interface DashTickets {
+  total: number;
+  status: {
+    active: number;
+    resolved: number;
+    [key: string]: number;
+  };
+}
+
+export interface DashInvoices {
+  totalProfit: number;
+  thisPeriodProfit: number;
+  lastPeriodProfit: number;
+  comparisonPct: number;
+}
+
+
+
 /* ---------------------------- Authorization ----------------------------*/
 export interface Login {
   email: string;

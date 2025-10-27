@@ -1,7 +1,9 @@
 
 import TopPageNavigation from "@/components/shared/TopPageNavigation";
-import DashboardMain from "@/components/dashboard/DashboardMain";
-import { auth } from "@/auth";
+import OverviewMain from "@/components/dashboard/owerview/OverviewMain";
+import { getDashboardStats } from "@/lib/features/dashboard/dashboardAction";
+import { Suspense } from "react";
+import OverviewSkeleton from "@/components/dashboard/owerview/OverviewSkeleton";
 
 export const metadata = {
   title: "Client Link Dashboard",
@@ -9,11 +11,15 @@ export const metadata = {
 };
 
 export default async function Home() {
+  const overviewPromise = getDashboardStats();
+
 
   return (
     <>
       <TopPageNavigation />
-      <DashboardMain />
+      <Suspense fallback={<OverviewSkeleton />}>
+        <OverviewMain overviewPromise={overviewPromise} />
+      </Suspense>
     </>
   );
 }

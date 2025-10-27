@@ -12,8 +12,8 @@ export default function ChatSidebarListSkeleton() {
 
             {Array(10).fill(null).map((_, index) => (
                 <div key={index} className="flex gap-2 justify-between items-center">
-                    <div className="bg-gray-300 size-12 rounded-full" />
-                    <div className="h-10 bg-gray-300 flex-1 rounded-md" />
+                    <div className="bg-gray-200 dark:bg-gray-700 size-12 rounded-full" />
+                    <div className="h-10 bg-gray-200 dark:bg-gray-700 flex-1 rounded-md" />
                 </div>
             ))}
         </div>
