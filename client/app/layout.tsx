@@ -22,6 +22,9 @@ export const experimental_ppr = true
 export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
   return (
     <html lang="en" data-scroll-behavior="smooth">
+      <head>
+        <meta name="apple-mobile-web-app-title" content="Client Link" />
+      </head>
 
       <StoreProvider>
         <body className={`${nunito.variable} font-nunito`}>
