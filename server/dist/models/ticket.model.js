@@ -71,7 +71,7 @@ const ticketSchema = new mongoose_1.Schema({
     customer: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'Customer',
-        required: true,
+        // required: true,
     },
     category: {
         type: mongoose_1.Schema.Types.ObjectId,

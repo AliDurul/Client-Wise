@@ -72,7 +72,14 @@ const getTickets = async (req, res) => {
 exports.getTickets = getTickets;
 const createTicket = async (req, res) => {
     const userId = req.user?.id;
-    req.body.assigned_agent = userId;
+    if (!req.body.assigned_agent) {
+        req.body.assigned_agent = userId;
+    }
+    if (req.body.email_id) {
+        const isExistEmail = await ticket_model_1.default.exists({ email_id: req.body.email_id });
+        if (isExistEmail)
+            throw new common_1.CustomError("A ticket with this email ID already exists.", 400, true);
+    }
     const result = await ticket_model_1.default.create(req.body);
     if (!result)
         throw new common_1.CustomError("Failed to create ticket", 500, true);

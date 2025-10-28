@@ -7,4 +7,4 @@ const router = (0, express_1.Router)();
 router.get('/', webhook_controller_1.handleGetRequest);
 router.post('/', webhook_controller_1.handlePostRequest);
 exports.default = router;
-//# sourceMappingURL=webhook.route.js.map
+//# sourceMappingURL=wp.webhook.route.js.map

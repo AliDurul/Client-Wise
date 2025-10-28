@@ -1,8 +1,7 @@
 "use strict";
+// Emails
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getGmailMessages = getGmailMessages;
-exports.getGmailLabels = getGmailLabels;
-const gmail_service_1 = require("../services/gmail.service");
+exports.modifyMessage = modifyMessage;
 // Helper to parse the "From" header
 function parseFromHeader(fromValue) {
     const match = fromValue.match(/^(.*?)\s*<(.+?)>$/);
@@ -51,25 +50,16 @@ function modifyMessage(message) {
         firstName: fromParsed.firstName,
         lastName: fromParsed.lastName,
         email: fromParsed.email,
+        to: getHeader('To'),
         title: getHeader('Subject'),
         displayDescription: description,
         isUnread: message.labelIds?.includes('UNREAD'),
-        isStar: message.labelIds?.includes('STARRED'),
+        isStarred: message.labelIds?.includes('STARRED'),
         isImportant: message.labelIds?.includes('IMPORTANT'),
         labelIds: message.labelIds,
-        group: '', // Set as needed
         attachments,
         date: getHeader('Date'),
         payload: message.payload,
     };
 }
-async function getGmailMessages(req, res) {
-    const result = await (0, gmail_service_1.listGmailMessages)();
-    const transformed = result.map(modifyMessage);
-    res.status(200).send({ success: true, result: transformed });
-}
-async function getGmailLabels(req, res) {
-    const result = await (0, gmail_service_1.listGmailLabels)();
-    res.status(200).send({ success: true, result });
-}
-//# sourceMappingURL=gmail.controller.js.map
+//# sourceMappingURL=functions.js.map

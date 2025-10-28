@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.resetPassSchema = exports.forgetPassSchema = exports.verifyEmailSchema = exports.loginUserSchema = exports.registerUserSchema = void 0;
+exports.sendEmailSchema = exports.resetPassSchema = exports.forgetPassSchema = exports.verifyEmailSchema = exports.loginUserSchema = exports.registerUserSchema = void 0;
 const zod_1 = require("zod");
 exports.registerUserSchema = zod_1.z.object({
     // name: z.string().min(1, 'Name is required').max(50, 'Name must be less than 50 characters'),
@@ -20,4 +20,20 @@ exports.forgetPassSchema = zod_1.z.object({
 exports.resetPassSchema = zod_1.z.object({
     password: zod_1.z.string().min(8, 'Password must be at least 8 characters long').max(16, 'Password must be less than 16 characters')
 }).strict();
+exports.sendEmailSchema = zod_1.z.object({
+    to: zod_1.z.string().email('Invalid recipient email address'),
+    subject: zod_1.z.string().min(1, 'Subject is required').max(200, 'Subject must be less than 200 characters'),
+    textBody: zod_1.z.string().optional(),
+    htmlBody: zod_1.z.string().optional(),
+    cc: zod_1.z.string().email('Invalid CC email address').optional().or(zod_1.z.literal('')),
+    bcc: zod_1.z.string().email('Invalid BCC email address').optional().or(zod_1.z.literal('')),
+    attachments: zod_1.z.array(zod_1.z.object({
+        filename: zod_1.z.string().min(1, 'Filename is required'),
+        content: zod_1.z.string().min(1, 'Content is required'),
+        contentType: zod_1.z.string().min(1, 'Content type is required')
+    })).optional().default([])
+}).refine((data) => data.textBody || data.htmlBody, {
+    message: 'Either text body or HTML body must be provided',
+    path: ['textBody']
+});
 //# sourceMappingURL=validationSchemas.js.map

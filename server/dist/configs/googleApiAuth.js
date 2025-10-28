@@ -9,7 +9,11 @@ const node_process_1 = __importDefault(require("node:process"));
 const local_auth_1 = require("@google-cloud/local-auth");
 const googleapis_1 = require("googleapis");
 const promises_1 = __importDefault(require("fs/promises"));
-const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly', 'https://www.googleapis.com/auth/gmail.compose', 'https://www.googleapis.com/auth/gmail.send'];
+const SCOPES = [
+    'https://www.googleapis.com/auth/gmail.compose',
+    'https://www.googleapis.com/auth/gmail.send',
+    'https://www.googleapis.com/auth/gmail.modify'
+];
 const CREDENTIALS_PATH = node_path_1.default.join(node_process_1.default.cwd(), './src/configs/credentials.json');
 const TOKEN_PATH = node_path_1.default.join(node_process_1.default.cwd(), './src/configs/token.json');
 async function loadSavedCredentials() {
