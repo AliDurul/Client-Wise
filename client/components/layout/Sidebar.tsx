@@ -16,7 +16,8 @@ const Sidebar = () => {
     const pathname: string = usePathname()
     const [currentMenu, setCurrentMenu] = useState<string>('');
     const themeConfig = useAppSelector(selectThemeConfig)
-    const semidark = themeConfig.semidark
+    const semidark = themeConfig.semidark;
+    const isDarkMode = themeConfig.isDarkMode;
     const toggleMenu = (value: string) => {
         setCurrentMenu((oldValue) => {
             return oldValue === value ? '' : value;
@@ -65,9 +66,9 @@ const Sidebar = () => {
                 <div className="h-full bg-white dark:bg-black">
 
                     <div className="flex items-center justify-between px-2 py-3 overflow-hidden">
-                        <Link href="/" className="flex shrink-0 items-center">
-                            <Image className="flex-none" src="/assets/images/logo.png" alt="logo" width={60} height={80} />
-                            <span className=" px-1 align-middle text-base font-semibold dark:text-white-light lg:inline">Customer Management</span>
+                        <Link href="/" className="flex shrink-0 items-center justify-center  opacity-80">
+                            <Image className="flex-none" src={`/assets/images/${isDarkMode ? 'logo-dark.png' : 'logo-light.png'}`} alt="logo" width={180} height={80} />
+                            {/* <span className="align-middle text-base font-semibold dark:text-white-light lg:inline">Management</span> */}
                         </Link>
                         <button
                             type="button"

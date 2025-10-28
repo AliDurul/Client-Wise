@@ -1,17 +1,19 @@
 import { ToggleHamburgerHorizontalIcon } from "@/icons"
-import { toggleSidebar } from "@/lib/features/theme/themeSlice";
-import { useAppDispatch } from "@/lib/hooks";
+import { selectIsDarkMode, toggleSidebar } from "@/lib/features/theme/themeSlice";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import Image from "next/image"
 import Link from "next/link"
 
 const NavbarLogo = () => {
     const dispatch = useAppDispatch();
+    const isDarkMode = useAppSelector(selectIsDarkMode)
     return (
         <div className="horizontal-logo flex items-center justify-between ltr:mr-2 rtl:ml-2 lg:hidden">
-            <Link href="/" className="flex shrink-0 items-center">
+            <Link href="/" className="flex shrink-0 items-center opacity-80">
 
 
-                <Image width={100} height={50} className="inline ltr:-ml-1 rtl:-mr-1" src="/assets/images/logo.png" alt="logo" />
+                {/* <Image width={100} height={50} className="inline ltr:-ml-1 rtl:-mr-1" src="/assets/images/logo.png" alt="logo" /> */}
+                 <Image className="flex-none" src={`/assets/images/${isDarkMode ? 'logo-dark.png' : 'logo-light.png'}`} alt="logo" width={100} height={80} />
 
             </Link>
             <button
