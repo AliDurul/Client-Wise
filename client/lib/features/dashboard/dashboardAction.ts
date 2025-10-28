@@ -6,9 +6,6 @@ const BASE_URL = process.env.API_BASE_URL + '/';
 
 export const getDashboardStats = async () => {
 
-   await new Promise((resolve) => setTimeout(resolve, 5000)); // Simulate a delay
-
-
     try {
         const response = await fetch(BASE_URL + 'dashboard/', {
             next: { tags: ['dashboard-overview'] }
