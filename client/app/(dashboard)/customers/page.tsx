@@ -33,19 +33,13 @@ export default async function page({ searchParams }: PageSearchParams) {
 
     return (
         <>
-            {/* <TopPageNavigation /> */}
-
-            {/* <div className="flex justify-end mt-3">
-                <div className="flex gap-3">
-                    <CustomerHeaderBtns />
-                </div>
-            </div> */}
-            
-            <div className="panel mt-5 border-white-light px-0 dark:border-[#1b2e4b]">
+           
+            {/* <div className="panel mt-5 border-white-light px-0 dark:border-[#1b2e4b]">
                 <Suspense fallback={<TableSkeleton />}>
                     <CustomerTable customerPromise={customerPromise} />
                 </Suspense>
-            </div>
+            </div> */}
+           <TableSkeleton /> 
         </>
     )
 }

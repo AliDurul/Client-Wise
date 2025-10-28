@@ -19,7 +19,7 @@ export function TableSkeleton() {
                 {Array.from({ length: 10 }).map((_, idx) => (
                     <div
                         key={idx}
-                        className={`grid grid-cols-4 gap-4 py-3 border-t  border-slate-700 `}>
+                        className={`grid grid-cols-4 gap-4 py-3 border-t  dark:border-slate-700 `}>
 
                         <div className="h-8 rounded bg-gray-200 dark:bg-gray-700 " />
                         <div className="h-8 rounded bg-gray-200 dark:bg-gray-700 " />
@@ -79,7 +79,7 @@ export function TaskMainSkeleton() {
 
                 <div className="space-y-4">
                     {Array.from({ length: 8 }).map((_, idx) => (
-                        <div key={idx} className="border-t border-slate-700 pt-4">
+                        <div key={idx} className="border-t dark:border-slate-700 pt-4">
                             <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-2" />
                             <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
                         </div>

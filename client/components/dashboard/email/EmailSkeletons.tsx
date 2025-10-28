@@ -39,7 +39,7 @@ export function EmailListSkeleton() {
             <div className="flex flex-col gap-1 p-4">
                 {
                     Array.from({ length: messages }).map((_, index) => (
-                        <div key={index} className="h-12 flex p-2 gap-1 border-b-2 border-slate-700">
+                        <div key={index} className="h-12 flex p-2 gap-1 border-b-2 dark:border-slate-700">
                             <div className=" bg-gray-200 dark:bg-gray-700 w-13 rounded-md " />
                             <div className=" bg-gray-200 dark:bg-gray-700 w-2/12 rounded-lg" />
                             <div className=" bg-gray-200 dark:bg-gray-700 w-8/12 rounded-lg" />
