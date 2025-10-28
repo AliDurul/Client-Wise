@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   // experimental: {
   //   ppr: 'incremental',
   // },
-
+  staticPageGenerationTimeout: 120,
   images: {
     remotePatterns: [
       {
