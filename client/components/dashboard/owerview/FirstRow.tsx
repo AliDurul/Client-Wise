@@ -4,7 +4,8 @@ import { DashCardStats } from '@/types';
 import React from 'react'
 
 export default function FirstRow({ cardStats }: { cardStats: DashCardStats }) {
-    const { customers, invoices, tickets, leads } = cardStats;
+
+    // const { customers, invoices, tickets, leads } = cardStats;
     return (
         <div className="mb-6 grid grid-cols-1 gap-6 text-white sm:grid-cols-2 xl:grid-cols-4">
             <div className="panel bg-gradient-to-r from-cyan-500 to-cyan-400">
@@ -35,7 +36,7 @@ export default function FirstRow({ cardStats }: { cardStats: DashCardStats }) {
                     </div>
                 </div>
                 <div className="mt-5 flex items-center justify-around">
-                    <div className="text-5xl px-2 text-center font-bold "> {customers.total} </div>
+                    <div className="text-5xl px-2 text-center font-bold "> {cardStats?.customers.total} </div>
                     <div className='flex flex-col'>
                         <div className="badge px-3 bg-white/30">
                             <div className="flex items-center text-base font-semibold">
@@ -48,7 +49,7 @@ export default function FirstRow({ cardStats }: { cardStats: DashCardStats }) {
                                     />
                                     <path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="currentColor" strokeWidth="1.5" />
                                 </svg>
-                                {customers.byType.corporate} Corporate
+                                {cardStats?.customers.byType.corporate} Corporate
                             </div>
                         </div>
                         <div className="badge px-3 bg-white/30">
@@ -62,7 +63,7 @@ export default function FirstRow({ cardStats }: { cardStats: DashCardStats }) {
                                     />
                                     <path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="currentColor" strokeWidth="1.5" />
                                 </svg>
-                                {customers.byType.individual} Individual
+                                {cardStats?.customers.byType.individual} Individual
                             </div>
                         </div>
 
@@ -99,7 +100,7 @@ export default function FirstRow({ cardStats }: { cardStats: DashCardStats }) {
                     </div>
                 </div>
                 <div className="mt-5 flex items-center justify-around">
-                    <div className="text-5xl px-2 text-center font-bold "> {tickets.total} </div>
+                    <div className="text-5xl px-2 text-center font-bold "> {cardStats?.tickets.total} </div>
                     <div className='flex flex-col'>
                         <div className="badge px-3 bg-white/30">
                             <div className="flex items-center text-base font-semibold">
@@ -112,7 +113,7 @@ export default function FirstRow({ cardStats }: { cardStats: DashCardStats }) {
                                     />
                                     <path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="currentColor" strokeWidth="1.5" />
                                 </svg>
-                                {tickets.status.active} Acvtive
+                                {cardStats?.tickets.status.active} Active
                             </div>
                         </div>
                         <div className="badge px-3 bg-white/30">
@@ -126,7 +127,7 @@ export default function FirstRow({ cardStats }: { cardStats: DashCardStats }) {
                                     />
                                     <path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="currentColor" strokeWidth="1.5" />
                                 </svg>
-                                {tickets.status.resolved} Resolved
+                                {cardStats?.tickets.status.resolved} Resolved
                             </div>
                         </div>
 
@@ -163,7 +164,7 @@ export default function FirstRow({ cardStats }: { cardStats: DashCardStats }) {
                     </div>
                 </div>
                 <div className="mt-5 flex items-center justify-around">
-                    <div className="text-5xl px-2 text-center font-bold "> {leads.total} </div>
+                    <div className="text-5xl px-2 text-center font-bold "> {cardStats?.leads.total} </div>
                     <div className='flex flex-col'>
                         <div className="badge px-3 bg-white/30">
                             <div className="flex items-center text-base font-semibold">
@@ -176,7 +177,7 @@ export default function FirstRow({ cardStats }: { cardStats: DashCardStats }) {
                                     />
                                     <path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="currentColor" strokeWidth="1.5" />
                                 </svg>
-                                {leads.pipeline_stage['Closed-Won']} Closed-Won
+                                {cardStats?.leads.pipeline_stage['Closed-Won']} Closed-Won
                             </div>
                         </div>
                         <div className="badge px-3 bg-white/30">
@@ -190,7 +191,7 @@ export default function FirstRow({ cardStats }: { cardStats: DashCardStats }) {
                                     />
                                     <path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="currentColor" strokeWidth="1.5" />
                                 </svg>
-                                {leads.pipeline_stage['Negotiation']} Negotiation
+                                {cardStats?.leads.pipeline_stage['Negotiation']} Negotiation
                             </div>
                         </div>
 
@@ -227,8 +228,8 @@ export default function FirstRow({ cardStats }: { cardStats: DashCardStats }) {
                     </div>
                 </div>
                 <div className="mt-5 flex items-center">
-                    <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3"> $ {invoices.totalProfit} </div>
-                    <div className="badge bg-white/30">{invoices.comparisonPct}% </div>
+                    <div className="text-3xl font-bold ltr:mr-3 rtl:ml-3"> $ {cardStats?.invoices.totalProfit} </div>
+                    <div className="badge bg-white/30">{cardStats?.invoices.comparisonPct}% </div>
                 </div>
                 <div className="mt-5 flex items-center font-semibold">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ltr:mr-2 rtl:ml-2">
@@ -240,7 +241,7 @@ export default function FirstRow({ cardStats }: { cardStats: DashCardStats }) {
                         />
                         <path d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z" stroke="currentColor" strokeWidth="1.5" />
                     </svg>
-                    Last Week $ {invoices.lastPeriodProfit}
+                    Last Week $ {cardStats?.invoices.lastPeriodProfit}
                 </div>
             </div>
         </div>
