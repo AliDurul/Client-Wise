@@ -47,7 +47,7 @@ export default async function page({ params }: { params: Promise<{ productId: st
                                 {/* {product.images.map((image: any) => ( */}
                                 <TabPanel>
                                     <img
-                                        src='/assets/images/profile-pic.png'
+                                        src={`https://placehold.co/600x400/png?text=${encodeURIComponent(product?.result.name)}`}
                                         alt={product?.result.name}
                                         className="h-full w-full object-cover object-center sm:rounded-lg"
                                     />

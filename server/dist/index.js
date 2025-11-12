@@ -18,6 +18,7 @@ async function startServer() {
     try {
         await (0, db_1.connectDB)();
         server.listen(PORT, () => {
+            // initializeData2();
             console.log(`Server running on http://localhost:${PORT}`);
         });
         process.on('SIGINT', async () => {

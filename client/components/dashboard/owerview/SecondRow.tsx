@@ -14,6 +14,8 @@ export default function SecondRow({ secondRowData }: any) {
     const revenueChart = createRevenueChart(secondRowData?.monthlyStats?.revenueSeries || []);
     const recentInvoices = secondRowData?.recentInvoices || [];
 
+    console.log(recentInvoices);
+
     // Map invoice status to colors
     const getStatusColors = (status: 'draft' | 'sent' | 'paid' | 'overdue' | 'closed' | 'refunded') => {
         const colorMap = {
@@ -30,7 +32,7 @@ export default function SecondRow({ secondRowData }: any) {
     return (
         <div className="mb-6 grid gap-6 xl:grid-cols-3">
             {/* Revenue Chart */}
-            <div className="panel h-full xl:col-span-2">
+            <div className="panel h-full col-span-3 md:col-span-2">
                 <div className="mb-5 flex items-center justify-between dark:text-white-light">
                     <h5 className="text-lg font-semibold">Revenue</h5>
                     <div className="dropdown">
@@ -88,7 +90,7 @@ export default function SecondRow({ secondRowData }: any) {
                                 return (
                                     <div key={index} className="group relative flex items-center py-1.5">
                                         <div className={`h-1.5 w-1.5 rounded-full ${statusColors.bgDot} ltr:mr-1 rtl:ml-1.5`}></div>
-                                        <div className="flex-1">{invoice.customer?.first_name} {invoice.customer?.last_name}</div>
+                                        <div className="flex-1">{invoice.customer?.first_name ? invoice.customer.first_name : invoice.customer.company_name} {invoice.customer?.last_name}</div>
                                         <div className="text-xs text-white-dark ltr:ml-auto rtl:mr-auto dark:text-gray-500">{formatDate(invoice.createdAt).slice(0, 6)}</div>
                                         <span className={`badge ${statusColors.badge} absolute ${statusColors.bg} text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black`}>
                                             {invoice.status}

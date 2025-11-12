@@ -208,7 +208,7 @@ export interface ICustomer extends Document {
         country?: string;
         zip_code?: string;
     };
-    id_type?: 'passport' | 'national_id' | 'driving_license' | 'other';
+    id_type?: 'passport' | 'nrc' | 'driving_license' | 'other';
     id_number?: string;
     id_front?: string;
     id_back?: string;
