@@ -48,7 +48,7 @@ export default function InvoiceReadPreviewBtns({ invoice }: invoiceProps) {
 
             <button
                 onClick={() => {
-                    router.push(`/invoice/action`)
+                    router.push(`/invoices/action/?s=c`);
                     // dispatch(updateInvoiceState(null))
                 }} className="btn btn-secondary gap-2">
                 <svg className="h-5 w-5" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
@@ -60,7 +60,7 @@ export default function InvoiceReadPreviewBtns({ invoice }: invoiceProps) {
 
             <button
                 onClick={() => {
-                    router.push(`/invoice/action`)
+                    router.push(`/invoices/action?s=e&id=${invoice._id}`);
                     // dispatch(updateInvoiceState(invoice))
                 }} className="btn btn-warning gap-2">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5">

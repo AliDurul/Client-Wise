@@ -1,5 +1,5 @@
 'use client';
-import { formatDate } from '@/lib/utility/functions';
+import { formatDate, truncateText } from '@/lib/utility/functions';
 import { Lead, Pagination } from '@/types';
 import { LuMousePointerClick } from "react-icons/lu";
 import { DeleteIcon, EditIcon, PreviewIcon } from '@/icons';
@@ -43,12 +43,12 @@ export default function LeadTable({ leads }: CustomerMainProps) {
 
   const renderActions: DataTableColumn<Lead>['render'] = (record) => (
     <div className="mx-auto flex w-max items-center gap-4">
-      <button
+      {/* <button
         className="flex hover:text-primary"
         onClick={(e) => { handlePreview(`/leads/action/?s=r&id=${record._id}`, e); }}
       >
         <PreviewIcon />
-      </button>
+      </button> */}
       {
         userInfo?.role !== 'admin' && (
           <>
@@ -193,7 +193,7 @@ export default function LeadTable({ leads }: CustomerMainProps) {
       title: 'Location',
       render: ({ location }: Lead) =>
         location
-          ? `${location.province ?? ''} ${location.town ?? ''} ${location.address ?? ''}`.trim()
+          ? `${truncateText(`${location.province ?? ''} ${location.town ?? ''} ${location.address ?? ''}`, 20)}`.trim()
           : '-',
       sortable: false,
     },

@@ -16,21 +16,21 @@ export const initializeData2 = async () => {
         throw new Error("Mongoose is not connected. Connect before running this script.");
     }
 
-    console.log("Dropping entire database...");
-    await mongoose.connection.db.dropDatabase();
-    console.log("Database dropped successfully.");
+    // console.log("Dropping entire database...");
+    // await mongoose.connection.db.dropDatabase();
+    // console.log("Database dropped successfully.");
 
-    // await Promise.all([
-    //     User.deleteMany({}),
-    //     Customer.deleteMany({}),
-    //     Faq.deleteMany({}),
-    //     Product.deleteMany({}),
-    //     Task.deleteMany({}),
-    //     Ticket.deleteMany({}),
-    //     TicCat.deleteMany({}),
-    //     Invoice.deleteMany({}),
-    // ]);
-    // console.log("All collections cleared.");
+    await Promise.all([
+        User.deleteMany({}),
+        Customer.deleteMany({}),
+        Faq.deleteMany({}),
+        Product.deleteMany({}),
+        Task.deleteMany({}),
+        Ticket.deleteMany({}),
+        TicCat.deleteMany({}),
+        Invoice.deleteMany({}),
+    ]);
+    console.log("All collections cleared.");
 
     await User.insertMany(dummyUsers);
     console.log("Users seeded successfully.");
