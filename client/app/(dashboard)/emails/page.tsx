@@ -28,8 +28,9 @@ export default function page() {
                             className="w-full h-auto rounded-lg"
                             controls
                             preload="metadata"
+                            poster='/assets/videos/email-service-poster.jpg'
                         >
-                            <source src='/assets/videos/email-service.mp4' type="video/mp4" />
+                            <source src='https://ik.imagekit.io/devlee/email-service.mp4' type="video/mp4" />
                             Your browser does not support the video tag.
                         </video>
                     </div>
