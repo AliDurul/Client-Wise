@@ -13,7 +13,6 @@ export const metadata = {
 export default async function Home() {
   const overviewPromise = getDashboardStats();
 
-
   return (
     <>
       <TopPageNavigation />

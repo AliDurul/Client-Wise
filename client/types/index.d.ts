@@ -36,6 +36,7 @@ export interface PersonInfo {
   email: string;
   phone_number: string;
   profile_pic: string | null;
+  role: string;
 };
 
 /* ---------------------------- Dashboard ----------------------------*/

@@ -1,21 +1,12 @@
 'use client';
 import { authCredentials } from '@/lib/features/auth/authActions'
-import { LoginFormState } from '@/types/auth'
 import React, { useActionState, useEffect } from 'react'
 import InputBox from '../shared/InputBox';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
-
-const initialState: LoginFormState = {
-    success: false,
-    message: '',
-    errors: {},
-    inputs: { email: '', password: '' }
-};
-
 export default function LoginForm() {
-    const [state, action, isPending] = useActionState(authCredentials, initialState);
+    const [state, action, isPending] = useActionState(authCredentials, null);
     const router = useRouter();
 
     useEffect(() => {

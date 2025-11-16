@@ -70,7 +70,7 @@ table tr .mantine-Checkbox-root {
     @apply hidden;
 }
 .mantine-Group-root .mantine-UnstyledButton-root {
-    @apply hover:bg-inherit dark:!border-[#191e3a] dark:text-white-dark;
+    @apply bg-inherit dark:!border-[#191e3a] dark:text-white-dark;
 }
 
 .mantine-Table-root th.text-right .mantine-Group-root {

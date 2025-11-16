@@ -10,7 +10,7 @@ export type TRegisterUser = z.infer<typeof registerUserSchema>;
 
 export const loginUserSchema = z.object({
     email: z.string().email('Invalid email address').max(100, 'Email must be less than 100 characters'),
-    password: z.string().min(8, 'Password must be at least 8 characters long').max(16, 'Password must be less than 16 characters'),
+    password: z.string().min(6, 'Password must be at least 6 characters long').max(16, 'Password must be less than 16 characters'),
 }).strict();
 
 export type TLoginUser = z.infer<typeof loginUserSchema>;

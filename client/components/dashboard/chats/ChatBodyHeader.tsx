@@ -11,7 +11,7 @@ import { mutate } from 'swr';
 export default function ChatBodyHeader() {
     // hooks
     const dispatch = useAppDispatch();
-    const { displayName, displayPic, otherUserId, isGroup, chatId, subTitle } = useChatDisplayInfo();
+    const { displayName, displayPic, otherUserId, isGroup, chatId, subTitle, role } = useChatDisplayInfo();
     const activeUsers = useAppSelector(selectActiveChatUsers);
 
     const handleDelete = async () => {
@@ -60,10 +60,14 @@ export default function ChatBodyHeader() {
                             </div>
                         )
                     }
+
                 </div>
                 <div className="mx-3">
                     <p className="font-semibold">{displayName}</p>
                     <p className="text-xs text-white-dark">{subTitle}</p>
+                    {
+                        !isGroup && <p className='text-sm text-white-dark'>{role}</p>
+                    }
                     {/* <p className="text-xs text-white-dark">{selectedChat.active ? 'Active now' : 'Last seen at ' + selectedChat.time}</p> */}
                 </div>
             </div>

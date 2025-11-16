@@ -11,6 +11,7 @@ import {
 } from "@/icons";
 import { signOut } from "next-auth/react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { truncateText } from "@/lib/utility/functions";
 
 
 const NavbarProfileDrop = () => {
@@ -57,7 +58,7 @@ const NavbarProfileDrop = () => {
                       type="button"
                       className="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white"
                     >
-                      {userInfo?.email}
+                      {truncateText(userInfo?.email || '', 15)}
                     </button>
                   </div>
                 </div>

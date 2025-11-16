@@ -1,51 +1,108 @@
 import Image from 'next/image';
 import React from 'react'
-import logo from '@/public/assets/images/logo.png';
 import Link from 'next/link';
 import LoginForm from '@/components/auth/LoginForm';
 import LoginBtns from '@/components/auth/LoginBtns';
 
 export default function page() {
     return (
-        <div className="flex min-h-screen">
-            <div className="hidden min-h-screen w-1/2 flex-col  items-center justify-center bg-gradient-to-t from-[#ff1361bf] to-[#44107A] p-4 text-white dark:text-black lg:flex">
-                <div className="mx-auto mb-5 w-full">
-                    <Image src="/assets/images/auth-cover.svg" width={500} height={500} alt="coming_soon" className="mx-auto lg:max-w-[370px] xl:max-w-[500px]" />
+        <div className="flex max-h-screen">
+            {/* Left Panel - Brand Section */}
+            <div className="hidden min-h-screen w-1/2 flex-col items-center justify-center bg-gradient-to-br from-[#4361ee] via-[#805dca] to-[#e7515a] p-8 text-white lg:flex">
+                <div className="mx-auto w-full max-w-[500px]">
+                    {/* Logo */}
+                    <div className="mb-8 flex justify-center">
+                        <div className="rounded-2xl bg-white/10 p-4 backdrop-blur-sm">
+                            <Image 
+                                src={'/assets/images/logo-dark.png'} 
+                                width={125} 
+                                height={125} 
+                                alt="CRM Logo" 
+                                className="h-auto w-auto"
+                                priority
+                            />
+                        </div>
+                    </div>
+
+                    {/* Illustration */}
+                    <div className="mb-8">
+                        <Image 
+                            src="/assets/images/crm-importance.jpg" 
+                            width={500} 
+                            height={500} 
+                            alt="CRM Illustration" 
+                            className="mx-auto w-full drop-shadow-2xl lg:max-w-[370px] xl:max-w-[450px] rounded-3xl" 
+                        />
+                    </div>
+
+                    {/* Title & Description */}
+                    <div className="text-center">
+                        <h3 className="text-3xl font-bold leading-tight xl:text-4xl">
+                            Manage Your Customer Relationships Efficiently
+                        </h3>
+                        <p className="text-lg leading-relaxed text-white/90">
+                            Access your CRM dashboard to manage customers, track leads, handle support tickets, and grow your business.
+                        </p>
+                    </div>
+
                 </div>
-                <h3 className="mb-4 text-center text-3xl font-bold">Join the community of expert developers</h3>
-                <p>It is easy to setup with great customer experience. Start your 7-day free trial</p>
             </div>
-            <div className="relative flex w-full items-center justify-center lg:w-1/2">
-                <div className="max-w-[480px] p-5 md:p-10">
-                    <h2 className="mb-3 text-3xl font-bold">Sign In</h2>
-                    <p className="mb-7">Enter your email and password to login</p>
+
+            {/* Right Panel - Login Form */}
+            <div className="relative flex w-full min-h-screen flex-col items-center justify-center bg-white dark:bg-[#060818] lg:w-1/2">
+                {/* Mobile Logo */}
+                <div className="absolute left-5 top-5 lg:hidden">
+                    <Image 
+                        src={'/assets/images/logo-light.png'} 
+                        width={125} 
+                        height={125} 
+                        alt="CRM Logo" 
+                        className="h-auto w-auto"
+                        priority
+                    />
+                </div>
+
+                <div className="w-full max-w-[480px] p-6 md:p-10">
+                    {/* Welcome Section */}
+                    <div className="mb-8">
+                        <h2 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">
+                            Welcome Back
+                        </h2>
+                        <p className="text-base text-gray-600 dark:text-gray-400">
+                            Sign in to access your CRM dashboard
+                        </p>
+                    </div>
+
+                    {/* Login Form */}
                     <LoginForm />
 
-                    <div className="relative my-7 h-5 text-center before:absolute before:inset-0 before:m-auto before:h-[1px] before:w-full before:bg-[#ebedf2]  dark:before:bg-[#253b5c]">
-                        <div className="relative z-[1] inline-block bg-[#fafafa] px-2 font-bold text-white-dark dark:bg-[#060818]">
+                    {/* Footer Links */}
+                    <div className="mt-8 text-center">
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Having trouble signing in?{' '}
+                            <Link 
+                                href="/reset-password" 
+                                className="font-semibold text-primary transition hover:underline"
+                            >
+                                Reset Password
+                            </Link>
+                        </p>
+                    </div>
+
+                    {/* Optional: Social Login (currently commented out) */}
+                    {/* <div className="relative my-7 h-5 text-center before:absolute before:inset-0 before:m-auto before:h-[1px] before:w-full before:bg-[#ebedf2] dark:before:bg-[#253b5c]">
+                        <div className="relative z-[1] inline-block bg-white px-2 font-bold text-gray-500 dark:bg-[#060818] dark:text-gray-400">
                             <span>OR</span>
                         </div>
                     </div>
-                    <LoginBtns />
-                    <p className="text-center">
-                        Dont&apos;t have an account ?
-                        <Link href="/sign-up" className="font-bold text-primary hover:underline ltr:ml-1 rtl:mr-1">
-                            Sign Up
-                        </Link>
-                    </p>
+                    <LoginBtns /> */}
                 </div>
-                {/* <div className="border-t p-5 w-full border-gray-900/10 md:flex md:items-center md:justify-between ">
-                    <div className="flex space-x-6 md:order-2">
-                        <Link href='https://www.paylinkzm.com/' target="_blank" className="text-gray-500 hover:text-gray-400">
-                            <Image src="/assets/images/logo.png" alt="facebook" width={100} height={100} />
-                        </Link>
-                    </div>
-                    <p className="mt-8 text-xs leading-5 text-gray-400 md:order-1 md:mt-0">
-                        &copy; {new Date().getFullYear()} Paylink, Inc. All rights reserved.
-                    </p>
-                </div> */}
+
+                {/* Footer */}
+                <div className="absolute bottom-5 text-center text-sm text-gray-500 dark:text-gray-400">
+                    <p>© {new Date().getFullYear()} <Link href="https://alidurul.dev" className='text-blue-500 hover:underline'>Ali Durul</Link> All rights reserved.</p>
+                </div>
             </div>
         </div>
-
     );
 }

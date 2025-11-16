@@ -17,7 +17,6 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 
 
 export default function TicketReview({ ticket }: { ticket: Ticket }) {
-    console.log(ticket);
 
     // hooks
     const dispatch = useAppDispatch();
@@ -93,7 +92,7 @@ export default function TicketReview({ ticket }: { ticket: Ticket }) {
 
 
     return (
-        <div className={` panel col-span-1 md:col-span-2 lg:col-span-3 ${lightBgColor}`}>
+        <div className={`min-h-[calc(100vh-200px)] panel col-span-1 md:col-span-2 lg:col-span-3 ${lightBgColor}`}>
             {/* Header */}
             <div className=" mb-1 flex flex-col gap-3 lg:flex-row  items-start justify-between  p-5  ">
                 <div className="sm:text-2xl text-sm font-extrabold ">Ticket / <span className='text-sm'>{ticket?._id ?? ''}</span></div>

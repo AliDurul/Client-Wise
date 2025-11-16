@@ -11,7 +11,6 @@ export function isChat(obj: any): obj is Chat {
 export function useChatDisplayInfo(chatProp?: Chat) {
     const { userInfo } = useCurrentUser();
     const selectedChat = useAppSelector(selectSelectedChat);
-
     const chat = chatProp || selectedChat;
 
     if (!isChat(chat)) {
@@ -33,11 +32,13 @@ export function useChatDisplayInfo(chatProp?: Chat) {
     let otherUser: PersonInfo | undefined;
     let otherUserId: string = '';
     let chatId: string = '';
+    let role: string = '';
 
     if (!chat?.is_group && chat?.users && userInfo?.id) {
         otherUser = chat.users.find((member: PersonInfo) => member._id !== userInfo.id);
 
         if (otherUser) {
+            role = otherUser.role || '';
             displayName = otherUser.full_name;
             displayPic = (otherUser.profile_pic || '/assets/images/profile-pic.png');
             otherUserId = otherUser._id;
@@ -45,5 +46,5 @@ export function useChatDisplayInfo(chatProp?: Chat) {
         }
     }
 
-    return { displayName, displayPic, otherUser, otherUserId, isGroup, chatId, subTitle };
+    return { displayName, displayPic, otherUser, otherUserId, isGroup, chatId, subTitle, role };
 }

@@ -29,16 +29,11 @@ export default function page({ params }: { params: Promise<{ emailId: string }> 
     const { emailId } = use(params);
 
     // validation
-    const { trigger } = useSWRMutation(`emails/${selectedTab}`, modifyEmail, {
-        onError: (error, key, config) => {
-            console.error('Error modifying email:', error);
-        },
-    });
+    const { trigger } = useSWRMutation(`emails/${selectedTab}`, modifyEmail);
 
     // api call
     const { data: email, isLoading } = useSWR<{ result: Email, success: boolean }>(`emails/${emailId}`, () => getData(`emails/${emailId}`), {
         onError: (err) => {
-            console.log('err', err);
             toast.error(err?.message ?? 'Error fetching email', { duration: 3000 });
         },
         onSuccess: () => {

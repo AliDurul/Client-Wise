@@ -30,7 +30,6 @@ export default function EmailtoTicketModal() {
     // state - variables
     const assignModal = useAppSelector(selectAssignModal);
     const email = useAppSelector(selectEmail);
-    // console.log(email);
 
     const [categoryModal, setCategoryModal] = useState(false);
 
@@ -46,7 +45,6 @@ export default function EmailtoTicketModal() {
     // action result
     useEffect(() => {
         if (!state) return;
-        console.log(state);
 
         if (state?.success) {
             toast.success(state?.message || 'Operation completed successfully');

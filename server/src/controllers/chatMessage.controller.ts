@@ -17,7 +17,7 @@ export const getChats = async (req: Request, res: Response) => {
 
     const result = await Chat.find({ users: { $in: [currenUser] } }).populate([
         { path: 'latest_message', select: '-chat -__v -sender -updatedAt' },
-        { path: 'users', select: 'full_name email phone_number profile_pic' },
+        { path: 'users', select: 'full_name email phone_number profile_pic role' },
         { path: 'customer', select: 'full_name email phone_number profile_pic' },
     ]).sort({ updatedAt: -1 }).lean();
 

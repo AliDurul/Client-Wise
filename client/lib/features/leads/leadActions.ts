@@ -104,7 +104,6 @@ export const leadCrUpAction = async (_: unknown, payload: FormData) => {
       data,
     };
   } catch (error: any) {
-    console.error("Lead action error:", error);
     return {
       success: false,
       message: error.message || "Failed to save lead. Please try again.",

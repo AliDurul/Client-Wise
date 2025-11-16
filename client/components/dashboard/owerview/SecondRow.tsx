@@ -14,8 +14,6 @@ export default function SecondRow({ secondRowData }: any) {
     const revenueChart = createRevenueChart(secondRowData?.monthlyStats?.revenueSeries || []);
     const recentInvoices = secondRowData?.recentInvoices || [];
 
-    console.log(recentInvoices);
-
     // Map invoice status to colors
     const getStatusColors = (status: 'draft' | 'sent' | 'paid' | 'overdue' | 'closed' | 'refunded') => {
         const colorMap = {

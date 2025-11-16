@@ -13,7 +13,7 @@ const Notes = () => {
         {
             id: 1,
             user: 'Max Smith',
-            thumb: 'profile-16.jpeg',
+            thumb: 'profile-pic.png',
             title: 'Meeting with Kelly',
             description: 'Curabitur facilisis vel elit sed dapibus sodales purus rhoncus.',
             date: '11/01/2020',
@@ -23,7 +23,7 @@ const Notes = () => {
         {
             id: 2,
             user: 'John Doe',
-            thumb: 'profile-14.jpeg',
+            thumb: 'profile-pic.png',
             title: 'Receive Package',
             description: 'Facilisis curabitur facilisis vel elit sed dapibus sodales purus.',
             date: '11/02/2020',
@@ -33,7 +33,7 @@ const Notes = () => {
         {
             id: 3,
             user: 'Kia Jain',
-            thumb: 'profile-15.jpeg',
+            thumb: 'profile-pic.png',
             title: 'Download Docs',
             description: 'Proin a dui malesuada, laoreet mi vel, imperdiet diam quam laoreet.',
             date: '11/04/2020',
@@ -43,7 +43,7 @@ const Notes = () => {
         {
             id: 4,
             user: 'Max Smith',
-            thumb: 'profile-16.jpeg',
+            thumb: 'profile-pic.png',
             title: 'Meeting at 4:50pm',
             description: 'Excepteur sint occaecat cupidatat non proident, anim id est laborum.',
             date: '11/08/2020',
@@ -53,7 +53,7 @@ const Notes = () => {
         {
             id: 5,
             user: 'Karena Courtliff',
-            thumb: 'profile-17.jpeg',
+            thumb: 'profile-pic.png',
             title: 'Backup Files EOD',
             description: 'Maecenas condimentum neque mollis, egestas leo ut, gravida.',
             date: '11/09/2020',
@@ -63,7 +63,7 @@ const Notes = () => {
         {
             id: 6,
             user: 'Max Smith',
-            thumb: 'profile-16.jpeg',
+            thumb: 'profile-pic.png',
             title: 'Download Server Logs',
             description: 'Suspendisse efficitur diam quis gravida. Nunc molestie est eros.',
             date: '11/09/2020',
@@ -73,7 +73,7 @@ const Notes = () => {
         {
             id: 7,
             user: 'Vladamir Koschek',
-            thumb: '',
+            thumb: 'profile-pic.png',
             title: 'Team meet at Starbucks',
             description: 'Etiam a odio eget enim aliquet laoreet lobortis sed ornare nibh.',
             date: '11/10/2020',
@@ -83,7 +83,7 @@ const Notes = () => {
         {
             id: 8,
             user: 'Max Smith',
-            thumb: 'profile-16.jpeg',
+            thumb: 'profile-pic.png',
             title: 'Create new users Profile',
             description: 'Duis aute irure in nulla pariatur. Etiam a odio eget enim aliquet.',
             date: '11/11/2020',
@@ -93,7 +93,7 @@ const Notes = () => {
         {
             id: 9,
             user: 'Robert Garcia',
-            thumb: 'profile-21.jpeg',
+            thumb: 'profile-pic.png',
             title: 'Create a compost pile',
             description: 'Zombie ipsum reversus ab viral inferno, nam rick grimes malum cerebro.',
             date: '11/12/2020',
@@ -103,7 +103,7 @@ const Notes = () => {
         {
             id: 10,
             user: 'Marie Hamilton',
-            thumb: 'profile-2.jpeg',
+            thumb: 'profile-pic.png',
             title: 'Take a hike at a local park',
             description: 'De carne lumbering animata corpora quaeritis. Summus brains sit',
             date: '11/13/2020',
@@ -113,7 +113,7 @@ const Notes = () => {
         {
             id: 11,
             user: 'Megan Meyers',
-            thumb: 'profile-1.jpeg',
+            thumb: 'profile-pic.png',
             title: 'Take a class at local community center that interests you',
             description: 'Cupcake ipsum dolor. Sit amet marshmallow topping cheesecake muffin.',
             date: '11/13/2020',
@@ -123,7 +123,7 @@ const Notes = () => {
         {
             id: 12,
             user: 'Angela Hull',
-            thumb: 'profile-22.jpeg',
+            thumb: 'profile-pic.png',
             title: 'Research a topic interested in',
             description: 'Lemon drops tootsie roll marshmallow halvah carrot cake.',
             date: '11/14/2020',
@@ -133,7 +133,7 @@ const Notes = () => {
         {
             id: 13,
             user: 'Karen Wolf',
-            thumb: 'profile-23.jpeg',
+            thumb: 'profile-pic.png',
             title: 'Plan a trip to another country',
             description: 'Space, the final frontier. These are the voyages of the Starship Enterprise.',
             date: '11/16/2020',
@@ -143,7 +143,7 @@ const Notes = () => {
         {
             id: 14,
             user: 'Jasmine Barnes',
-            thumb: 'profile-1.jpeg',
+            thumb: 'profile-pic.png',
             title: 'Improve touch typing',
             description: 'Well, the way they make shows is, they make one show.',
             date: '11/16/2020',
@@ -153,7 +153,7 @@ const Notes = () => {
         {
             id: 15,
             user: 'Thomas Cox',
-            thumb: 'profile-11.jpeg',
+            thumb: 'profile-pic.png',
             title: 'Learn Express.js',
             description: 'Bulbasaur Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
             date: '11/17/2020',
@@ -163,7 +163,7 @@ const Notes = () => {
         {
             id: 16,
             user: 'Marcus Jones',
-            thumb: 'profile-12.jpeg',
+            thumb: 'profile-pic.png',
             title: 'Learn calligraphy',
             description: 'Ivysaur Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
             date: '11/17/2020',
@@ -173,7 +173,7 @@ const Notes = () => {
         {
             id: 17,
             user: 'Matthew Gray',
-            thumb: 'profile-24.jpeg',
+            thumb: 'profile-pic.png',
             title: 'Have a photo session with some friends',
             description: 'Venusaur Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
             date: '11/18/2020',
@@ -183,7 +183,7 @@ const Notes = () => {
         {
             id: 18,
             user: 'Chad Davis',
-            thumb: 'profile-31.jpeg',
+            thumb: 'profile-pic.png',
             title: 'Go to the gym',
             description: 'Charmander Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
             date: '11/18/2020',
@@ -193,7 +193,7 @@ const Notes = () => {
         {
             id: 19,
             user: 'Linda Drake',
-            thumb: 'profile-23.jpeg',
+            thumb: 'profile-pic.png',
             title: 'Make own LEGO creation',
             description: 'Charmeleon Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
             date: '11/18/2020',
@@ -203,7 +203,7 @@ const Notes = () => {
         {
             id: 20,
             user: 'Kathleen Flores',
-            thumb: 'profile-34.jpeg',
+            thumb: 'profile-pic.png',
             title: 'Take cat on a walk',
             description: 'Baseball ipsum dolor sit amet cellar rubber win hack tossed. ',
             date: '11/18/2020',
@@ -584,7 +584,7 @@ const Notes = () => {
                                                     <div className="dropdown">
                                                         <Dropdown
                                                             offset={[0, 5]}
-                                                            placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
+                                                            placement='bottom-end'
                                                             btnClassName="text-primary"
                                                             button={
                                                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="rotate-90 opacity-70">
@@ -676,7 +676,7 @@ const Notes = () => {
                                                         <div className="dropdown">
                                                             <Dropdown
                                                                 offset={[0, 5]}
-                                                                placement={`${isRtl ? 'bottom-end' : 'bottom-start'}`}
+                                                                placement='bottom-start'
                                                                 btnClassName={`${note.tag === 'personal'
                                                                         ? 'text-primary'
                                                                         : note.tag === 'work'

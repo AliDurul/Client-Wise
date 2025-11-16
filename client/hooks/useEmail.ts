@@ -94,7 +94,6 @@ export default function useEmails() {
         () => getAllData(getAllDataOp()),
         {
             onError: (err) => {
-                console.error('Error fetching emails:', err);
                 toast.error(err?.message ?? 'Error fetching emails', { duration: 3000 });
             },
             onSuccess: (data) => {

@@ -3,7 +3,6 @@ import { use, useEffect, useState } from 'react';
 import Dropdown from '../../layout/Dropdown';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import {  uniqueVisitorSeries } from '@/constants/dashboard';
-import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import FirstRow from './FirstRow';
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
@@ -25,8 +24,7 @@ const OverviewMain = ({ overviewPromise }: any) => {
     const monthlyStats = overview?.result?.monthlyStats;
     const recentInvoices = overview?.result?.recentInvoices;
 
-    const totalSales = overview.result?.monthlyStats?.totalSales || 0;
-    
+    const totalSales = overview?.result?.monthlyStats?.totalSales || 0;
     const secondRowData = { monthlyStats, recentInvoices }
 
     const [isMounted, setIsMounted] = useState(false);

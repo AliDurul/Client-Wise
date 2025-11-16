@@ -24,7 +24,7 @@ export default function EmailEdit({ params, setIsShowMailMenu, isShowMailMenu, c
 
     useEffect(() => {
         if (!state) return;
-        console.log('State:', state);
+
         if (state?.success) {
             toast.success(state?.message || 'Operation completed successfully');
         } else {
@@ -83,8 +83,6 @@ export default function EmailEdit({ params, setIsShowMailMenu, isShowMailMenu, c
                         value={params.description || ''}
                         defaultValue={params.description || ''}
                         onChange={(content, delta, source, editor) => {
-                            console.log(content);
-                            console.log(editor.getText());
                             params.description = content;
                             params.displayDescription = editor.getText();
                             setParams({

@@ -67,7 +67,7 @@ const Sidebar = () => {
 
                     <div className="flex items-center justify-between px-2 py-3 overflow-hidden">
                         <Link href="/" className="flex shrink-0 items-center justify-center  opacity-80">
-                            <Image className="flex-none" src={`/assets/images/${isDarkMode ? 'logo-dark.png' : 'logo-light.png'}`} alt="logo" width={180} height={80} />
+                            <Image className="flex-none" src={`/assets/images/${isDarkMode ? 'logo-dark.png' : 'logo-light.png'}`} alt="logo" width={125} height={125} />
                             {/* <span className="align-middle text-base font-semibold dark:text-white-light lg:inline">Management</span> */}
                         </Link>
                         <button

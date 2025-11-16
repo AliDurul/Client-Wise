@@ -2,7 +2,7 @@ import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { resetUnreadChat, selectActiveChatUsers, selectChat, selectGroupModal, selectSelectedChat, selectUnreadChats, setGroupCreate, setGroupModal, setIsShowChatMenu, setIsShowUserChat, setSelectedChat } from '@/lib/features/chat/chatSlice';
 import { getAllData } from '@/lib/features/shared/actionUtils';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
-import { formatDate } from '@/lib/utility/functions';
+import { formatDate, truncateText } from '@/lib/utility/functions';
 import { Chat, PersonInfo } from '@/types';
 import Image from 'next/image';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -76,7 +76,7 @@ export default function ChatSidebarList({ filteredItems, showGroupBtn }: ChatSid
                                                     }
                                                 </div>
                                                 <div className="mx-3 ltr:text-left rtl:text-right">
-                                                    <p className="mb-1 font-semibold">{displayName}</p>
+                                                    <p className="mb-1 font-semibold">{truncateText(displayName, 17)}</p>
                                                     <p className="max-w-[185px] truncate text-xs text-white-dark">{chat.latest_message?.content}</p>
                                                 </div>
                                             </div>

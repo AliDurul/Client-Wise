@@ -29,7 +29,7 @@ export const useUrlParams = () => {
                     router.push(newUrl, { scroll: false });
                 }
             } catch (error) {
-                console.error('Failed to update URL params:', error);
+                // console.error('Failed to update URL params:', error);
             }
         };
 

@@ -25,7 +25,6 @@ export class ClientErrorBoundary extends Component<Props, State> {
     }
 
     componentDidCatch(error: Error, errorInfo: any) {
-        console.error('KYC Error Boundary caught an error:', error, errorInfo);
     }
 
     render() {

@@ -105,7 +105,7 @@ export default function ThirdRow({ thirdRowData }: any) {
                         </div>
                     </div>
                     <h5 className="text-2xl font-semibold ltr:text-right rtl:text-left dark:text-white-light">
-                        {thirdRowData.totalSales}
+                        {thirdRowData?.totalSales}
                         <span className="block text-sm font-normal">Sales Count</span>
                     </h5>
                 </div>
