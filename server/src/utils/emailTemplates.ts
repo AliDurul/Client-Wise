@@ -1,276 +1,186 @@
 import env from '../configs/env';
 
-export const verificationEmailTemp = ({ verificationCode }) => {
-  return `
-<!DOCTYPE html>
-<html lang="en">
+// ─── Shared Partials ────────────────────────────────────────────────────────
 
+const brandHeader = (title: string) => `
+  <div style="background-color:#4361ee;padding:32px 24px;text-align:center;border-radius:8px 8px 0 0;">
+    <span style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;">
+      <svg width="36" height="36" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="32" rx="9" fill="white" fill-opacity="0.18"/>
+        <path d="M21.5 11.2A7 7 0 1 0 21.5 20.8" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="22" cy="16" r="2.2" fill="#fff"/>
+      </svg>
+      <span style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px;font-family:Arial,sans-serif;">
+        Client<span style="font-weight:500;opacity:0.8;">White</span>
+      </span>
+    </span>
+    <h1 style="margin:16px 0 0;color:#ffffff;font-size:20px;font-weight:600;font-family:Arial,sans-serif;">${title}</h1>
+  </div>
+`;
+
+const brandFooter = () => `
+  <div style="text-align:center;padding:20px 24px;background-color:#f1f4fb;border-radius:0 0 8px 8px;">
+    <p style="color:#9ca3af;font-size:12px;margin:0;font-family:Arial,sans-serif;">
+      © ${new Date().getFullYear()} Client White &nbsp;·&nbsp; This is an automated message, please do not reply.
+    </p>
+  </div>
+`;
+
+const wrapper = (content: string) => `<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Verify Your Email</title>
 </head>
-
-<body
-  style="font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; max-width: 600px; margin: 0 auto; padding: 0;">
-
-  <!-- Header with Logo -->
-  <div style="text-align: center; padding: 30px 0; background-color: #4CAF50;">
-    <!-- <img src="${env.BACKEND_URL}/uploads/logo.png" alt="Client White Logo" style="width: 120px; height: auto; margin-bottom: 10px;" />  -->
-    <h1 style="margin: 0; color: #ffffff;">Verify Your Email</h1>
-  </div>
-
-  <!-- Body -->
-  <div
-    style="padding: 20px; background-color: #ffffff; border-radius: 0 0 8px 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-    <p>Hello,</p>
-    <p>Thank you for signing up! Please verify your email by clicking the button below:</p>
-
-    <div style="text-align: center; margin: 30px 0;">
-      <a href="${env.FRONTEND_URL}/auth/verify-email?verification-code=${verificationCode}"
-        style="background-color: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">
-        Verify Email
-      </a>
-    </div>
-
-    <p>This link will expire in 2 hours for security reasons.</p>
-    <p>If you didn't create an account, you can safely ignore this email.</p>
-    <p>Best regards,<br />Ali Durul</p>
-  </div>
-
-  <!-- Footer with Social Links -->
-  <div style="text-align: center; padding: 20px 0; background-color: #f0f0f0;">
-    <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">Stay connected with me</p>
-    <div style="margin-bottom: 10px;">
-      <a href="https://linkedin.com/in/ali-durul" target="_blank" style="margin: 0 10px; text-decoration: none;">
-        <img src="https://cdn-icons-png.flaticon.com/24/733/733561.png" alt="LinkedIn" />
-      </a>
-      <a href="https://github.com/AliDurul" target="_blank" style="margin: 0 10px; text-decoration: none;">
-        <img src="https://cdn-icons-png.flaticon.com/24/733/733553.png" alt="GitHub" />
-      </a>
-    </div>
-    <p style="color: #999; font-size: 0.8em;">This is an automated message. Please do not reply.</p>
-  </div>
-
+<body style="font-family:Arial,sans-serif;background-color:#f4f6fb;color:#374151;margin:0;padding:40px 0;">
+  <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" role="presentation"
+          style="max-width:600px;width:100%;box-shadow:0 4px 24px rgba(67,97,238,0.10);border-radius:8px;overflow:hidden;">
+          <tr><td>${content}</td></tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>
-</html>
+</html>`;
+
+const bodyBlock = (content: string) => `
+  <div style="padding:32px 32px 24px;background-color:#ffffff;">
+    ${content}
+  </div>
 `;
+
+const ctaButton = (href: string, label: string) => `
+  <div style="text-align:center;margin:32px 0;">
+    <a href="${href}"
+      style="display:inline-block;background-color:#4361ee;color:#ffffff;padding:14px 32px;
+             text-decoration:none;border-radius:6px;font-weight:700;font-size:15px;
+             font-family:Arial,sans-serif;letter-spacing:0.2px;">
+      ${label}
+    </a>
+  </div>
+`;
+
+const p = (text: string) =>
+  `<p style="margin:0 0 14px;line-height:1.6;font-size:15px;color:#374151;font-family:Arial,sans-serif;">${text}</p>`;
+
+// ─── Templates ───────────────────────────────────────────────────────────────
+
+export const verificationEmailTemp = ({ verificationCode }: { verificationCode: string }) => {
+  const verifyUrl = `${env.FRONTEND_URL}/auth/verify-email?verification-code=${verificationCode}`;
+
+  return wrapper(
+    brandHeader('Verify Your Email') +
+    bodyBlock(
+      p('Hello,') +
+      p('Thank you for signing up for <strong>Client White</strong>. Please verify your email address by clicking the button below:') +
+      ctaButton(verifyUrl, 'Verify Email Address') +
+      p('This link will expire in <strong>2 hours</strong> for security reasons.') +
+      p('If you did not create an account, you can safely ignore this email.') +
+      p('Best regards,<br/><strong>The Client White Team</strong>')
+    ) +
+    brandFooter()
+  );
 };
 
-export const passResetReqTemp = ({ resetURL }) => {
-  return `
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Password Reset</title>
-</head>
-
-<body
-  style="font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; max-width: 600px; margin: 0 auto; padding: 0;">
-
-  <!-- Header with Logo -->
-  <div style="text-align: center; padding: 30px 0; background-color: #4CAF50;">
-    <!-- <img src="\${ENV.backendUrl}/uploads/logo.png" alt="Client White Logo" style="width: 120px; height: auto; margin-bottom: 10px;" /> -->
-    <h1 style="margin: 0; color: #ffffff;">Password Reset</h1>
-  </div>
-
-  <!-- Body -->
-  <div
-    style="padding: 20px; background-color: #ffffff; border-radius: 0 0 8px 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-    <p>Hello,</p>
-    <p>We received a request to reset your password. If you didn’t make this request, you can safely ignore this email.</p>
-
-    <p>To reset your password, simply click the button below:</p>
-
-    <div style="text-align: center; margin: 30px 0;">
-      <a href="${resetURL}"
-        style="background-color: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
-        Reset Password
-      </a>
-    </div>
-
-    <p>This link will expire in 1 hour for security reasons.</p>
-    <p>Stay safe,<br />Ali Durul</p>
-  </div>
-
-  <!-- Footer with Social Links -->
-  <div style="text-align: center; padding: 20px 0; background-color: #f0f0f0;">
-    <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">Stay connected with me</p>
-    <div style="margin-bottom: 10px;">
-      <a href="https://linkedin.com/in/ali-durul" target="_blank" style="margin: 0 10px; text-decoration: none;">
-        <img src="https://cdn-icons-png.flaticon.com/24/733/733561.png" alt="LinkedIn" />
-      </a>
-      <a href="https://github.com/AliDurul" target="_blank" style="margin: 0 10px; text-decoration: none;">
-        <img src="https://cdn-icons-png.flaticon.com/24/733/733553.png" alt="GitHub" />
-      </a>
-    </div>
-    <p style="color: #999; font-size: 0.8em;">This is an automated message. Please do not reply.</p>
-  </div>
-
-</body>
-</html>
-`;
+export const passResetReqTemp = ({ resetURL }: { resetURL: string }) => {
+  return wrapper(
+    brandHeader('Reset Your Password') +
+    bodyBlock(
+      p('Hello,') +
+      p('We received a request to reset the password for your <strong>Client White</strong> account. If you did not make this request, you can safely ignore this email.') +
+      p('To reset your password, click the button below:') +
+      ctaButton(resetURL, 'Reset My Password') +
+      p('This link will expire in <strong>1 hour</strong> for security reasons.') +
+      `<div style="background-color:#fff7ed;border-left:4px solid #f59e0b;padding:12px 16px;border-radius:0 4px 4px 0;margin-bottom:14px;">
+        <p style="margin:0;font-size:13px;color:#92400e;font-family:Arial,sans-serif;">
+          ⚠️ If you did not request a password reset, please contact our support team immediately.
+        </p>
+      </div>` +
+      p('Stay safe,<br/><strong>The Client White Team</strong>')
+    ) +
+    brandFooter()
+  );
 };
 
 export const passResetSuccessTemp = () => {
-  return `
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Password Reset Successful</title>
-</head>
-
-<body
-  style="font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; max-width: 600px; margin: 0 auto; padding: 0;">
-
-  <!-- Header -->
-  <div style="text-align: center; padding: 30px 0; background-color: #4CAF50;">
-    <h1 style="margin: 0; color: #ffffff;">Password Reset Successful</h1>
-  </div>
-
-  <!-- Body -->
-  <div
-    style="padding: 20px; background-color: #ffffff; border-radius: 0 0 8px 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-    <p>Hello,</p>
-    <p>This is a confirmation that your password has been successfully reset.</p>
-
-    <div style="text-align: center; margin: 30px 0;">
-      <div
-        style="background-color: #4CAF50; color: white; width: 50px; height: 50px; line-height: 50px; border-radius: 50%; display: inline-block; font-size: 30px;">
-        ✓
-      </div>
-    </div>
-
-    <p>If you did not initiate this change, please contact our support team immediately.</p>
-
-    <p>To keep your account secure, we recommend:</p>
-    <ul>
-      <li>Using a strong, unique password</li>
-      <li>Enabling two-factor authentication</li>
-      <li>Avoiding reuse of passwords across sites</li>
-    </ul>
-
-    <p>Thank you for keeping your account secure.</p>
-    <p>Best regards,<br />Ali Durul</p>
-  </div>
-
-  <!-- Footer -->
-  <div style="text-align: center; padding: 20px 0; background-color: #f0f0f0;">
-    <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">Stay connected with me</p>
-    <div style="margin-bottom: 10px;">
-      <a href="https://linkedin.com/in/ali-durul" target="_blank" style="margin: 0 10px; text-decoration: none;">
-        <img src="https://cdn-icons-png.flaticon.com/24/733/733561.png" alt="LinkedIn" />
-      </a>
-      <a href="https://github.com/AliDurul" target="_blank" style="margin: 0 10px; text-decoration: none;">
-        <img src="https://cdn-icons-png.flaticon.com/24/733/733553.png" alt="GitHub" />
-      </a>
-    </div>
-    <p style="color: #999; font-size: 0.8em;">This is an automated message. Please do not reply.</p>
-  </div>
-
-</body>
-</html>
-`;
+  return wrapper(
+    brandHeader('Password Reset Successful') +
+    bodyBlock(
+      p('Hello,') +
+      p('Your <strong>Client White</strong> password has been successfully reset.') +
+      `<div style="text-align:center;margin:28px 0;">
+        <div style="display:inline-block;background-color:#ecfdf5;border-radius:50%;width:60px;height:60px;line-height:60px;text-align:center;">
+          <span style="font-size:28px;">✓</span>
+        </div>
+      </div>` +
+      p('You can now <a href="${env.FRONTEND_URL}/login" style="color:#4361ee;font-weight:600;text-decoration:none;">sign in</a> with your new password.') +
+      `<div style="background-color:#eff6ff;border-left:4px solid #4361ee;padding:12px 16px;border-radius:0 4px 4px 0;margin-bottom:14px;">
+        <p style="margin:0 0 6px;font-size:13px;font-weight:700;color:#1e40af;font-family:Arial,sans-serif;">Keep your account secure:</p>
+        <ul style="margin:0;padding-left:18px;font-size:13px;color:#1e40af;font-family:Arial,sans-serif;">
+          <li>Use a strong, unique password</li>
+          <li>Never share your password with anyone</li>
+          <li>Contact support if you notice unusual activity</li>
+        </ul>
+      </div>` +
+      p('Thank you,<br/><strong>The Client White Team</strong>')
+    ) +
+    brandFooter()
+  );
 };
 
-export const welcomeEmailTemp = ({ name }) => {
-  return `
-  <!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to Client White</title>
-</head>
-
-<body
-  style="font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; max-width: 600px; margin: 0 auto; padding: 0;">
-
-  <!-- Header with Logo -->
-  <div style="text-align: center; padding: 30px 0; background-color: #4361ee;">
-    <!-- <img src="${env.BACKEND_URL}/uploads/logo.png" alt="Client White Logo" style="width: 120px; height: auto; margin-bottom: 10px;" /> -->
-    <h1 style="margin: 0; color: #ffffff;">Welcome ${name} to Client White!</h1>
-  </div>
-
-  <!-- Body -->
-  <div
-    style="padding: 20px; background-color: #ffffff; border-radius: 0 0 8px 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-    <p>Hey there 👋</p>
-    <p>Welcome to <strong>Client White</strong> – your workspace for customers, leads, tickets and invoices.</p>
-
-    <p>A good first step is to add your first customer, then create a lead or a ticket for them.</p>
-
-    <ul>
-      <li>Customers: keep every contact and conversation in one place.</li>
-      <li>Leads: move deals through your pipeline.</li>
-      <li>Tickets and invoices: resolve requests and get paid.</li>
-    </ul>
-
-    <div style="text-align: center; margin: 30px 0;">
-      <a href="${env.FRONTEND_URL}/customers"
-        style="background-color: #4361ee; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
-        Open your dashboard
-      </a>
-    </div>
-
-    <p>We're glad to have you on board.</p>
-    <p>Cheers,<br />Ali Durul</p>
-  </div>
-
-  <!-- Footer with Social Links -->
-  <div style="text-align: center; padding: 20px 0; background-color: #f0f0f0;">
-    <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;">Stay connected with me</p>
-    <div style="margin-bottom: 10px;">
-      <a href="https://linkedin.com/in/ali-durul" target="_blank" style="margin: 0 10px; text-decoration: none;">
-        <img src="https://cdn-icons-png.flaticon.com/24/733/733561.png" alt="LinkedIn" />
-      </a>
-      <a href="https://github.com/AliDurul" target="_blank" style="margin: 0 10px; text-decoration: none;">
-        <img src="https://cdn-icons-png.flaticon.com/24/733/733553.png" alt="GitHub" />
-      </a>
-    </div>
-    <p style="color: #999; font-size: 0.8em;">This is an automated message. Please do not reply.</p>
-  </div>
-
-</body>
-</html>
-  `
+export const welcomeEmailTemp = ({ name }: { name: string }) => {
+  return wrapper(
+    brandHeader(`Welcome to Client White, ${name}!`) +
+    bodyBlock(
+      p('Hey there 👋') +
+      p('Welcome to <strong>Client White</strong> — your all-in-one workspace for customers, leads, support tickets, and invoices.') +
+      p('Here are a few things you can do to get started:') +
+      `<ul style="margin:0 0 14px;padding-left:20px;font-size:15px;color:#374151;font-family:Arial,sans-serif;line-height:1.8;">
+        <li><strong>Customers</strong> — keep every contact and conversation in one place</li>
+        <li><strong>Leads</strong> — move deals through your pipeline</li>
+        <li><strong>Tickets</strong> — resolve support requests quickly</li>
+        <li><strong>Invoices</strong> — bill clients and track payments</li>
+      </ul>` +
+      ctaButton(`${env.FRONTEND_URL}/`, 'Open Your Dashboard') +
+      p("We're glad to have you on board. Let's get to work!") +
+      p('Cheers,<br/><strong>The Client White Team</strong>')
+    ) +
+    brandFooter()
+  );
 };
 
-export const errorEmailTemp = (error) => {
-  return `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Error Notification</title>
-</head>
-<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-  <div style="background: linear-gradient(to right, #FF5722, #E64A19); padding: 20px; text-align: center;">
-    <h1 style="color: white; margin: 0;">Error Notification</h1>
-  </div>
-  <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-    <p>Dear Developer,</p>
-    <p>An error has occurred in the application:</p>
-    <div style="text-align: center; margin: 30px 0;">
-      <span style="font-size: 24px; font-weight: bold; color: #FF5722;">Error Code: ${error.statusCode}</span>
-    </div>
-    <p style="font-size: 16px; color: #E64A19;">${error.message}</p>
-    <p style="font-size: 16px; color: #E64A19;">${error.stack}</p>
-    <p>Please investigate and resolve the issue as soon as possible.</p>
-    <p>Thank you for your attention.</p>
-  </div>
-  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
-    <p>This is an automated message, please do not reply to this email.</p>
-  </div>
-</body>
-</html>
-`;
+export const errorEmailTemp = (error: { statusCode?: number; message?: string; stack?: string }) => {
+  return wrapper(
+    `<div style="background:linear-gradient(to right,#ef4444,#b91c1c);padding:24px;text-align:center;border-radius:8px 8px 0 0;">
+      <h1 style="color:white;margin:0;font-size:20px;font-family:Arial,sans-serif;">⚠️ Error Notification</h1>
+    </div>` +
+    bodyBlock(
+      p('Dear Developer,') +
+      p('An unhandled error has occurred in the <strong>Client White</strong> application:') +
+      `<div style="text-align:center;margin:20px 0;">
+        <span style="font-size:28px;font-weight:800;color:#ef4444;font-family:Arial,sans-serif;">
+          Error ${error.statusCode ?? 500}
+        </span>
+      </div>` +
+      `<pre style="background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:14px;
+                   font-size:13px;color:#991b1b;overflow-x:auto;white-space:pre-wrap;word-break:break-word;">
+${error.message ?? ''}
+      </pre>` +
+      (error.stack
+        ? `<details style="margin-top:12px;">
+            <summary style="cursor:pointer;font-size:13px;color:#6b7280;font-family:Arial,sans-serif;">Stack trace</summary>
+            <pre style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:12px;
+                        font-size:12px;color:#374151;margin-top:8px;overflow-x:auto;white-space:pre-wrap;">
+${error.stack}
+            </pre>
+          </details>`
+        : '') +
+      p('Please investigate and resolve the issue as soon as possible.') +
+      p('Thank you,<br/><strong>The Client White Dev Team</strong>')
+    ) +
+    brandFooter()
+  );
 };

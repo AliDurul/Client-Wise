@@ -8,7 +8,10 @@ export default auth((req) => {
     const userInfo = req.auth?.user;
 
     const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-    const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
+    // also allow /reset-password/<token> pages for unauthenticated users
+    const isPublicRoute =
+        publicRoutes.includes(nextUrl.pathname) ||
+        nextUrl.pathname.startsWith('/reset-password/');
     const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
     if (isApiAuthRoute) return null;

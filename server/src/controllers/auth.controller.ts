@@ -131,7 +131,8 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
     const { resetPassToken } = req.params;
     const { password } = req.body as TResetPass;
 
-    const user = await User.findOne({ resetPassToken, resetPassExpiresAt: { $gt: new Date() } });
+    const user = await User.findOne({ reset_pass_token: resetPassToken, reset_pass_expires_at: { $gt: new Date() } })
+        .select('+reset_pass_token +reset_pass_expires_at');
 
     if (!user) throw new CustomError('Invalid or expired reset token', 400);
 
