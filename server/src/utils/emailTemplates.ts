@@ -16,7 +16,7 @@ export const verificationEmailTemp = ({ verificationCode }) => {
 
   <!-- Header with Logo -->
   <div style="text-align: center; padding: 30px 0; background-color: #4CAF50;">
-    <!-- <img src="${env.BACKEND_URL}/uploads/logo.png" alt="Your App Logo" style="width: 120px; height: auto; margin-bottom: 10px;" />  -->
+    <!-- <img src="${env.BACKEND_URL}/uploads/logo.png" alt="Client White Logo" style="width: 120px; height: auto; margin-bottom: 10px;" />  -->
     <h1 style="margin: 0; color: #ffffff;">Verify Your Email</h1>
   </div>
 
@@ -73,7 +73,7 @@ export const passResetReqTemp = ({ resetURL }) => {
 
   <!-- Header with Logo -->
   <div style="text-align: center; padding: 30px 0; background-color: #4CAF50;">
-    <!-- <img src="\${ENV.backendUrl}/uploads/logo.png" alt="Your App Logo" style="width: 120px; height: auto; margin-bottom: 10px;" /> -->
+    <!-- <img src="\${ENV.backendUrl}/uploads/logo.png" alt="Client White Logo" style="width: 120px; height: auto; margin-bottom: 10px;" /> -->
     <h1 style="margin: 0; color: #ffffff;">Password Reset</h1>
   </div>
 
@@ -187,40 +187,40 @@ export const welcomeEmailTemp = ({ name }) => {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to Blogly</title>
+  <title>Welcome to Client White</title>
 </head>
 
 <body
   style="font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; max-width: 600px; margin: 0 auto; padding: 0;">
 
   <!-- Header with Logo -->
-  <div style="text-align: center; padding: 30px 0; background-color: #4CAF50;">
-    <!-- <img src="${env.BACKEND_URL}/uploads/logo.png" alt="Blogly Logo" style="width: 120px; height: auto; margin-bottom: 10px;" /> -->
-    <h1 style="margin: 0; color: #ffffff;">Welcome ${name} to Blogly!</h1>
+  <div style="text-align: center; padding: 30px 0; background-color: #4361ee;">
+    <!-- <img src="${env.BACKEND_URL}/uploads/logo.png" alt="Client White Logo" style="width: 120px; height: auto; margin-bottom: 10px;" /> -->
+    <h1 style="margin: 0; color: #ffffff;">Welcome ${name} to Client White!</h1>
   </div>
 
   <!-- Body -->
   <div
     style="padding: 20px; background-color: #ffffff; border-radius: 0 0 8px 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
     <p>Hey there 👋</p>
-    <p>Welcome to <strong>Blogly</strong> – your new space to share ideas, stories, and experiences with the world!</p>
+    <p>Welcome to <strong>Client White</strong> – your workspace for customers, leads, tickets and invoices.</p>
 
-    <p>Start by creating your very first post and tell us what you're passionate about. Whether it’s tech, travel, food, or thoughts on life – Blogly is the perfect place to express yourself.</p>
+    <p>A good first step is to add your first customer, then create a lead or a ticket for them.</p>
 
-    <p>Need inspiration? Here are a couple of trending blogs you might like:</p>
     <ul>
-      <li><a href="${env.FRONTEND_URL}/blog/frontend-developer-roadmap-202511" target="_blank">Frontend Developer Roadmap 2025</a></li>
-      <li><a href="${env.FRONTEND_URL}/blog/backend-developer-roadmap-2025vh" target="_blank">Backend Developer Roadmap 2025</a></li>
+      <li>Customers: keep every contact and conversation in one place.</li>
+      <li>Leads: move deals through your pipeline.</li>
+      <li>Tickets and invoices: resolve requests and get paid.</li>
     </ul>
 
     <div style="text-align: center; margin: 30px 0;">
-      <a href="${env.FRONTEND_URL}/editor"
-        style="background-color: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
-        Create Your First Post
+      <a href="${env.FRONTEND_URL}/customers"
+        style="background-color: #4361ee; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
+        Open your dashboard
       </a>
     </div>
 
-    <p>We're excited to have you on board. Let's make the blogosphere a little more interesting – together!</p>
+    <p>We're glad to have you on board.</p>
     <p>Cheers,<br />Ali Durul</p>
   </div>
 

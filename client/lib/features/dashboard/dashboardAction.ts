@@ -7,7 +7,9 @@ const BASE_URL = process.env.API_BASE_URL + '/';
 export const getDashboardStats = async () => {
 
     try {
+        const headers = await authConfig();
         const response = await fetch(BASE_URL + 'dashboard/', {
+            headers,
             next: { tags: ['dashboard-overview'] }
         });
 

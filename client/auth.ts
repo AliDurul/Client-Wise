@@ -16,7 +16,7 @@ class SignInError extends Error {
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
-    signIn: '/auth/login',
+    signIn: '/login',
     signOut: '/',
     error: '/auth-error',
   },

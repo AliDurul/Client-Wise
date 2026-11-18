@@ -3,7 +3,7 @@ import TopPageNavigation from '@/components/shared/TopPageNavigation';
 import { getData } from '@/lib/features/shared/actionUtils';
 import { capitalize, formatDate } from '@/lib/utility/functions';
 import { Invoice, InvoiceItem, PageParams } from '@/types'
-import Image from 'next/image';
+import BrandLogo from '@/components/shared/BrandLogo';
 import React from 'react'
 
 export default async function page({ params }: { params: Promise<{ invoiceId: string }> }) {
@@ -50,14 +50,14 @@ export default async function page({ params }: { params: Promise<{ invoiceId: st
                 <div className="flex flex-wrap justify-between gap-4 px-4">
                     <div className="text-2xl font-semibold uppercase">Invoice</div>
                     <div className="shrink-0">
-                        <Image src="/assets/images/logo.png" className="ltr:ml-auto rtl:mr-auto" alt="Campony logo" width={120} height={120} />
+                        <BrandLogo className="ltr:ml-auto rtl:mr-auto text-slate-900 dark:text-white" size={34} />
                     </div>
                 </div>
                 <div className="px-4 ltr:text-right rtl:text-left">
                     <div className="mt-6 space-y-1 text-white-dark">
-                        <div>3nd Floor,Finance House, Hero's Place, Lusaka, Zambia</div>
-                        <div>clientLinko@gmail.com</div>
-                        <div>+260 (970) 732-4567</div>
+                        <div>14 Granary Row, London EC1V 2NX, United Kingdom</div>
+                        <div>billing@clientwhite.demo</div>
+                        <div>+44 20 7946 0321</div>
                     </div>
                 </div>
                 <hr className="my-6 border-white-light dark:border-[#1b2e4b]" />

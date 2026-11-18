@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { requireAuth } from "../middlewares/common";
 import userRoutes from "./user.route";
 import authRoutes from "./auth.route";
 import faqRoutes from "./faq.route";
@@ -18,8 +19,16 @@ const router = Router();
 
 // URL: /api
 
-// authRoutes
+// ---- Public routes (no token needed) ----
+
+// authRoutes: login, register, refresh, password reset
 router.use('/auth', authRoutes);
+
+// Webhook: called by WhatsApp's servers, which cannot send our JWT
+router.use("/webhook", wpWebhookRoutes);
+
+// ---- Everything below requires a signed-in user ----
+router.use(requireAuth);
 
 // userRoutes
 router.use("/users", userRoutes);
@@ -53,9 +62,6 @@ router.use("/wp", wpRoutes);
 
 // Email
 router.use("/emails", emailRoutes);
-
-// Webhook
-router.use("/webhook", wpWebhookRoutes);
 
 // Dashboard
 router.use("/dashboard", dashboardRoutes);

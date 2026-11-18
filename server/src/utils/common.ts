@@ -141,7 +141,7 @@ export const sendMail = async ({
     const transporter = getTransporter();
 
     const mailOptions = {
-        from: from || { name: 'Your App', address: env.EMAIL_USER },
+        from: from || { name: 'Client White', address: env.EMAIL_USER },
         to,
         subject,
         html: data ? tempFn(data) : tempFn(),

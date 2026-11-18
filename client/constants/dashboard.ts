@@ -4,7 +4,9 @@ const isRtl = false; // Change this based on your layout direction
 //Revenue Chart
 
 
-export const createRevenueChart = (series: Array<{ name: string; data: number[] }>) => {
+const DEFAULT_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+export const createRevenueChart = (series: Array<{ name: string; data: number[] }>, labels: string[] = DEFAULT_MONTHS) => {
     const getMaxValueIndex = (data: number[]): number => {
         return data.indexOf(Math.max(...data));
     };
@@ -50,7 +52,7 @@ export const createRevenueChart = (series: Array<{ name: string; data: number[] 
                     size: 7,
                 })),
             },
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            labels,
             xaxis: {
                 axisBorder: {
                     show: false,

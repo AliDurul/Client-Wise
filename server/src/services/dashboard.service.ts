@@ -2,6 +2,7 @@ import Customer from "../models/customer.model";
 import Lead from "../models/lead.model";
 import Ticket from "../models/ticket.model";
 import Invoice from "../models/invoice.model";
+import Task from "../models/task.model";
 
 export class DashboardService {
 
@@ -10,18 +11,48 @@ export class DashboardService {
         const [
             cardStats,
             monthlyStats,
-            recentInvoices
+            recentInvoices,
+            recentActivity
         ] = await Promise.all([
             this.getCardStats(),
             this.getMonthlyStats(),
-            this.getRecentInvoices()
+            this.getRecentInvoices(),
+            this.getRecentActivity()
         ]);
 
         return {
             cardStats,
             monthlyStats,
-            recentInvoices
+            recentInvoices,
+            recentActivity
         };
+    }
+
+    /** Latest events across tickets, leads, invoices and tasks, newest first. */
+    private static async getRecentActivity() {
+        const [tickets, leads, invoices, tasks] = await Promise.all([
+            Ticket.find().sort({ createdAt: -1 }).limit(5).select('title status createdAt').lean(),
+            Lead.find().sort({ createdAt: -1 }).limit(5).select('company_name person_name pipeline_stage createdAt').lean(),
+            Invoice.find().sort({ createdAt: -1 }).limit(5).populate('customer', 'first_name last_name company_name').select('customer status total_amount createdAt').lean(),
+            Task.find().sort({ createdAt: -1 }).limit(5).select('title status createdAt').lean(),
+        ]);
+
+        const events = [
+            ...tickets.map((t: any) => ({ type: 'ticket', text: `New ticket (${t.status})`, detail: t.title, date: t.createdAt })),
+            ...leads.map((l: any) => ({ type: 'lead', text: `New lead (${l.pipeline_stage})`, detail: l.company_name || l.person_name, date: l.createdAt })),
+            ...invoices.map((i: any) => ({
+                type: 'invoice',
+                text: `New invoice (${i.status})`,
+                detail: `${i.customer?.company_name || [i.customer?.first_name, i.customer?.last_name].filter(Boolean).join(' ') || 'Customer'} · ${i.total_amount}`,
+                date: i.createdAt,
+            })),
+            ...tasks.map((k: any) => ({ type: 'task', text: `New task (${String(k.status).toLowerCase()})`, detail: k.title, date: k.createdAt })),
+        ];
+
+        return events
+            .filter((e) => e.date)
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            .slice(0, 8);
     }
 
 
@@ -305,7 +336,13 @@ export class DashboardService {
         const totalLeads = leadsSeries.reduce((sum, n) => sum + n, 0);
         const totalTickets = ticketsSeries.reduce((sum, n) => sum + n, 0);
 
+        // The window is the last 12 months (rolling), so label each point with its real month.
+        const labels = months.map(({ y, m }) =>
+            new Date(y, m - 1, 1).toLocaleString('en-GB', { month: 'short' })
+        );
+
         return {
+            labels,
             revenueSeries: [
                 { name: 'Income', data: incomeSeries },
                 { name: 'Lead lost', data: lostSeries },

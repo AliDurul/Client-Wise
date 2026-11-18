@@ -187,7 +187,7 @@ export default function ChatBody() {
                                                             <Image
                                                                 width={36}
                                                                 height={36}
-                                                                src={senderProfilePic ?? ''}
+                                                                src={senderProfilePic || '/assets/images/profile-pic.png'}
                                                                 className="h-8 w-8 rounded-full object-cover"
                                                                 alt={senderName}
                                                             />

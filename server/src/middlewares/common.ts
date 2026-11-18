@@ -130,14 +130,19 @@ export const authenticate: RequestHandler = async (req, res, next) => {
     req.user = null;
 
     if (tokenParts[0] === "Bearer" && tokenParts[1]) {
-
-        jwt.verify(tokenParts[1], env.JWT_SECRET, (err: jwt.VerifyErrors | null, userData: AuthUser | undefined) => {
-            if (err) {
-                return next(new CustomError("Invalid or expired token", 401, true));
-            }
-            req.user = userData;
-        });
+        try {
+            req.user = jwt.verify(tokenParts[1], env.JWT_SECRET) as AuthUser;
+        } catch {
+            // Return here: calling next() again below would let a bad token through as an anonymous request.
+            return next(new CustomError("Invalid or expired token", 401, true));
+        }
     }
+    next();
+};
+
+/** Rejects anonymous requests. Use on routes that must only be reachable when signed in. */
+export const requireAuth: RequestHandler = (req, _res, next) => {
+    if (!req.user) return next(new CustomError("Authentication required", 401, true));
     next();
 };
 

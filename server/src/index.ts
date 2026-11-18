@@ -3,8 +3,6 @@ import { connectDB, disconnectDB } from "./configs/db";
 import env from "./configs/env";
 import app from './utils/express';
 import initSocket from './utils/socket';
-import { initializeData } from "./utils/seeds";
-import { initializeData2 } from "./utils/seed2";
 
 // server
 const server = createServer(app);
@@ -19,7 +17,6 @@ async function startServer() {
     await connectDB();
 
     server.listen(PORT, () => {
-      // initializeData2();
       console.log(`Server running on http://localhost:${PORT}`);
     });
 
@@ -36,5 +33,3 @@ async function startServer() {
 startServer();
 
 
-//! seeding
-// initializeData();

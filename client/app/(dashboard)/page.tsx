@@ -6,8 +6,8 @@ import { Suspense } from "react";
 import OverviewSkeleton from "@/components/dashboard/owerview/OverviewSkeleton";
 
 export const metadata = {
-  title: "Client Link Dashboard",
-  description: "Client Link Dashboard",
+  title: "Dashboard",
+  description: "Client White dashboard: customers, leads, tickets and invoices at a glance.",
 };
 
 export default async function Home() {

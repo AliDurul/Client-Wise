@@ -1,4 +1,4 @@
-# CMS Project - AI Coding Assistant Instructions
+# Client White - AI Coding Assistant Instructions
 
 ## Architecture Overview
 This is a full-stack CMS application with a Next.js 15 frontend and Express.js backend, supporting real-time chat, customer management, and multi-tenant functionality.

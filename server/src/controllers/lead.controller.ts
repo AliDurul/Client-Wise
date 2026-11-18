@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import Lead from '../models/lead.model';
 import { CustomError } from '../utils/common';
-import { dummyLeads } from '../utils/dumyData';
+import { buildDemoData } from '../utils/demoData';
 import Product from '../models/product.model';
 
 
@@ -101,7 +101,7 @@ export const createLeads = async (req: Request, res: Response, next: NextFunctio
 
     const product = await Product.findOne().lean();
 
-    const leadsToInsert = dummyLeads.map(lead => ({
+    const leadsToInsert = buildDemoData().leads.map(({ _id, ...lead }) => ({
         ...lead,
         assigned_agent: req.user.id,
         product: product ? product._id : null

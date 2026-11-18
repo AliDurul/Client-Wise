@@ -11,8 +11,13 @@ const ReactApexChart = dynamic(() => import('react-apexcharts'), {
 
 
 export default function SecondRow({ secondRowData }: any) {
-    const revenueChart = createRevenueChart(secondRowData?.monthlyStats?.revenueSeries || []);
+    const revenueChart = createRevenueChart(
+        secondRowData?.monthlyStats?.revenueSeries || [],
+        secondRowData?.monthlyStats?.labels
+    );
     const recentInvoices = secondRowData?.recentInvoices || [];
+    // Income over the 12 months shown in the chart.
+    const yearIncome: number = (revenueChart.series[0]?.data || []).reduce((sum: number, n: number) => sum + n, 0);
 
     // Map invoice status to colors
     const getStatusColors = (status: 'draft' | 'sent' | 'paid' | 'overdue' | 'closed' | 'refunded') => {
@@ -60,7 +65,7 @@ export default function SecondRow({ secondRowData }: any) {
                     </div>
                 </div>
                 <p className="text-lg dark:text-white-light/90">
-                    Total Profit <span className="ml-2 text-primary">$10,840</span>
+                    Total Profit <span className="ml-2 text-primary">${yearIncome.toLocaleString('en-US', { maximumFractionDigits: 0 })}</span>
                 </p>
                 <div className="relative">
                     <div className="rounded-lg bg-white dark:bg-black">

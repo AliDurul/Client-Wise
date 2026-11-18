@@ -74,11 +74,16 @@ export const fetchWithErrorHandling = async (url: string, body: object) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body),
             cache: 'no-store',
+            // Cold starts (sleeping server + database) can take a while; fail clearly instead of hanging.
+            signal: AbortSignal.timeout(45_000),
         });
         const data = await res.json();
         if (!res.ok || !data.success) throw new CustomError(data.message || 'Custom Message: Authentication failed');
         return data;
     } catch (error) {
+        if (error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError')) {
+            throw new CustomError('The server is taking too long to wake up. Please try again in a moment.');
+        }
         throw new CustomError(error instanceof Error ? error.message : 'Network or server error occurred');
     }
 };

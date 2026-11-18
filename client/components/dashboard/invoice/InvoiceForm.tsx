@@ -1,7 +1,7 @@
 'use client';
 import InputBox from '@/components/shared/InputBox';
 import { Invoice, InvoiceItem, Customer, Product } from '@/types';
-import Image from 'next/image';
+import BrandLogo from '@/components/shared/BrandLogo';
 import React, { startTransition, useActionState, useCallback, useEffect, useMemo, useState, useTransition } from 'react'
 import Select from 'react-select';
 import { paymentOp, statusOp } from './InvoiceConstraint';
@@ -159,12 +159,12 @@ export default function InvoiceForm({ invoice, customers, products, isEdit, erro
                 <div className="flex flex-wrap justify-between px-4">
                     <div className="mb-6 w-full lg:w-1/2">
                         <div className="flex shrink-0 items-center text-black dark:text-white">
-                            <Image src="/assets/images/logo.png" alt="img" width={150} height={50} />
+                            <BrandLogo size={34} />
                         </div>
                         <div className="mt-6 space-y-1 text-gray-500 dark:text-gray-400">
-                            <div>2rd Floor, Paylink, Cairo road, Lusaka, Zambia</div>
-                            <div>info@paylinkzm.com</div>
-                            <div>+260 21144500(0/1) or 5500</div>
+                            <div>14 Granary Row, London EC1V 2NX, United Kingdom</div>
+                            <div>billing@clientwhite.demo</div>
+                            <div>+44 20 7946 0321</div>
                         </div>
                     </div>
                     <div className="w-full lg:w-1/2 lg:max-w-fit">

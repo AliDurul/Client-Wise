@@ -6,6 +6,8 @@ import helmet from "helmet";
 import cors from "cors";
 import compression from "compression";
 import { shouldCompress } from "../utils/common";
+import mongoose from "mongoose";
+import { connectDB } from "../configs/db";
 
 //* Required packages  & configs & middewares
 const app = express();
@@ -35,6 +37,18 @@ app.use(compression({
 
 app.all('/', (req, res) => {
     res.send('Welcome to the API!');
+});
+
+// Warm-up / health check: wakes the server and pings MongoDB (used by the login page).
+app.get('/api/health', async (_req, res) => {
+    const startedAt = Date.now();
+    try {
+        await connectDB();
+        await mongoose.connection.db?.admin().ping();
+        res.json({ success: true, db: 'up', ms: Date.now() - startedAt });
+    } catch {
+        res.status(503).json({ success: false, db: 'down', ms: Date.now() - startedAt });
+    }
 });
 
 // Static files:

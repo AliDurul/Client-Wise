@@ -216,8 +216,8 @@ export async function sendEmailService(emailData: ISendEmailService) {
     // Generate unique boundary for MIME multipart
 
     const hasAttachments = !!emailData.attachments?.length;
-    const mixedBoundary = `----CMS_MIXED_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-    const altBoundary = `----CMS_ALT_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    const mixedBoundary = `----CW_MIXED_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    const altBoundary = `----CW_ALT_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 
     // Build email headers (filter out empty optional headers)
     const headers = [

@@ -2,7 +2,7 @@
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import Link from 'next/link';
 import { usePathname } from 'next/navigation'
-import Image from 'next/image'
+import BrandLogo from '@/components/shared/BrandLogo'
 import { useState, useEffect } from 'react';
 import { ContactIcon, DoubleArrowIcon, FaqIcon, InvoiceIcon, MailBox, NotesIcon, ProductIcon, TicketIcon, TodoIcon } from "@/icons"
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
@@ -17,7 +17,6 @@ const Sidebar = () => {
     const [currentMenu, setCurrentMenu] = useState<string>('');
     const themeConfig = useAppSelector(selectThemeConfig)
     const semidark = themeConfig.semidark;
-    const isDarkMode = themeConfig.isDarkMode;
     const toggleMenu = (value: string) => {
         setCurrentMenu((oldValue) => {
             return oldValue === value ? '' : value;
@@ -67,7 +66,7 @@ const Sidebar = () => {
 
                     <div className="flex items-center justify-between px-2 py-3 overflow-hidden">
                         <Link href="/" className="flex shrink-0 items-center justify-center  opacity-80">
-                            <Image className="flex-none" src={`/assets/images/${isDarkMode ? 'logo-dark.png' : 'logo-light.png'}`} alt="logo" width={125} height={125} />
+                            <BrandLogo className="pl-2 text-slate-900 dark:text-white" size={30} />
                             {/* <span className="align-middle text-base font-semibold dark:text-white-light lg:inline">Management</span> */}
                         </Link>
                         <button

@@ -1,7 +1,7 @@
 <div id="user-content-toc" align="center">
     <ul align="left">
         <summary>
-            <h1 style="display: inline-block; font-size: 2.5em; color: #2c3e50;">Client Link — Fullstack CRM (Next.js + Express)</h1>
+            <h1 style="display: inline-block; font-size: 2.5em; color: #2c3e50;">Client White — Fullstack CRM (Next.js + Express)</h1>
         </summary>
     </ul>
 </div>
@@ -60,8 +60,8 @@ pnpm dev
         </tr>
         <tr>
             <td colspan="3" style="padding: 10px; background-color: #ecf0f1;">
-                <h2>🌟What is Client Link CRM?</h2>
-                <p>Client Link is a modern, multi-tenant CRM and helpdesk platform built for teams who need customer management, ticketing, invoicing, and real-time chat. It pairs a Next.js 15 frontend (App Router) with an Express API backend and MongoDB for persistence. The project includes authentication, role-based access, socket-powered real-time features, and integrations for file uploads and external APIs.
+                <h2>🌟What is Client White CRM?</h2>
+                <p>Client White is a modern, multi-tenant CRM and helpdesk platform built for teams who need customer management, ticketing, invoicing, and real-time chat. It pairs a Next.js 15 frontend (App Router) with an Express API backend and MongoDB for persistence. The project includes authentication, role-based access, socket-powered real-time features, and integrations for file uploads and external APIs.
 </p>
                 <h2>⚙️ Features</h2>
                <ul>
@@ -75,8 +75,8 @@ pnpm dev
 					<li>🧩 Server-side APIs with Express and Mongoose models</li>
 					<li>⚡ Redis for caching and presence</li>
 					<li>🎨 Tailwind + Mantine UI components for a responsive design</li>
-					<li>📲 WhatsApp integration: inbound messages are received via webhooks and processed by the server so messages sent to the company's WhatsApp number can be handled directly inside Client Link (automatically create tickets or leads and route messages to agents). No external platform is required to respond — everything is managed from the CRM.</li>
-					<li>✉️ Gmail integration: the platform integrates with the Gmail API so the company can send, read and create emails from inside Client Link. Email-based leads or tickets can be automatically created and assigned to agents, and outgoing emails are sent on behalf of the configured company account.</li>
+					<li>📲 WhatsApp integration: inbound messages are received via webhooks and processed by the server so messages sent to the company's WhatsApp number can be handled directly inside Client White (automatically create tickets or leads and route messages to agents). No external platform is required to respond — everything is managed from the CRM.</li>
+					<li>✉️ Gmail integration: the platform integrates with the Gmail API so the company can send, read and create emails from inside Client White. Email-based leads or tickets can be automatically created and assigned to agents, and outgoing emails are sent on behalf of the configured company account.</li>
 				</ul>
                <h2>📎 Project Resources</h2>
                 <ul>

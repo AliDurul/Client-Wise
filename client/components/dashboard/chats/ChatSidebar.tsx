@@ -50,7 +50,7 @@ export default function ChatSidebar() {
                 // Tab filtering
                 if (selectedTab === 'Chats' && c.is_group) return false;
                 if (selectedTab === 'Groups' && !c.is_group) return false;
-                if(selectedTab === 'WhatsApp' && c.source !== 'whatsapp') return false;
+                if (selectedTab === 'WhatsApp' && c.source !== 'whatsapp') return false;
 
                 // Search filtering
                 if (c.is_group) {
@@ -75,7 +75,13 @@ export default function ChatSidebar() {
             <div className="flex items-center justify-between">
                 <div className="flex items-center">
                     <div className="flex-none">
-                        <Image src={userInfo?.profile_pic || '/assets/images/profile-pic.jpeg'} width={48} height={48} className="h-12 w-12 rounded-full object-cover" alt="" />
+                        <Image
+                            src={userInfo?.profile_pic || '/assets/images/profile-pic.png'}
+                            width={48}
+                            height={48}
+                            className="h-12 w-12 rounded-full object-cover"
+                            alt=""
+                        />
                     </div>
                     <div className="mx-3">
                         <p className="mb-1 font-semibold">{userInfo?.first_name} {userInfo?.last_name}</p>
